@@ -1,26 +1,19 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import styled from "styled-components";
 import FacebookLogin from "react-facebook-login";
+import constants from "./constants";
 
 const App = () => {
-  const [facebookID, setFacebookID] = useState("");
   const [isLoggedIn, setLogInStatus] = useState(false);
   const [userID, setUserID] = useState("");
 
-  // useEffect(() => {
-  //   console.log("rendering");
-  //   (async () => {
-  //     setFacebookID(axios.get("localhost:5000/").fb_key);
-  //   })();
-  // }, [facebookID]);
 
   const handleClick = () => {
     console.log("logging in");
+    console.log(parseInt(facebookID));
   };
 
   const handleResponse = (response) => {
-    console.log(response);
     setUserID(response.id);
     setLogInStatus(true);
   };
@@ -36,8 +29,10 @@ const App = () => {
       <BodyContainer>
         <p>Welcome to LifeMap.</p>
         <FacebookLogin
-          appId="853609955129035"
+          appId={constants.fb_key}
           autoload={true}
+          reauthenticate={true}
+          authload={true}
           fields="name,email"
           onClick={handleClick}
           callback={handleResponse}
