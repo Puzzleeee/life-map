@@ -10,7 +10,6 @@ const App = () => {
 
   const handleClick = () => {
     console.log("logging in");
-    console.log(parseInt(facebookID));
   };
 
   const handleResponse = (response) => {
