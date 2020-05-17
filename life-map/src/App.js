@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import FacebookLogin from "react-facebook-login";
 
 const App = () => {
   let facebookID = undefined;
@@ -42,7 +43,28 @@ const App = () => {
 
 export default App;
 
-const CustomHeader = styled.h1`
+const Layout = styled.main`
   display: flex;
-  color: black;
-`
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+`;
+
+const TitleContainer = styled.header`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+`;
+
+const BodyContainer = styled.main`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1200px;
+  align-items: center;
+`;
+
+const Title = styled.h1`
+  font-family: sans-serif;
+  color: blue;
+`;
