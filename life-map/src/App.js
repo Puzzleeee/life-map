@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as router, Switch, Route, Link } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 import FacebookLogin from "react-facebook-login";
 
 const App = () => {
-  let facebookID = undefined;
+  const [facebookID, setFacebookID] = useState("");
   const [isLoggedIn, setLogInStatus] = useState(false);
   const [userID, setUserID] = useState("");
 
-  useEffect(() => {
-    console.log("rendering");
-    (async () => {
-      facebookID = axios.get("localhost:5000");
-    })();
-  }, [facebookID]);
+  // useEffect(() => {
+  //   console.log("rendering");
+  //   (async () => {
+  //     setFacebookID(axios.get("localhost:5000/").fb_key);
+  //   })();
+  // }, [facebookID]);
 
   const handleClick = () => {
     console.log("logging in");
