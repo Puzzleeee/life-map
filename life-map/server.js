@@ -52,6 +52,14 @@ app.post('/login', passport.authenticate('local', {
   failureFlash: true
 }))
 
+function checkAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next()
+  }
+
+  res.redirect('/login')
+}
+
 app.listen(PORT, console.log(`Server running on port ${PORT}`));
 
 
