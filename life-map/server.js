@@ -17,7 +17,9 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors());
-app.use(flash())
+app.use(flash());
+
+// Node passport middleware
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -26,31 +28,22 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
+
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    fb_key: process.env.KEY
+    message: 'Welcome back to the homepage!',
+    user: req.user
   })
 });
-
-app.post('/register', async (req, res) => {
-  let name = 'test_name'
-  let email ='test@mail.com'
-  let password = '123456'
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10)
-    await db.register_user.execute(name, email, hashedPassword)
-    console.log("success!")
-  } catch (err) {
-    console.log("failure")
-  }
-})
 
 app.post('/login', passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/login',
   failureFlash: true
 }))
+
+
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -59,6 +52,17 @@ function checkAuthenticated(req, res, next) {
 
   res.redirect('/login')
 }
+
+function checkNotAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.redirect('/')
+  }
+  next()
+}
+
+
+// Routes
+app.use('/', require('./route_includes/auth_routes.js'));
 
 app.listen(PORT, console.log(`Server running on port ${PORT}`));
 
