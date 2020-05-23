@@ -3,7 +3,6 @@ import styled from "styled-components";
 import {
   BrowserRouter as Router,
   Switch,
-  Link,
   Route,
   Redirect,
 } from "react-router-dom";
@@ -14,6 +13,8 @@ import mapImage from "./static/map.jpg";
 const Landing = () => {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [userID, setUserID] = useState("");
+
+  // DOM refs for scrolling
   const loginRef = React.useRef();
   const registerRef = React.useRef();
 
@@ -46,15 +47,17 @@ const Landing = () => {
             registerRef={registerRef}
             redirect={loginRedirect}
           />
-          <Register registerRef={registerRef} />
+          <Register registerRef={registerRef} redirect={loginRedirect} />
         </Container>
       )}
 
+      {/* start of routes */}
       <Switch>
         <Route path="/home">
           <Home userID={userID} />
         </Route>
       </Switch>
+      {/* end of routes */}
     </Router>
   );
 };
@@ -62,9 +65,9 @@ const Landing = () => {
 const Login = ({ loginRef, registerRef, redirect }) => {
   const [emailInput, setEmail] = useState("");
   const [passwordInput, setPassword] = useState("");
-  const [isLoggedIn, setLoggedIn] = useState(false);
   const [hasError, setError] = useState(false);
 
+  /* helper for credential authentication with backend */
   const authCheck = async () => {
     const {
       data: { success },
@@ -73,14 +76,14 @@ const Login = ({ loginRef, registerRef, redirect }) => {
       password: passwordInput,
     });
 
+    // for now, just return success status (without user data)
     return success;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (authCheck()) {
-      setLoggedIn(true);
+    if (await authCheck()) {
       redirect(emailInput);
     } else {
       setError(true);
@@ -130,16 +133,37 @@ const Login = ({ loginRef, registerRef, redirect }) => {
   );
 };
 
-const Register = ({ registerRef }) => {
+const Register = ({ registerRef, redirect }) => {
   const [emailInput, setEmail] = useState("");
   const [nameInput, setName] = useState("");
   const [passwordInput, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (event) => {
+  /* backend call to create account */
+  const createAccount = async () => {
+    const req = {
+      name: nameInput,
+      email: emailInput,
+      password: passwordInput,
+    };
+
+    const response = await axios.post("http://localhost:5000/register", req);
+
+    if (!response.data) {
+      // email was taken
+      setError("Email has been taken");
+    } else if (!response.data.success) {
+      // unknown exception
+      setError("Something bad happened");
+    } else {
+      // succesful registration
+      redirect(emailInput);
+    }
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(emailInput);
-    console.log(nameInput);
-    console.log(passwordInput);
+    await createAccount();
   };
 
   return (
@@ -170,6 +194,7 @@ const Register = ({ registerRef }) => {
         <FormButton type="submit" style={{ marginTop: "24px" }}>
           Register
         </FormButton>
+        <p style={{ height: "24px", color: "red" }}>{error}</p>
       </Form>
     </RegisterContainer>
   );
