@@ -1,8 +1,19 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Link,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import axios from "axios";
+import Home from "./Home";
 import mapImage from "./static/map.jpg";
 
 const Landing = () => {
+  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [userID, setUserID] = useState("");
   const loginRef = React.useRef();
   const registerRef = React.useRef();
 
@@ -13,28 +24,67 @@ const Landing = () => {
     });
   };
 
+  const loginRedirect = (userID) => {
+    setUserID(userID);
+    setLoggedIn(true);
+  };
+
   return (
-    <Container>
-      <HeroImage>
-        <HeroContainer>
-          <Title>Welcome to LifeMap</Title>
-          <Button onClick={scrollToLogin}>Register / Login</Button>
-        </HeroContainer>
-      </HeroImage>
-      <Login loginRef={loginRef} registerRef={registerRef} />
-      <Register registerRef={registerRef} />
-    </Container>
+    <Router>
+      {isLoggedIn ? (
+        <Redirect to="/home" />
+      ) : (
+        <Container>
+          <HeroImage>
+            <HeroContainer>
+              <Title>Welcome to LifeMap</Title>
+              <Button onClick={scrollToLogin}>Register / Login</Button>
+            </HeroContainer>
+          </HeroImage>
+          <Login
+            loginRef={loginRef}
+            registerRef={registerRef}
+            redirect={loginRedirect}
+          />
+          <Register registerRef={registerRef} />
+        </Container>
+      )}
+
+      <Switch>
+        <Route path="/home">
+          <Home userID={userID} />
+        </Route>
+      </Switch>
+    </Router>
   );
 };
 
-const Login = ({ loginRef, registerRef }) => {
+const Login = ({ loginRef, registerRef, redirect }) => {
   const [emailInput, setEmail] = useState("");
   const [passwordInput, setPassword] = useState("");
+  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [hasError, setError] = useState(false);
+
+  const authCheck = async () => {
+    const {
+      data: { success },
+    } = await axios.post("http://localhost:5000/login", {
+      email: emailInput,
+      password: passwordInput,
+    });
+
+    return success;
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(emailInput);
-    console.log(passwordInput);
+
+    if (authCheck()) {
+      setLoggedIn(true);
+      redirect(emailInput);
+    } else {
+      setError(true);
+    }
   };
 
   const scrollToRegister = () => {
@@ -70,6 +120,9 @@ const Login = ({ loginRef, registerRef }) => {
           >
             Don't have an account? Register here
           </FormButton>
+          <p style={{ height: "24px", color: "red" }}>
+            {hasError ? "Invalid credentials" : ""}
+          </p>
           <FormButton type="submit">Log in</FormButton>
         </LoginFooter>
       </Form>
@@ -151,7 +204,6 @@ const HeroContainer = styled.div`
 
 const Title = styled.h1`
   font-size: 2em;
-  font-family: sans-serif;
   margin-top: 50px;
   letter-spacing: 2px;
   font-weight: 100;
