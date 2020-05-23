@@ -149,7 +149,7 @@ const Register = ({ registerRef, redirect }) => {
 
     const response = await axios.post("http://localhost:5000/register", req);
 
-    if (!response.data) {
+    if (response.data.message ==='duplicate') {
       // email was taken
       setError("Email has been taken");
     } else if (!response.data.success) {

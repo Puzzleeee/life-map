@@ -19,7 +19,10 @@ router.post('/', async (req, res) => {
   try {
     const existing = await db.get_user_by_email.execute(email)
     if (existing.length !== 0) {
-      res.send("Email already used!")
+      res.status(200).json({
+        success: false,
+        message: 'duplicate'
+      })
     } else {
       const hashedPassword = await bcrypt.hash(password, 10)
       await db.register_user.execute(name, email, hashedPassword)
