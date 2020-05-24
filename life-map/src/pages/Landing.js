@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import axios from "axios";
 import Home from "./Home";
-import mapImage from "./static/map.jpg";
+import mapImage from "../static/map.jpg";
 
 const Landing = () => {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -32,31 +32,38 @@ const Landing = () => {
 
   return (
     <Router>
-      {isLoggedIn ? (
-        <Redirect to="/home" />
-      ) : (
-        <Container>
-          <HeroImage>
-            <HeroContainer>
-              <Title>Welcome to LifeMap</Title>
-              <Button onClick={scrollToLogin}>Register / Login</Button>
-            </HeroContainer>
-          </HeroImage>
-          <Login
-            loginRef={loginRef}
-            registerRef={registerRef}
-            redirect={loginRedirect}
+      <div>
+        {isLoggedIn ? (
+          <Redirect
+            to={{
+              pathname: "/home",
+              state: { userID: userID },
+            }}
           />
-          <Register registerRef={registerRef} redirect={loginRedirect} />
-        </Container>
-      )}
+        ) : (
+          <Container>
+            <HeroImage>
+              <HeroContainer>
+                <Title>Welcome to LifeMap</Title>
+                <Button onClick={scrollToLogin}>Register / Login</Button>
+              </HeroContainer>
+            </HeroImage>
+            <Login
+              loginRef={loginRef}
+              registerRef={registerRef}
+              redirect={loginRedirect}
+            />
+            <Register registerRef={registerRef} redirect={loginRedirect} />
+          </Container>
+        )}
+      </div>
 
       {/* start of routes */}
-      <Switch>
+      {/* <Switch>
         <Route path="/home">
           <Home userID={userID} />
         </Route>
-      </Switch>
+      </Switch> */}
       {/* end of routes */}
     </Router>
   );
@@ -69,15 +76,16 @@ const Login = ({ loginRef, registerRef, redirect }) => {
 
   /* helper for credential authentication with backend */
   const authCheck = async () => {
-    const {
-      data: { success },
-    } = await axios.post("http://localhost:5000/login", {
-      email: emailInput,
-      password: passwordInput,
-    });
+    // const {
+    //   data: { success },
+    // } = await axios.post("http://localhost:5000/login", {
+    //   email: emailInput,
+    //   password: passwordInput,
+    // });
 
-    // for now, just return success status (without user data)
-    return success;
+    // // for now, just return success status (without user data)
+    // return success;
+    return true;
   };
 
   const handleSubmit = async (event) => {
@@ -149,7 +157,7 @@ const Register = ({ registerRef, redirect }) => {
 
     const response = await axios.post("http://localhost:5000/register", req);
 
-    if (response.data.message ==='duplicate') {
+    if (response.data.message === "duplicate") {
       // email was taken
       setError("Email has been taken");
     } else if (!response.data.success) {
