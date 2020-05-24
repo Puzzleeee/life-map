@@ -55,7 +55,7 @@ function checkAuthenticated(req, res, next) {
 
 function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    return res.redirect('/')
+    return res.redirect('/homepage')
   }
   next()
 }
@@ -63,6 +63,7 @@ function checkNotAuthenticated(req, res, next) {
 
 // Routes
 app.use('/', require('./route_includes/auth_routes.js'));
+app.use('/', require('./route_includes/homepage_routes.js'));
 
 app.listen(PORT, console.log(`Server running on port ${PORT}`));
 
