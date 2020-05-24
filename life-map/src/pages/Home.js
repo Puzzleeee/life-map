@@ -52,7 +52,8 @@ const Home = ({
       </SideBar>
       <MapContainer>
         <GoogleMapReact
-          bootstrapURLKeys={{ key: "AIzaSyDzTgpKHtP7Isg7-HdcV962p_Kjv0tH1UU" }}
+          // populate api key
+          bootstrapURLKeys={{ key: "" }}
           defaultCenter={mapDefaults.center}
           defaultZoom={mapDefaults.zoom}
           // somehow you need to do this cos of some bug in the package
