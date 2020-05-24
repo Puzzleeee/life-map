@@ -1,11 +1,6 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import axios from "axios";
 import mapImage from "../static/map.jpg";
 
@@ -57,20 +52,6 @@ const Landing = () => {
       )}
     </div>
   );
-
-  {
-    /* start of routes */
-  }
-  {
-    /* <Switch>
-        <Route path="/home">
-          <Home userID={userID} />
-        </Route>
-      </Switch> */
-  }
-  {
-    /* end of routes */
-  }
 };
 
 const Login = ({ loginRef, registerRef, redirect }) => {
@@ -80,16 +61,15 @@ const Login = ({ loginRef, registerRef, redirect }) => {
 
   /* helper for credential authentication with backend */
   const authCheck = async () => {
-    // const {
-    //   data: { success },
-    // } = await axios.post("http://localhost:5000/login", {
-    //   email: emailInput,
-    //   password: passwordInput,
-    // });
+    const {
+      data: { success },
+    } = await axios.post("http://localhost:5000/login", {
+      email: emailInput,
+      password: passwordInput,
+    });
 
-    // // for now, just return success status (without user data)
-    // return success;
-    return true;
+    // for now, just return success status (without user data)
+    return success;
   };
 
   const handleSubmit = async (event) => {
@@ -216,6 +196,7 @@ export default Landing;
 
 const Container = styled.div`
   width: 100%;
+  font-family: "Roboto";
 `;
 
 const HeroImage = styled.div`
@@ -247,14 +228,15 @@ const Title = styled.h1`
 `;
 
 const Button = styled.button`
-  border-radius: 16px;
-  padding: 6px 36px;
   margin-bottom: 50px;
+  padding: 6px 36px;
+  border-radius: 25px;
+  border: 1px solid grey;
   cursor: pointer;
 
   text-align: center;
   font-size: 1.1em;
-  font-weight: 300;
+  font-weight: 100;
   letter-spacing: 2px;
 
   background-color: rgb(17, 82, 168);
@@ -309,6 +291,7 @@ const FormButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.1s ease;
+  border: 1px solid grey;
 
   &:hover {
     background-color: #1152a8;
