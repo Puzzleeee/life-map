@@ -14,5 +14,6 @@ var pool = mysql.createPool({
 const crud = require('./crud.js')(pool)
 
 const user_auth = require('./db_includes/user_auth.js')(crud)
+const markers = require('./db_includes/markers.js')(crud)
 
-module.exports = {...user_auth}
+module.exports = {...user_auth, ...markers}
