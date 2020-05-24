@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
+import Marker from "../components/Marker";
 
 const Home = (props) => {
   const id = props;
@@ -18,6 +19,11 @@ const Home = (props) => {
     zoom: 12,
   };
 
+  const tag = {
+    lat: 1.303902,
+    lng: 103.907284,
+  };
+
   return (
     <Container>
       <SideBar>
@@ -29,7 +35,10 @@ const Home = (props) => {
           bootstrapURLKeys={{ key: "AIzaSyDzTgpKHtP7Isg7-HdcV962p_Kjv0tH1UU" }}
           defaultCenter={mapDefaults.center}
           defaultZoom={mapDefaults.zoom}
-        />
+          distanceToMouse={() => {}}
+        >
+          <Marker lat={1.303902} lng={103.907284}></Marker>
+        </GoogleMapReact>
       </MapContainer>
     </Container>
   );
