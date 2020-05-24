@@ -32,7 +32,7 @@ app.use(passport.session())
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Welcome back to the homepage!',
+    message: 'Log in successful!',
     user: req.user
   })
 });
