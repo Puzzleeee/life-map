@@ -2,6 +2,15 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
 import Marker from "../components/Marker";
+import axios from 'axios';
+
+
+const config = {
+  withCredentials: true,
+  headers: {
+    'Content-Type' : 'application/json'
+  }
+};
 
 // initialize constants for map
 const mapDefaults = {
@@ -21,26 +30,25 @@ const Home = ({
 
   useEffect(async () => {
     /* start of dummy logic */
-    const fakeMarkers = [
-      {
-        lat: 1.3521,
-        lng: 103.8198,
-        name: "home",
-      },
-      {
-        lat: 1.42,
-        lng: 103.87,
-        name: "home 2",
-      },
-    ];
-    setMarkers(fakeMarkers);
+    // const fakeMarkers = [
+    //   {
+    //     lat: 1.3521,
+    //     lng: 103.8198,
+    //     name: "home",
+    //   },
+    //   {
+    //     lat: 1.42,
+    //     lng: 103.87,
+    //     name: "home 2",
+    //   },
+    // ];
+    // setMarkers(fakeMarkers);
     /* end of dummy logic */
 
     /* Uncomment this for actual api call logic */
-    // const markers = await axios.get("http://localhost:5000/homepage", {
-    //   params: { user_id: props.user_id },
-    // });
-    // setMarkers(markers);
+    const markers = await axios.get("http://localhost:5000/homepage", config)
+    console.log(markers.data)
+    setMarkers(markers.data.data)
   }, []);
 
   return (
@@ -53,7 +61,7 @@ const Home = ({
       <MapContainer>
         <GoogleMapReact
           // populate api key
-          bootstrapURLKeys={{ key: "" }}
+          bootstrapURLKeys={{ key: "AIzaSyDPYe3Kij0urnon3l7QIcS0Dqw_KVaorjU" }}
           defaultCenter={mapDefaults.center}
           defaultZoom={mapDefaults.zoom}
           // somehow you need to do this cos of some bug in the package

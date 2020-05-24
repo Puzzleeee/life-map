@@ -6,18 +6,11 @@ const db = require('./db/db.js')
 const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
-
 const initializePassport = require('./passport-config.js')
-initializePassport(passport, db.get_user_by_email.execute, db.get_user_by_id.execute)
-
-dotenv.config({ path: './config/config.env' });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-app.use(express.json());
-app.use(cors());
-app.use(flash());
+dotenv.config({ path: './config/config.env' });
 
 // Node passport middleware
 app.use(session({
@@ -28,6 +21,24 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
+initializePassport(passport, db.get_user_by_email.execute, db.get_user_by_id.execute)
+
+
+app.use(express.json());
+app.use(flash());
+
+
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  if ('OPTIONS' == req.method) {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -42,8 +53,6 @@ app.post('/login', passport.authenticate('local', {
   failureRedirect: '/login',
   failureFlash: true
 }))
-
-
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {

@@ -4,6 +4,15 @@ import { Redirect } from "react-router-dom";
 import axios from "axios";
 import mapImage from "../static/map.jpg";
 
+// config required to make requests specific to the user that is logged in,
+// include this when using axios so that back-end knows which user is logged in
+const config = {
+  withCredentials: true,
+  headers: {
+    'Content-Type' : 'application/json'
+  }
+};
+
 const Landing = () => {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [userID, setUserID] = useState("");
@@ -61,22 +70,20 @@ const Login = ({ loginRef, registerRef, redirect }) => {
 
   /* helper for credential authentication with backend */
   const authCheck = async () => {
-    const {
-      data: { success },
-    } = await axios.post("http://localhost:5000/login", {
+    const response = await axios.post("http://localhost:5000/login", {
       email: emailInput,
-      password: passwordInput,
-    });
-
-    // for now, just return success status (without user data)
-    return success;
+      password: passwordInput
+    }, config);
+    return {success: response.data.success, name: response.data.user.name};
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (await authCheck()) {
-      redirect(emailInput);
+    const response = await authCheck();
+
+    if (response.success){
+      redirect(response.name);
     } else {
       setError(true);
     }
