@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const Marker = () => {
+const Marker = ({ name }) => {
   const [isOpen, setOpen] = useState(false);
 
   return isOpen ? (
     <Card>
       <CardHeader>
-        <h1>Location Name</h1>
+        <h2 style={{ letterSpacing: "1px" }}>{name.toUpperCase()}</h2>
         <CloseButton onClick={() => setOpen(false)}>close</CloseButton>
       </CardHeader>
       <p>

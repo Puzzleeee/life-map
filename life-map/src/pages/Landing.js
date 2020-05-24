@@ -7,7 +7,6 @@ import {
   Redirect,
 } from "react-router-dom";
 import axios from "axios";
-import Home from "./Home";
 import mapImage from "../static/map.jpg";
 
 const Landing = () => {
@@ -31,42 +30,47 @@ const Landing = () => {
   };
 
   return (
-    <Router>
-      <div>
-        {isLoggedIn ? (
-          <Redirect
-            to={{
-              pathname: "/home",
-              state: { userID: userID },
-            }}
+    <div>
+      {isLoggedIn ? (
+        <Redirect
+          push
+          to={{
+            pathname: "/home",
+            state: { userID: userID },
+          }}
+        />
+      ) : (
+        <Container>
+          <HeroImage>
+            <HeroContainer>
+              <Title>Welcome to LifeMap</Title>
+              <Button onClick={scrollToLogin}>Register / Login</Button>
+            </HeroContainer>
+          </HeroImage>
+          <Login
+            loginRef={loginRef}
+            registerRef={registerRef}
+            redirect={loginRedirect}
           />
-        ) : (
-          <Container>
-            <HeroImage>
-              <HeroContainer>
-                <Title>Welcome to LifeMap</Title>
-                <Button onClick={scrollToLogin}>Register / Login</Button>
-              </HeroContainer>
-            </HeroImage>
-            <Login
-              loginRef={loginRef}
-              registerRef={registerRef}
-              redirect={loginRedirect}
-            />
-            <Register registerRef={registerRef} redirect={loginRedirect} />
-          </Container>
-        )}
-      </div>
+          <Register registerRef={registerRef} redirect={loginRedirect} />
+        </Container>
+      )}
+    </div>
+  );
 
-      {/* start of routes */}
-      {/* <Switch>
+  {
+    /* start of routes */
+  }
+  {
+    /* <Switch>
         <Route path="/home">
           <Home userID={userID} />
         </Route>
-      </Switch> */}
-      {/* end of routes */}
-    </Router>
-  );
+      </Switch> */
+  }
+  {
+    /* end of routes */
+  }
 };
 
 const Login = ({ loginRef, registerRef, redirect }) => {

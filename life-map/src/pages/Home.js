@@ -1,32 +1,52 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
 import Marker from "../components/Marker";
 
-const Home = (props) => {
-  const id = props;
+// initialize constants for map
+const mapDefaults = {
+  center: {
+    lat: 1.3521,
+    lng: 103.8198,
+  },
+  zoom: 12,
+};
 
-  useEffect(() => {
-    console.log("mounting");
-    console.log(id);
-  });
+const Home = ({
+  location: {
+    state: { userID: userID },
+  },
+}) => {
+  const [markers, setMarkers] = useState([]);
 
-  const mapDefaults = {
-    center: {
-      lat: 1.3521,
-      lng: 103.8198,
-    },
-    zoom: 12,
-  };
+  useEffect(async () => {
+    /* start of dummy logic */
+    const fakeMarkers = [
+      {
+        lat: 1.3521,
+        lng: 103.8198,
+        name: "home",
+      },
+      {
+        lat: 1.42,
+        lng: 103.87,
+        name: "home 2",
+      },
+    ];
+    setMarkers(fakeMarkers);
+    /* end of dummy logic */
 
-  const tag = {
-    lat: 1.303902,
-    lng: 103.907284,
-  };
+    /* Uncomment this for actual api call logic */
+    // const markers = await axios.get("http://localhost:5000/homepage", {
+    //   params: { user_id: props.user_id },
+    // });
+    // setMarkers(markers);
+  }, []);
 
   return (
     <Container>
       <SideBar>
+        <p style={{ textAlign: "center" }}>Welcome {userID}</p>
         <NavButton>Add an entry</NavButton>
         <NavButton>View all entries</NavButton>
       </SideBar>
@@ -35,9 +55,17 @@ const Home = (props) => {
           bootstrapURLKeys={{ key: "AIzaSyDzTgpKHtP7Isg7-HdcV962p_Kjv0tH1UU" }}
           defaultCenter={mapDefaults.center}
           defaultZoom={mapDefaults.zoom}
+          // somehow you need to do this cos of some bug in the package
           distanceToMouse={() => {}}
         >
-          <Marker lat={1.303902} lng={103.907284}></Marker>
+          {markers.map((marker) => (
+            <Marker
+              key={marker.name}
+              lat={marker.lat}
+              lng={marker.lng}
+              name={marker.name}
+            />
+          ))}
         </GoogleMapReact>
       </MapContainer>
     </Container>
