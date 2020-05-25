@@ -23,7 +23,7 @@ const mapDefaults = {
 
 const Home = ({
   location: {
-    state: { userID: userID },
+    state: { userID },
   },
 }) => {
   const [markers, setMarkers] = useState([]);
@@ -61,7 +61,7 @@ const Home = ({
       <MapContainer>
         <GoogleMapReact
           // populate api key
-          bootstrapURLKeys={{ key: "AIzaSyDPYe3Kij0urnon3l7QIcS0Dqw_KVaorjU" }}
+          bootstrapURLKeys={{ key: "" }}
           defaultCenter={mapDefaults.center}
           defaultZoom={mapDefaults.zoom}
           // somehow you need to do this cos of some bug in the package
