@@ -1,14 +1,17 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import axios from "axios";
-import Home from "./Home";
-import mapImage from "./static/map.jpg";
+import mapImage from "../static/map.jpg";
+
+// config required to make requests specific to the user that is logged in,
+// include this when using axios so that back-end knows which user is logged in
+const config = {
+  withCredentials: true,
+  headers: {
+    'Content-Type' : 'application/json'
+  }
+};
 
 const Landing = () => {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -31,9 +34,14 @@ const Landing = () => {
   };
 
   return (
-    <Router>
+    <div>
       {isLoggedIn ? (
-        <Redirect to="/home" />
+        <Redirect
+          to={{
+            pathname: "/home",
+            state: { userID: userID },
+          }}
+        />
       ) : (
         <Container>
           <HeroImage>
@@ -50,15 +58,7 @@ const Landing = () => {
           <Register registerRef={registerRef} redirect={loginRedirect} />
         </Container>
       )}
-
-      {/* start of routes */}
-      <Switch>
-        <Route path="/home">
-          <Home userID={userID} />
-        </Route>
-      </Switch>
-      {/* end of routes */}
-    </Router>
+    </div>
   );
 };
 
@@ -69,22 +69,20 @@ const Login = ({ loginRef, registerRef, redirect }) => {
 
   /* helper for credential authentication with backend */
   const authCheck = async () => {
-    const {
-      data: { success },
-    } = await axios.post("http://localhost:5000/login", {
+    const response = await axios.post("http://localhost:5000/login", {
       email: emailInput,
-      password: passwordInput,
-    });
-
-    // for now, just return success status (without user data)
-    return success;
+      password: passwordInput
+    }, config);
+    return {success: response.data.success, name: response.data.user.name};
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (await authCheck()) {
-      redirect(emailInput);
+    const response = await authCheck();
+
+    if (response.success){
+      redirect(response.name);
     } else {
       setError(true);
     }
@@ -149,7 +147,7 @@ const Register = ({ registerRef, redirect }) => {
 
     const response = await axios.post("http://localhost:5000/register", req);
 
-    if (response.data.message ==='duplicate') {
+    if (response.data.message === "duplicate") {
       // email was taken
       setError("Email has been taken");
     } else if (!response.data.success) {
@@ -204,6 +202,7 @@ export default Landing;
 
 const Container = styled.div`
   width: 100%;
+  font-family: "Roboto";
 `;
 
 const HeroImage = styled.div`
@@ -235,14 +234,15 @@ const Title = styled.h1`
 `;
 
 const Button = styled.button`
-  border-radius: 16px;
-  padding: 6px 36px;
   margin-bottom: 50px;
+  padding: 6px 36px;
+  border-radius: 25px;
+  border: 1px solid grey;
   cursor: pointer;
 
   text-align: center;
   font-size: 1.1em;
-  font-weight: 300;
+  font-weight: 100;
   letter-spacing: 2px;
 
   background-color: rgb(17, 82, 168);
@@ -297,6 +297,7 @@ const FormButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.1s ease;
+  border: 1px solid grey;
 
   &:hover {
     background-color: #1152a8;
