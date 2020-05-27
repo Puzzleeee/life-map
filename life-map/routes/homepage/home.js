@@ -1,12 +1,12 @@
 const express = require('express')
-const db = require('../../db/db.js')
+const homepage = require('../../service/homepage/homepage.js')
 
 const router = express.Router()
 
 router.get('/', async (req, res) => {
   let id = req.user.id
   try {
-    const markers = await db.get_markers_by_user_id.execute(id)
+    const markers = await homepage.getMarkers(id);
     res.status(200).json({
       success: true,
       data: markers

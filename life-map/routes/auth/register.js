@@ -1,7 +1,5 @@
 const express = require('express')
-const db = require('../../db/db.js')
-const bcrypt = require('bcrypt')
-
+const registerUser = require('../../service/authentication/register.js')
 const router = express.Router()
 
 /**
@@ -17,20 +15,8 @@ router.post('/', async (req, res) => {
   let password = req.body.password
 
   try {
-    const existing = await db.get_user_by_email.execute(email)
-    if (existing.length !== 0) {
-      res.status(200).json({
-        success: false,
-        message: 'duplicate'
-      })
-    } else {
-      const hashedPassword = await bcrypt.hash(password, 10)
-      await db.register_user.execute(name, email, hashedPassword)
-      res.status(200).json({
-        success: true,
-        message: `${name} registered with email: ${email}`
-      })
-    }
+    let result = await registerUser(email, name, password);
+    res.status(200).json(result)
   } catch (err) {
     console.log(err)
     res.status(409).json({
