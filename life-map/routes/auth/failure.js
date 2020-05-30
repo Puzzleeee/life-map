@@ -3,9 +3,9 @@ const express = require('express')
 const router = express.Router()
 
 router.get('/', (req, res) => {
-  let message = "Log in page"
-  res.json({
-    message: message
+  res.status(200).json({
+    success: false,
+    user: {}
   })
 })
 

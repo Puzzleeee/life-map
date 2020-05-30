@@ -50,7 +50,7 @@ app.get('/', (req, res) => {
 
 app.post('/login', passport.authenticate('local', {
   successRedirect: '/',
-  failureRedirect: '/login',
+  failureRedirect: '/failure',
   failureFlash: true
 }))
 
