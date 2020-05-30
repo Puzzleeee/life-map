@@ -3,6 +3,7 @@ import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
 import Marker from "../components/Marker";
 import axios from "axios";
+import { Redirect, withRouter } from "react-router-dom";
 
 const config = {
   withCredentials: true,
@@ -24,63 +25,69 @@ const Home = ({
   location: {
     state: { userID },
   },
+  history,
 }) => {
   const [markers, setMarkers] = useState([]);
+  const [isLogOut, setLogOut] = useState(false);
+  console.log(history);
 
   useEffect(async () => {
-    /* start of dummy logic */
-    // const fakeMarkers = [
-    //   {
-    //     lat: 1.3521,
-    //     lng: 103.8198,
-    //     name: "home",
-    //   },
-    //   {
-    //     lat: 1.42,
-    //     lng: 103.87,
-    //     name: "home 2",
-    //   },
-    // ];
-    // setMarkers(fakeMarkers);
-    /* end of dummy logic */
-
-    /* Uncomment this for actual api call logic */
     const markers = await axios.get("http://localhost:5000/homepage", config);
-    console.log(markers.data);
     setMarkers(markers.data.data);
   }, []);
 
+  const handleLogOut = async () => {
+    // await axios.delete("https://localhost:5000/logout");
+    // setLogOut(true);
+    history.push("/");
+  };
+
   return (
-    <Container>
-      <SideBar>
-        <p style={{ textAlign: "center" }}>Welcome {userID}</p>
-        <NavButton>Add an entry</NavButton>
-        <NavButton>View all entries</NavButton>
-        <LogOutButton>Log Out</LogOutButton>
-      </SideBar>
-      <MapContainer>
-        <GoogleMapReact
-          // populate api key
-          bootstrapURLKeys={{ key: "" }}
-          defaultCenter={mapDefaults.center}
-          defaultZoom={mapDefaults.zoom}
-          // somehow you need to do this cos of some bug in the package
-          distanceToMouse={() => {}}
-        >
-          {markers.map((marker) => (
-            <Marker
-              key={marker.name}
-              lat={marker.lat}
-              lng={marker.lng}
-              name={marker.name}
-            />
-          ))}
-        </GoogleMapReact>
-      </MapContainer>
-    </Container>
+    <div>
+      {/* if logged out, redirect to landing page  */}
+      {/* {isLogOut && (
+        <Redirect
+          to={{
+            pathname: "/",
+          }}
+        />
+      )} */}
+
+      {/* else, load the logged in homepage */}
+      {!isLogOut && (
+        <Container>
+          <SideBar>
+            <p style={{ textAlign: "center" }}>Welcome {userID}</p>
+            <NavButton>Add an entry</NavButton>
+            <NavButton>View all entries</NavButton>
+            <LogOutButton onClick={handleLogOut}>Log Out</LogOutButton>
+          </SideBar>
+          <MapContainer>
+            <GoogleMapReact
+              // populate api key
+              bootstrapURLKeys={{ key: "" }}
+              defaultCenter={mapDefaults.center}
+              defaultZoom={mapDefaults.zoom}
+              // somehow you need to do this cos of some bug in the package
+              distanceToMouse={() => {}}
+            >
+              {markers.map((marker) => (
+                <Marker
+                  key={marker.name}
+                  lat={marker.lat}
+                  lng={marker.lng}
+                  name={marker.name}
+                />
+              ))}
+            </GoogleMapReact>
+          </MapContainer>
+        </Container>
+      )}
+    </div>
   );
 };
 
+// export default withRouter(Home);
 export default Home;
 
 const Container = styled.section`

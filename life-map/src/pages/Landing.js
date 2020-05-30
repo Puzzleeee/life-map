@@ -13,7 +13,7 @@ const config = {
   },
 };
 
-const Landing = () => {
+const Landing = ({ location, history }) => {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [userID, setUserID] = useState("");
 
@@ -38,7 +38,9 @@ const Landing = () => {
         setUserID(response.data.user.id);
       }
     })();
-  });
+    console.log("location", location);
+    console.log("history", history);
+  }, [location, history]);
 
   // DOM refs for scrolling
   const loginRef = React.useRef();
