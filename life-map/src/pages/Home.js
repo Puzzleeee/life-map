@@ -49,7 +49,7 @@ const Home = ({
   return (
     <div>
       {/* if logged out, redirect to landing page  */}
-      {isLoggedIn && (
+      {!isLoggedIn && (
         <Redirect
           push
           to={{
@@ -59,7 +59,7 @@ const Home = ({
       )}
 
       {/* else, load the logged in homepage */}
-      {!isLoggedIn && (
+      {isLoggedIn && (
         <Container>
           <SideBar>
             <p style={{ textAlign: "center" }}>Welcome {userID}</p>
