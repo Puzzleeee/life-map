@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
 import Marker from "../components/Marker";
-import axios from 'axios';
-
+import axios from "axios";
 
 const config = {
   withCredentials: true,
   headers: {
-    'Content-Type' : 'application/json'
-  }
+    "Content-Type": "application/json",
+  },
 };
 
 // initialize constants for map
@@ -46,9 +45,9 @@ const Home = ({
     /* end of dummy logic */
 
     /* Uncomment this for actual api call logic */
-    const markers = await axios.get("http://localhost:5000/homepage", config)
-    console.log(markers.data)
-    setMarkers(markers.data.data)
+    const markers = await axios.get("http://localhost:5000/homepage", config);
+    console.log(markers.data);
+    setMarkers(markers.data.data);
   }, []);
 
   return (
@@ -57,6 +56,7 @@ const Home = ({
         <p style={{ textAlign: "center" }}>Welcome {userID}</p>
         <NavButton>Add an entry</NavButton>
         <NavButton>View all entries</NavButton>
+        <LogOutButton>Log Out</LogOutButton>
       </SideBar>
       <MapContainer>
         <GoogleMapReact
@@ -121,6 +121,27 @@ const NavButton = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: rgb(17, 82, 168, 0.8);
+    background-color: rgb(17, 82, 168, 0.9);
+  }
+`;
+
+const LogOutButton = styled.button`
+  color: white;
+  background-color: rgba(168, 17, 50, 1);
+  margin: 12px 24px;
+  padding: 6px 0px;
+  border-radius: 25px;
+  border: none;
+
+  font-size: 1.1em;
+  font-family: "Roboto";
+  font-weight: 300;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba(168, 17, 50, 0.9);
   }
 `;
