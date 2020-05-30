@@ -15,5 +15,6 @@ const crud = require('./crud.js')(pool)
 
 const user_auth = require('./db_includes/user_auth.js')(crud)
 const markers = require('./db_includes/markers.js')(crud)
+const diary = require('./db_includes/diary_entries.js')(crud)
 
 module.exports = {...user_auth, ...markers}
