@@ -41,10 +41,11 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', (req, res) => {
+  const { name, id } = req.user
   res.status(200).json({
     success: true,
     message: 'Log in successful!',
-    user: req.user
+    user: { name: name, id: id }
   })
 });
 
@@ -54,25 +55,10 @@ app.post('/login', passport.authenticate('local', {
   failureFlash: true
 }))
 
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-
-  res.redirect('/login')
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect('/homepage')
-  }
-  next()
-}
-
 
 // Routes
 app.use('/', require('./route_includes/auth_routes.js'));
-app.use('/', require('./route_includes/homepage_routes.js'));
+app.use('/homepage', require('./route_includes/homepage_routes.js'));
 
 app.listen(PORT, console.log(`Server running on port ${PORT}`));
 
