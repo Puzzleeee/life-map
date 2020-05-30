@@ -3,7 +3,7 @@ import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
 import Marker from "../components/Marker";
 import axios from "axios";
-import { Redirect, withRouter } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 const config = {
   withCredentials: true,
@@ -25,36 +25,41 @@ const Home = ({
   location: {
     state: { userID },
   },
-  history,
 }) => {
   const [markers, setMarkers] = useState([]);
-  const [isLogOut, setLogOut] = useState(false);
-  console.log(history);
+  const [isLoggedIn, setLoggedIn] = useState(false);
 
-  useEffect(async () => {
-    const markers = await axios.get("http://localhost:5000/homepage", config);
-    setMarkers(markers.data.data);
+  // on mounting component, check if user was already logged in and redirect
+  // appropriately
+  useEffect(() => {
+    (async () => {
+      const auth_response = await axios.get("http://localhost:5000/check-auth");
+      setLoggedIn(auth_response.data.authenticated);
+
+      const markers = await axios.get("http://localhost:5000/homepage", config);
+      setMarkers(markers.data.data);
+    })();
   }, []);
 
   const handleLogOut = async () => {
-    // await axios.delete("https://localhost:5000/logout");
-    // setLogOut(true);
-    history.push("/");
+    await axios.delete("https://localhost:5000/logout");
+    setLoggedIn(false);
   };
 
   return (
     <div>
       {/* if logged out, redirect to landing page  */}
-      {/* {isLogOut && (
+      {isLoggedIn && (
         <Redirect
+          push
           to={{
             pathname: "/",
           }}
         />
-      )} */}
+      )}
 
       {/* else, load the logged in homepage */}
-      {!isLogOut && (
+      {!isLoggedIn && (
         <Container>
           <SideBar>
             <p style={{ textAlign: "center" }}>Welcome {userID}</p>
@@ -87,7 +92,6 @@ const Home = ({
   );
 };
 
-// export default withRouter(Home);
 export default Home;
 
 const Container = styled.section`
