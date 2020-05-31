@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
 import Marker from "../components/Marker";
+import AddEntry from "../components/AddEntry";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 
@@ -29,6 +30,7 @@ const Home = ({
   const [markers, setMarkers] = useState([]);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(true);
+  const [mapView, setMapView] = useState(true);
 
   // on mounting component, check if user was already logged in and redirect
   // appropriately
@@ -36,34 +38,41 @@ const Home = ({
     let mounted = true;
 
     (async () => {
-      const auth_response = await axios.get("http://localhost:5000/check-auth", config);
+      const auth_response = await axios.get(
+        "http://localhost:5000/check-auth",
+        config
+      );
       console.log(mounted);
       if (mounted) {
         console.log(auth_response.data.authenticated);
         setLoggedIn(auth_response.data.authenticated);
-        setLoading(false)
+        setLoading(false);
       }
 
-      // const markers = await axios.get("http://localhost:5000/homepage", config);
-      // setMarkers(markers.data.data);
+    // const markers = await axios.get("http://localhost:5000/homepage", config);
+    // setMarkers(markers.data.data);
     })();
+    // setLoading(false);
+    // setLoggedIn(true);
 
-    return () => {mounted = false;};
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const handleLogOut = async () => {
     await axios.post("http://localhost:5000/logout", config);
-    console.log('logging out')
+    console.log("logging out");
     setLoggedIn(false);
+  };
+
+  const toggleMap = () => {
+    setMapView((prev) => !prev);
   };
 
   return (
     <div>
-      {isLoading && (
-        <p>Loading</p>
-      )
-
-      }
+      {isLoading && <p>Loading</p>}
       {/* if logged out, redirect to landing page  */}
       {!isLoading && !isLoggedIn && (
         <Redirect
@@ -79,29 +88,38 @@ const Home = ({
         <Container>
           <SideBar>
             <p style={{ textAlign: "center" }}>Welcome {userID}</p>
-            <NavButton>Add an entry</NavButton>
+            <NavButton onClick={toggleMap}>
+              {mapView ? `Add an entry` : `Back to map`}
+            </NavButton>
             <NavButton>View all entries</NavButton>
             <LogOutButton onClick={() => handleLogOut()}>Log Out</LogOutButton>
           </SideBar>
-          <MapContainer>
-            <GoogleMapReact
-              // populate api key
-              bootstrapURLKeys={{ key: "" }}
-              defaultCenter={mapDefaults.center}
-              defaultZoom={mapDefaults.zoom}
-              // somehow you need to do this cos of some bug in the package
-              distanceToMouse={() => {}}
-            >
-              {markers.map((marker) => (
-                <Marker
-                  key={marker.name}
-                  lat={marker.lat}
-                  lng={marker.lng}
-                  name={marker.name}
-                />
-              ))}
-            </GoogleMapReact>
-          </MapContainer>
+
+          {/* render map if mapView is true */}
+          {mapView && (
+            <MapContainer>
+              <GoogleMapReact
+                // populate api key
+                bootstrapURLKeys={{ key: "" }}
+                defaultCenter={mapDefaults.center}
+                defaultZoom={mapDefaults.zoom}
+                // somehow you need to do this cos of some bug in the package
+                distanceToMouse={() => {}}
+              >
+                {markers.map((marker) => (
+                  <Marker
+                    key={marker.name}
+                    lat={marker.lat}
+                    lng={marker.lng}
+                    name={marker.name}
+                  />
+                ))}
+              </GoogleMapReact>
+            </MapContainer>
+          )}
+
+          {/* render form if mapView is false */}
+          {!mapView && <AddEntry />}
         </Container>
       )}
     </div>
