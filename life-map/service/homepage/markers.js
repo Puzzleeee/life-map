@@ -19,7 +19,7 @@ const homepage = () => {
     return db.create_marker.execute(user_id, lng, lat, name, address);
   }
 
-  return Objects.freeze(modules);
+  return Object.freeze(modules);
 }
 
 module.exports = homepage()
