@@ -29,7 +29,7 @@ const AddEntry = () => {
     const {
       data: { success, message },
     } = await axios.post(
-      "https://localhost:5000/homepage/create-entry",
+      "http://localhost:5000/homepage/create-entry",
       payload,
       config
     );

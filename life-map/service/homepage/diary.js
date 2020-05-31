@@ -16,7 +16,7 @@ const diary = () => {
    * @param {number} entry.shared - 1/0 to represent if the diary entry is to be shared with friends
    */
   modules.createDiaryEntry = async ({ user_id, marker_id, title, content, shared }) => {
-    return db.create_diary_entry(user_id, marker_id, title, content, shared);
+    return db.create_diary_entry.execute(user_id, marker_id, title, content, shared);
   }
 
   return Object.freeze(modules);

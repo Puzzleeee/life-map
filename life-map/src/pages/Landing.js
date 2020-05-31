@@ -84,8 +84,8 @@ const Login = ({ loginRef, registerRef, redirect }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // const response = await authCheck();
-    const response = { success: true, name: "sam" };
+    const response = await authCheck();
+    // const response = { success: true, name: "sam" };
 
     if (response.success) {
       redirect(response.name);

@@ -37,23 +37,23 @@ const Home = ({
   useEffect(() => {
     let mounted = true;
 
-    // (async () => {
-    //   const auth_response = await axios.get(
-    //     "http://localhost:5000/check-auth",
-    //     config
-    //   );
-    //   console.log(mounted);
-    //   if (mounted) {
-    //     console.log(auth_response.data.authenticated);
-    //     setLoggedIn(auth_response.data.authenticated);
-    //     setLoading(false);
-    //   }
+    (async () => {
+      const auth_response = await axios.get(
+        "http://localhost:5000/check-auth",
+        config
+      );
+      console.log(mounted);
+      if (mounted) {
+        console.log(auth_response.data.authenticated);
+        setLoggedIn(auth_response.data.authenticated);
+        setLoading(false);
+      }
 
     // const markers = await axios.get("http://localhost:5000/homepage", config);
     // setMarkers(markers.data.data);
-    // })();
-    setLoading(false);
-    setLoggedIn(true);
+    })();
+    // setLoading(false);
+    // setLoggedIn(true);
 
     return () => {
       mounted = false;
@@ -61,7 +61,7 @@ const Home = ({
   }, []);
 
   const handleLogOut = async () => {
-    // await axios.post("http://localhost:5000/logout", config);
+    await axios.post("http://localhost:5000/logout", config);
     console.log("logging out");
     setLoggedIn(false);
   };
