@@ -1,18 +1,47 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
+
+const config = {
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+};
 
 const AddEntry = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [shared, setShared] = useState(false);
   const [location, setLocation] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitting");
+    const payload = {
+      title,
+      content,
+      shared,
+    };
+
+    console.log("submitting", payload);
+
+    const {
+      data: { success, message },
+    } = await axios.post(
+      "https://localhost:5000/homepage/create-entry",
+      payload,
+      config
+    );
+
+    console.log("response received", success);
+    console.log("reponse msg", message);
+
+    setResponseMessage(message);
   };
 
   return (
-    <Form onSubmit={(e) => handleSubmit(e)}>
+    <Form onSubmit={handleSubmit}>
       <Label>Title</Label>
       <TextInput
         type="text"
@@ -29,9 +58,31 @@ const AddEntry = () => {
         value={location}
         onChange={(e) => setLocation(e.target.value)}
       />
+      <CheckBoxContainer>
+        <input
+          type="checkbox"
+          style={{
+            marginRight: "18px",
+            height: "18px",
+            width: "18px",
+            cursor: "pointer",
+          }}
+          onChange={() => setShared((prev) => !prev)}
+          checked={shared}
+        />
+        <p
+          style={{ cursor: "pointer" }}
+          onClick={() => setShared((prev) => !prev)}
+        >
+          Share with friends
+        </p>
+      </CheckBoxContainer>
       <FormButton type="submit" style={{ marginTop: "24px" }}>
         Save
       </FormButton>
+      <p style={{ height: "30px", color: "red", textAlign: "center" }}>
+        {responseMessage}
+      </p>
     </Form>
   );
 };
@@ -48,7 +99,7 @@ const Form = styled.form`
 const Label = styled.label`
   font-size: 1.1em;
   letter-spacing: 1px;
-  margin-bottom: 12px;
+  margin: 12px 0px;
 `;
 
 const TextInput = styled.input`
@@ -61,7 +112,9 @@ const TextInput = styled.input`
 
 const TextArea = styled.textarea`
   font-family: "Roboto";
-  height: 50%;
+  font-size: 1.1em;
+  min-height: 40%;
+  flex-shrink: 0;
   resize: none;
   margin-bottom: 18px;
 `;
@@ -78,4 +131,11 @@ const FormButton = styled.button`
     background-color: #1152a8;
     color: white;
   }
+`;
+
+const CheckBoxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
+  letter-spacing: 1px;
 `;
