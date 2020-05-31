@@ -2,7 +2,7 @@ module.exports = function (crud) {
 
   let module = {};
 
-  module.execute = async function ({ user_id, marker_id, title, content, shared }) {
+  module.execute = async function (user_id, marker_id, title, content, shared) {
     const values = {
       user_id: {
         value: user_id

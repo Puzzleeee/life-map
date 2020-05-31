@@ -5,7 +5,7 @@ module.exports = function (crud) {
   /**
    * Creates a marker and returns the assigned marker_id of the newly created marker
    */
-  module.execute = async function ({ user_id, lng, lat, name, address }) {
+  module.execute = async function (user_id, lng, lat, name, address) {
     const values = {
       user_id: {
         value: user_id
