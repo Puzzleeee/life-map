@@ -28,28 +28,44 @@ const Home = ({
 }) => {
   const [markers, setMarkers] = useState([]);
   const [isLoggedIn, setLoggedIn] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   // on mounting component, check if user was already logged in and redirect
   // appropriately
   useEffect(() => {
-    (async () => {
-      const auth_response = await axios.get("http://localhost:5000/check-auth");
-      setLoggedIn(auth_response.data.authenticated);
+    let mounted = true;
 
-      const markers = await axios.get("http://localhost:5000/homepage", config);
-      setMarkers(markers.data.data);
+    (async () => {
+      const auth_response = await axios.get("http://localhost:5000/check-auth", config);
+      console.log(mounted);
+      if (mounted) {
+        console.log(auth_response.data.authenticated);
+        setLoggedIn(auth_response.data.authenticated);
+        setLoading(false)
+      }
+
+      // const markers = await axios.get("http://localhost:5000/homepage", config);
+      // setMarkers(markers.data.data);
     })();
+
+    return () => {mounted = false;};
   }, []);
 
   const handleLogOut = async () => {
-    await axios.delete("https://localhost:5000/logout");
+    await axios.post("http://localhost:5000/logout", config);
+    console.log('logging out')
     setLoggedIn(false);
   };
 
   return (
     <div>
+      {isLoading && (
+        <p>Loading</p>
+      )
+
+      }
       {/* if logged out, redirect to landing page  */}
-      {!isLoggedIn && (
+      {!isLoading && !isLoggedIn && (
         <Redirect
           push
           to={{
@@ -59,13 +75,13 @@ const Home = ({
       )}
 
       {/* else, load the logged in homepage */}
-      {isLoggedIn && (
+      {!isLoading && isLoggedIn && (
         <Container>
           <SideBar>
             <p style={{ textAlign: "center" }}>Welcome {userID}</p>
             <NavButton>Add an entry</NavButton>
             <NavButton>View all entries</NavButton>
-            <LogOutButton onClick={handleLogOut}>Log Out</LogOutButton>
+            <LogOutButton onClick={() => handleLogOut()}>Log Out</LogOutButton>
           </SideBar>
           <MapContainer>
             <GoogleMapReact

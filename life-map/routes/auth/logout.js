@@ -2,7 +2,7 @@ const express = require('express')
 
 const router = express.Router()
 
-router.delete('/', (req, res) => {
+router.post('/', (req, res) => {
   req.logOut()
   res.redirect('/login')
 })
