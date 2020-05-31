@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
       user: { name: name, id: id }
     })
   } else {
-    res.status(401).json({
+    res.status(200).json({
       authenticated: false,
       user: {}
     })

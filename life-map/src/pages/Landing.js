@@ -37,6 +37,7 @@ const Landing = () => {
     <div>
       {isLoggedIn ? (
         <Redirect
+          push
           to={{
             pathname: "/home",
             state: { userID: userID },
