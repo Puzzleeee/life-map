@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
@@ -9,38 +9,13 @@ import mapImage from "../static/map.jpg";
 const config = {
   withCredentials: true,
   headers: {
-    "Content-Type": "application/json",
-  },
+    'Content-Type' : 'application/json'
+  }
 };
 
-const Landing = ({ location, history }) => {
+const Landing = () => {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [userID, setUserID] = useState("");
-
-  // on mounting the landing component, check if user was already logged in and redirect
-  // appropriately
-  useEffect(() => {
-    (async () => {
-      // const response = await axios.get("https://localhost:5000/check-auth");
-      const response = {
-        status: 200,
-        data: {
-          authenticated: false,
-          user: {
-            name: "sam",
-            id: "123123",
-          },
-        },
-      };
-
-      if (response.data.authenticated) {
-        setLoggedIn(true);
-        setUserID(response.data.user.id);
-      }
-    })();
-    console.log("location", location);
-    console.log("history", history);
-  }, [location, history]);
 
   // DOM refs for scrolling
   const loginRef = React.useRef();
@@ -62,6 +37,7 @@ const Landing = ({ location, history }) => {
     <div>
       {isLoggedIn ? (
         <Redirect
+          push
           to={{
             pathname: "/home",
             state: { userID: userID },
@@ -94,16 +70,11 @@ const Login = ({ loginRef, registerRef, redirect }) => {
 
   /* helper for credential authentication with backend */
   const authCheck = async () => {
-    // const response = await axios.post(
-    //   "http://localhost:5000/login",
-    //   {
-    //     email: emailInput,
-    //     password: passwordInput,
-    //   },
-    //   config
-    // );
-    // return { success: response.data.success, name: response.data.user.name };
-    return { success: true, name: "sam" };
+    const response = await axios.post("http://localhost:5000/login", {
+      email: emailInput,
+      password: passwordInput
+    }, config);
+    return {success: response.data.success, name: response.data.user.name};
   };
 
   const handleSubmit = async (event) => {
@@ -111,7 +82,7 @@ const Login = ({ loginRef, registerRef, redirect }) => {
 
     const response = await authCheck();
 
-    if (response.success) {
+    if (response.success){
       redirect(response.name);
     } else {
       setError(true);
@@ -175,20 +146,18 @@ const Register = ({ registerRef, redirect }) => {
       password: passwordInput,
     };
 
-    // const response = await axios.post("http://localhost:5000/register", req);
-    redirect(emailInput);
-    return;
+    const response = await axios.post("http://localhost:5000/register", req);
 
-    // if (response.data.message === "duplicate") {
-    //   // email was taken
-    //   setError("Email has been taken");
-    // } else if (!response.data.success) {
-    //   // unknown exception
-    //   setError("Something bad happened");
-    // } else {
-    //   // succesful registration
-    //   redirect(emailInput);
-    // }
+    if (response.data.message === "duplicate") {
+      // email was taken
+      setError("Email has been taken");
+    } else if (!response.data.success) {
+      // unknown exception
+      setError("Something bad happened");
+    } else {
+      // succesful registration
+      redirect(emailInput);
+    }
   };
 
   const handleSubmit = async (event) => {
