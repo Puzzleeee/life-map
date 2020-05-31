@@ -9,8 +9,8 @@ import mapImage from "../static/map.jpg";
 const config = {
   withCredentials: true,
   headers: {
-    'Content-Type' : 'application/json'
-  }
+    "Content-Type": "application/json",
+  },
 };
 
 const Landing = () => {
@@ -70,19 +70,24 @@ const Login = ({ loginRef, registerRef, redirect }) => {
 
   /* helper for credential authentication with backend */
   const authCheck = async () => {
-    const response = await axios.post("http://localhost:5000/login", {
-      email: emailInput,
-      password: passwordInput
-    }, config);
-    return {success: response.data.success, name: response.data.user.name};
+    const response = await axios.post(
+      "http://localhost:5000/login",
+      {
+        email: emailInput,
+        password: passwordInput,
+      },
+      config
+    );
+    return { success: response.data.success, name: response.data.user.name };
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const response = await authCheck();
+    // const response = await authCheck();
+    const response = { success: true, name: "sam" };
 
-    if (response.success){
+    if (response.success) {
       redirect(response.name);
     } else {
       setError(true);
