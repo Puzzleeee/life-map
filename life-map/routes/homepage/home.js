@@ -9,7 +9,7 @@ router.get('/', checkAuthenticated, async (req, res) => {
     const userData = await homepage.arrangeUserData(id);
     res.status(200).json({
       success: true,
-      data: userMarkers
+      data: userData
     })
   } catch (err) {
     res.status(400).json({
