@@ -10,21 +10,27 @@ const marker = require('../../service/homepage/markers.js');
  *    title: title of diary entry
  *    content: content of diary entry
  *    shared: 1/0, whether the diary entry should be shared with friends
+ *    location: object that represents the location of the diary entry 
+ *              with the shape: {
+ *                     name: String,
+ *                     address: String,
+ *                     lat: Number,
+ *                     lng: Number
+ *                 }
  */
 router.post('/', checkAuthenticated, async (req, res) => {
-  const values = {
-    user_id: req.user.id,
-    marker_id: 1, // hard code marker_id to be 1 for now
-    title: req.body.title,
-    content: req.body.content,
-    shared: req.body.shared
-  }
+  const user_id = req.user.id;
+  const { name, address, lat, lng } = req.body.location;
+  const locationValues = { user_id, name, address, lat, lng };
   try {
-    await diary.createDiaryEntry(values);
+    const marker_id = await marker.createMarker(locationValues);
+    const { title, content, shared } = req.body;
+    const diaryValues = { user_id, marker_id, title, content, shared };
+    await diary.createDiaryEntry(diaryValues);
     res.status(200).json({
       success: true,
       message: 'entry created successfully!'
-    })
+    });
   } catch (err) {
     console.log(err)
     res.status(400).json({
