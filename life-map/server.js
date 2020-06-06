@@ -7,6 +7,8 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const initializePassport = require('./passport-config.js')
+const busboy = require('connect-busboy');
+const busboyBodyParser = require('busboy-body-parser');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,11 +22,14 @@ app.use(session({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
-
 initializePassport(passport, db.get_user_by_email.execute, db.get_user_by_id.execute)
 
+// busboy library for file upload
+app.use(busboy());
 
 app.use(express.json());
+app.use(busboyBodyParser());
+
 app.use(flash());
 
 
@@ -54,6 +59,17 @@ app.post('/login', passport.authenticate('local', {
   failureRedirect: '/failure',
   failureFlash: true
 }))
+
+// Testing file upload route,
+const busboyMiddleware = require('./middleware/file-upload/busboy.js');
+app.post('/test-upload', busboyMiddleware, (req, res) => {
+  console.log("reached");
+  const file = req.files;
+  console.log(file);
+  res.json({
+    file
+  });
+})
 
 
 // Routes
