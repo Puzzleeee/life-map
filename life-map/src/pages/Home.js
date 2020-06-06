@@ -49,11 +49,9 @@ const Home = ({
         setLoading(false);
       }
 
-    // const markers = await axios.get("http://localhost:5000/homepage", config);
-    // setMarkers(markers.data.data);
+    const markers = await axios.get("http://localhost:5000/homepage", config);
+    setMarkers(markers.data.data);
     })();
-    // setLoading(false);
-    // setLoggedIn(true);
 
     return () => {
       mounted = false;
@@ -100,7 +98,7 @@ const Home = ({
             <MapContainer>
               <GoogleMapReact
                 // populate api key
-                bootstrapURLKeys={{ key: "" }}
+                bootstrapURLKeys={{ key: "AIzaSyCKRP5jhXmVYo2r5FiWMUobmufY4u8Llz4" }}
                 defaultCenter={mapDefaults.center}
                 defaultZoom={mapDefaults.zoom}
                 // somehow you need to do this cos of some bug in the package

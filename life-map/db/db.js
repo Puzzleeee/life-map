@@ -2,14 +2,14 @@ const mysql = require('mysql2')
 
 var pool = mysql.createPool({
     multipleStatements: true,
-    host: 'localhost',
+    host: '192.168.64.2',
     user: 'root',
     password: '',
     database: 'orbital_development',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
-})  
+})
 
 const crud = require('./crud.js')(pool)
 
