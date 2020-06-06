@@ -62,13 +62,15 @@ app.post('/login', passport.authenticate('local', {
 
 // Testing file upload route,
 const busboyMiddleware = require('./middleware/file-upload/busboy.js');
-app.post('/test-upload', busboyMiddleware, (req, res) => {
-  console.log("reached");
+const aws = require('./service/aws-upload/aws.js');
+app.post('/test-upload', busboyMiddleware, async (req, res) => {
   const file = req.files;
-  console.log(file);
-  res.json({
-    file
-  });
+  // test file is specified with the key 'test' (for testing purpose only)
+  const awsResponse = await aws.upload(file.test);
+  console.log(awsResponse);
+  if (awsResponse.success) {
+    res.status(200).json(awsResponse);
+  }
 })
 
 
