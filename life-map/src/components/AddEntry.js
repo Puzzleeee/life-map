@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import usePlacesAutocomplete, {
+  getGeocode,
+  getLatLng,
+} from "use-places-autocomplete";
 
 const config = {
   withCredentials: true,
@@ -13,8 +17,59 @@ const AddEntry = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [shared, setShared] = useState(false);
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState({});
   const [responseMessage, setResponseMessage] = useState("");
+
+  /* initialize Places API */
+  const {
+    ready,
+    value: locationInput,
+    suggestions: { status, data },
+    setValue: setLocationInput,
+    clearSuggestions,
+  } = usePlacesAutocomplete({
+    // configure location-biasing for suggestions
+    requestOptions: {
+      // center of singapore
+      location: {
+        lat: () => 1.3521,
+        lng: () => 103.8198,
+      },
+      // radius in metres
+      radius: 40 * 1000,
+    },
+  });
+
+  /* when a Place suggestion is clicked */
+  const handleSelectPlace = (suggestion) => {
+    const {
+      description,
+      place_id: placeId,
+      structured_formatting: { main_text },
+    } = suggestion;
+
+    // get lat/lng
+    getGeocode({ placeId })
+      .then((results) => getLatLng(results[0]))
+      .then((latLngObject) => {
+        const { lat, lng } = latLngObject;
+
+        setLocation({
+          name: main_text,
+          address: description,
+          lat,
+          lng,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    // reset input field
+    setLocationInput(description, false);
+    // close drop-down list
+    clearSuggestions();
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,22 +77,38 @@ const AddEntry = () => {
       title,
       content,
       shared,
+      location,
     };
 
-    console.log("submitting", payload);
+    // const {
+    //   data: { success, message },
+    // } = await axios.post(
+    //   "http://localhost:5000/homepage/create-entry",
+    //   payload,
+    //   config
+    // );
 
-    const {
-      data: { success, message },
-    } = await axios.post(
-      "http://localhost:5000/homepage/create-entry",
-      payload,
-      config
+    // setResponseMessage(message);
+  };
+
+  /* Func comp to show suggestions in a drop-down list */
+  const Suggestions = () => {
+    return (
+      <div style={{ border: "1px solid grey" }}>
+        {data.map((suggestion) => {
+          const { description, place_id } = suggestion;
+
+          return (
+            <SuggestionTag
+              key={place_id}
+              onClick={() => handleSelectPlace(suggestion)}
+            >
+              {description}
+            </SuggestionTag>
+          );
+        })}
+      </div>
     );
-
-    console.log("response received", success);
-    console.log("reponse msg", message);
-
-    setResponseMessage(message);
   };
 
   return (
@@ -55,9 +126,12 @@ const AddEntry = () => {
       <TextInput
         type="text"
         placeholder="type to search"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
+        value={locationInput}
+        onChange={(e) => setLocationInput(e.target.value)}
+        style={{ marginBottom: "0" }}
       />
+      {/* preconditions to check before rendering autocomplete results */}
+      {ready && status === "OK" && status !== "ZERO_RESULTS" && <Suggestions />}
       <CheckBoxContainer>
         <input
           type="checkbox"
@@ -138,4 +212,13 @@ const CheckBoxContainer = styled.div`
   align-items: center;
   font-size: 1.1em;
   letter-spacing: 1px;
+`;
+
+const SuggestionTag = styled.div`
+  padding: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(85, 85, 85, 0.1);
+  }
 `;
