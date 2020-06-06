@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
 } from "use-places-autocomplete";
+import useOnclickOutside from "react-cool-onclickoutside";
 
 const config = {
   withCredentials: true,
@@ -36,7 +37,7 @@ const AddEntry = () => {
         lng: () => 103.8198,
       },
       // radius in metres
-      radius: 40 * 1000,
+      radius: 20 * 1000,
     },
   });
 
@@ -80,21 +81,25 @@ const AddEntry = () => {
       location,
     };
 
-    // const {
-    //   data: { success, message },
-    // } = await axios.post(
-    //   "http://localhost:5000/homepage/create-entry",
-    //   payload,
-    //   config
-    // );
+    const {
+      data: { success, message },
+    } = await axios.post(
+      "http://localhost:5000/homepage/create-entry",
+      payload,
+      config
+    );
 
-    // setResponseMessage(message);
+    setResponseMessage(message);
   };
+
+  /* declare dom ref to close when user clicks outside the dropdown list */
+  const dropDownRef = useRef();
+  useOnclickOutside(dropDownRef, clearSuggestions);
 
   /* Func comp to show suggestions in a drop-down list */
   const Suggestions = () => {
     return (
-      <div style={{ border: "1px solid grey" }}>
+      <div ref={dropDownRef} style={{ border: "1px solid grey" }}>
         {data.map((suggestion) => {
           const { description, place_id } = suggestion;
 
@@ -120,8 +125,10 @@ const AddEntry = () => {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+
       <Label>Content</Label>
       <TextArea value={content} onChange={(e) => setContent(e.target.value)} />
+
       <Label>Location</Label>
       <TextInput
         type="text"
@@ -132,6 +139,7 @@ const AddEntry = () => {
       />
       {/* preconditions to check before rendering autocomplete results */}
       {ready && status === "OK" && status !== "ZERO_RESULTS" && <Suggestions />}
+
       <CheckBoxContainer>
         <input
           type="checkbox"
@@ -144,6 +152,7 @@ const AddEntry = () => {
           onChange={() => setShared((prev) => !prev)}
           checked={shared}
         />
+
         <p
           style={{ cursor: "pointer" }}
           onClick={() => setShared((prev) => !prev)}
@@ -151,9 +160,11 @@ const AddEntry = () => {
           Share with friends
         </p>
       </CheckBoxContainer>
+
       <FormButton type="submit" style={{ marginTop: "24px" }}>
         Save
       </FormButton>
+
       <p style={{ height: "30px", color: "red", textAlign: "center" }}>
         {responseMessage}
       </p>
