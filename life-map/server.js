@@ -70,6 +70,18 @@ app.post('/test-upload', busboyMiddleware, async (req, res) => {
   console.log(awsResponse);
   if (awsResponse.success) {
     res.status(200).json(awsResponse);
+  } else {
+    res.status(400).json(awsResponse);
+  }
+})
+
+// Testing file url retrival route
+app.get('/test-retrieve', async (req, res) => {
+  const awsResponse = await aws.retrieve('Capture3.JPG');
+  if (awsResponse.success) {
+    res.status(200).json(awsResponse);
+  } else {
+    res.status(400).json(awsResponse);
   }
 })
 
