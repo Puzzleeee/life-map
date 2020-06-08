@@ -11,7 +11,7 @@ const homepage = (diary, markers) => {
     const diaryEntries = await diary.getDiaryEntries(id);
     const promises = diaryEntries.map(async (entry) => {
       const marker = await markers.getMarkers(entry.marker_id);
-      return {...entry, marker: marker}
+      return {...entry, marker: marker[0]}
     })
     return Promise.all(promises)
       .then((result) => {

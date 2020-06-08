@@ -27,7 +27,7 @@ const Home = ({
     state: { userID },
   },
 }) => {
-  const [markers, setMarkers] = useState([]);
+  const [entries, setEntries] = useState([]);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [mapView, setMapView] = useState(true);
@@ -42,18 +42,15 @@ const Home = ({
         "http://localhost:5000/check-auth",
         config
       );
-      console.log(mounted);
+
       if (mounted) {
-        console.log(auth_response.data.authenticated);
         setLoggedIn(auth_response.data.authenticated);
         setLoading(false);
       }
 
-    // const markers = await axios.get("http://localhost:5000/homepage", config);
-    // setMarkers(markers.data.data);
+      const entries = await axios.get("http://localhost:5000/homepage", config);
+      setEntries(entries.data.data);
     })();
-    // setLoading(false);
-    // setLoggedIn(true);
 
     return () => {
       mounted = false;
@@ -106,7 +103,7 @@ const Home = ({
                 // somehow you need to do this cos of some bug in the package
                 distanceToMouse={() => {}}
               >
-                {markers.map((marker) => (
+                {entries.map(({ marker }) => (
                   <Marker
                     key={marker.name}
                     lat={marker.lat}
