@@ -87,8 +87,8 @@ app.get('/test-retrieve', async (req, res) => {
 
 
 // Routes
-app.use('/', require('./route_includes/auth_routes.js'));
-app.use('/homepage', require('./route_includes/homepage_routes.js'));
+app.use('/', require('./routes/auth.js'));
+app.use('/homepage', require('./routes/homepage.js'));
 
 app.listen(PORT, console.log(`Server running on port ${PORT}`));
 
