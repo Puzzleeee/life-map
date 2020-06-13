@@ -21,11 +21,13 @@ module.exports = function (crud) {
       }
     };
     
-    return crud.create('diary_entries', values)
-      .then(() => {
+    return crud.create('diary_entries', values, true)
+      .then((result) => {
         console.log("diary entry created successfully");
+        return result;
       }).catch((err) => {
         console.log(err);
+        throw err;
       });
 
   }

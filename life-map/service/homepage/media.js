@@ -10,6 +10,19 @@ const media = () => {
     return Promise.all(fileNames.map(x => AWS.retrieve(x)));
   }
 
+  modules.uploadPhotos = async (entryId, files) => {
+    if (fileNames) {
+      let fileArr = Array.isArray(files) ? files : [files];
+      let promises = [];
+      for (let i = 0; i < fileArr.length; i++) {
+        promises.push(db.upload_photo.execute(entryId, fileArr[i].name));
+        promises.push(AWS.upload(fileArr[i]));
+      }
+      return Promise.all(promises);
+    }
+    return Promise.resolve(true);
+  }
+
   return Object.freeze(modules);
 }
 

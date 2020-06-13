@@ -60,30 +60,23 @@ app.post('/login', passport.authenticate('local', {
   failureFlash: true
 }))
 
-// Testing file upload route,
-const busboyMiddleware = require('./middleware/file-upload/busboy.js');
-const aws = require('./service/aws-upload/aws.js');
-app.post('/test-upload', busboyMiddleware, async (req, res) => {
-  const file = req.files;
-  // test file is specified with the key 'test' (for testing purpose only)
-  const awsResponse = await aws.upload(file.test);
-  console.log(awsResponse);
-  if (awsResponse.success) {
-    res.status(200).json(awsResponse);
-  } else {
-    res.status(400).json(awsResponse);
-  }
-})
+// Testing create entry route with new photo upload
+// const busboyMiddleware = require('./middleware/file-upload/busboy.js');
+// const aws = require('./service/aws-upload/aws.js');
+// const { createEntry } = require('./controllers/homepage.js');
+// app.post('/test-upload', busboyMiddleware, (req, res) => {
+//   console.log(req.files);
+// })
 
-// Testing file url retrival route
-app.get('/test-retrieve', async (req, res) => {
-  const awsResponse = await aws.retrieve('Capture3.JPG');
-  if (awsResponse.success) {
-    res.status(200).json(awsResponse);
-  } else {
-    res.status(400).json(awsResponse);
-  }
-})
+// // Testing file url retrival route
+// app.get('/test-retrieve', async (req, res) => {
+//   const awsResponse = await aws.retrieve('Capture3.JPG');
+//   if (awsResponse.success) {
+//     res.status(200).json(awsResponse);
+//   } else {
+//     res.status(400).json(awsResponse);
+//   }
+// })
 
 
 // Routes

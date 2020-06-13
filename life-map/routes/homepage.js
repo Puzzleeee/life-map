@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { checkAuthenticated } = require('../middleware/authentication/auth.js');
+const busboyMiddleware = require('../middleware/file-upload/busboy.js');
 const homepageController = require('../controllers/homepage.js');
 
 router.get('/', checkAuthenticated, homepageController.home)
@@ -16,10 +17,11 @@ router.get('/', checkAuthenticated, homepageController.home)
  *                     name: String,
  *                     address: String,
  *                     lat: Number,
- *                     lng: Number
+ *                     lng: Number,
+ *                     fileName: String || [String]
  *                 }
  */
-router.post('/create-entry', checkAuthenticated, homepageController.createEntry)
+router.post('/create-entry', [checkAuthenticated, busboyMiddleware], homepageController.createEntry)
 
 
 

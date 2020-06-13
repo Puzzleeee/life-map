@@ -2,6 +2,7 @@ const db = require('../db/db.js');
 const homepage = require('../service/homepage/homepage.js');
 const marker = require('../service/homepage/markers.js');
 const diary = require('../service/homepage/diary.js');
+const media = require('../service/homepage/media.js');
 
 const homepageController = () => {
   let modules = {};
@@ -26,11 +27,13 @@ const homepageController = () => {
     const user_id = req.user.id;
     const { name, address, lat, lng } = req.body.location;
     const locationValues = { user_id, name, address, lat, lng };
+    const files = req.files;
     try {
       const marker_id = await marker.createMarker(locationValues);
       const { title, content, shared } = req.body;
       const diaryValues = { user_id, marker_id, title, content, shared };
-      await diary.createDiaryEntry(diaryValues);
+      const entryId = await diary.createDiaryEntry(diaryValues);
+      await media.uploadPhotos(entryId, files);
       res.status(200).json({
         success: true,
         message: 'entry created successfully!'
