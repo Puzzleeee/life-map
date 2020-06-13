@@ -20,6 +20,7 @@ const AddEntry = () => {
   const [content, setContent] = useState("");
   const [shared, setShared] = useState(false);
   const [location, setLocation] = useState({});
+  const [images, setImages] = useState([]);
   const [responseMessage, setResponseMessage] = useState("");
 
   /* initialize Places API */
@@ -71,6 +72,16 @@ const AddEntry = () => {
     setLocationInput(description, false);
     // close drop-down list
     clearSuggestions();
+  };
+
+  const handleSelectImage = (event) => {
+    // create local URLs for each image selected
+    const objectURLs = Array.from(event.target.files).map((file) =>
+      URL.createObjectURL(file)
+    );
+
+    // store references to these image so we can display them in preview
+    setImages(objectURLs);
   };
 
   const handleSubmit = async (e) => {
@@ -161,7 +172,8 @@ const AddEntry = () => {
           Share with friends
         </p>
       </CheckBoxContainer>
-      <ImageUpload />
+
+      <ImageUpload images={images} handleSelectImage={handleSelectImage} />
 
       <FormButton type="submit" style={{ marginTop: "24px" }}>
         Save

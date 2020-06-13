@@ -1,30 +1,16 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const ImageUpload = () => {
-  const [image, setImage] = useState([]);
-
-  const handleSelectImage = (event) => {
-    // create local URLs for each image selected
-    const objectURLs = Array.from(event.target.files).map((file) =>
-      URL.createObjectURL(file)
-    );
-
-    // store references to these image so we can display them in preview
-    setImage(objectURLs);
-  };
-
-  return (
-    <Container>
-      <input type="file" onChange={handleSelectImage} multiple />
-      <ThumbnailContainer>
-        {image.map((url) => (
-          <Thumbnail src={url} key={url} />
-        ))}
-      </ThumbnailContainer>
-    </Container>
-  );
-};
+const ImageUpload = ({ images, handleSelectImage }) => (
+  <Container>
+    <input type="file" onChange={handleSelectImage} multiple />
+    <ThumbnailContainer>
+      {images.map((url) => (
+        <Thumbnail src={url} key={url} />
+      ))}
+    </ThumbnailContainer>
+  </Container>
+);
 
 export default ImageUpload;
 
