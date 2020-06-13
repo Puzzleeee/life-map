@@ -2,7 +2,9 @@ import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
-import mapImage from "../static/map.jpg";
+import mapImage from "../static/coffee-image.jpg";
+import loginImage from "../static/login-image.jpg";
+import registerImage from "../static/cover-image.jpg";
 
 // config required to make requests specific to the user that is logged in,
 // include this when using axios so that back-end knows which user is logged in
@@ -268,6 +270,16 @@ const LoginContainer = styled.section`
   align-items: center;
   justify-content: center;
   background-color: rgba(250, 249, 245, 1);
+
+  background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0.1)
+    ),
+    url(${loginImage});
+  background-position: 30% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
 `;
 
 const Form = styled.form`
@@ -318,4 +330,14 @@ const RegisterContainer = styled.section`
   align-items: center;
   justify-content: center;
   background-color: rgb(217, 126, 147, 0.1);
+
+  background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0.1)
+    ),
+    url(${registerImage});
+  background-position: 30% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
 `;
