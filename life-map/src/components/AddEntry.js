@@ -76,12 +76,14 @@ const AddEntry = () => {
 
   const handleSelectImage = (event) => {
     // create local URLs for each image selected
-    const objectURLs = Array.from(event.target.files).map((file) =>
-      URL.createObjectURL(file)
-    );
+    // const objectURLs = Array.from(event.target.files).map((file) =>
+    //   URL.createObjectURL(file)
+    // );
 
-    // store references to these image so we can display them in preview
-    setImages(objectURLs);
+    // // store references to these image so we can display them in preview
+    // setImages(objectURLs);
+
+    setImages(event.target.files);
   };
 
   const handleSubmit = async (e) => {
@@ -91,14 +93,32 @@ const AddEntry = () => {
       content,
       shared,
       location,
+      images: Array.from(images),
+    };
+
+    const form_data = new FormData();
+
+    for (const field in payload) {
+      form_data.append(field, payload[field]);
+    }
+
+    for (var value of form_data.values()) {
+      console.log(value);
+    }
+
+    const upload_config = {
+      withCredentials: true,
+      headers: { "Content-Type": "multipart/form-data" },
     };
 
     const {
       data: { success, message },
     } = await axios.post(
       "http://localhost:5000/homepage/create-entry",
-      payload,
-      config
+      // payload,
+      // "http://localhost:5000/test-upload",
+      form_data,
+      upload_config
     );
 
     setResponseMessage(message);

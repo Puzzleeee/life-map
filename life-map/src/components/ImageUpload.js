@@ -5,8 +5,8 @@ const ImageUpload = ({ images, handleSelectImage }) => (
   <Container>
     <input type="file" onChange={handleSelectImage} multiple />
     <ThumbnailContainer>
-      {images.map((url) => (
-        <Thumbnail src={url} key={url} />
+      {Array.from(images).map((file) => (
+        <Thumbnail src={URL.createObjectURL(file)} />
       ))}
     </ThumbnailContainer>
   </Container>
