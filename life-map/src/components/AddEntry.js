@@ -6,6 +6,7 @@ import usePlacesAutocomplete, {
   getLatLng,
 } from "use-places-autocomplete";
 import useOnclickOutside from "react-cool-onclickoutside";
+import ImageUpload from "./ImageUpload";
 
 const config = {
   withCredentials: true,
@@ -160,6 +161,7 @@ const AddEntry = () => {
           Share with friends
         </p>
       </CheckBoxContainer>
+      <ImageUpload />
 
       <FormButton type="submit" style={{ marginTop: "24px" }}>
         Save
