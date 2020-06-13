@@ -6,6 +6,7 @@ import usePlacesAutocomplete, {
   getLatLng,
 } from "use-places-autocomplete";
 import useOnclickOutside from "react-cool-onclickoutside";
+import ImageUpload from "./ImageUpload";
 
 const config = {
   withCredentials: true,
@@ -19,6 +20,7 @@ const AddEntry = () => {
   const [content, setContent] = useState("");
   const [shared, setShared] = useState(false);
   const [location, setLocation] = useState({});
+  const [images, setImages] = useState([]);
   const [responseMessage, setResponseMessage] = useState("");
 
   /* initialize Places API */
@@ -72,6 +74,18 @@ const AddEntry = () => {
     clearSuggestions();
   };
 
+  const handleSelectImage = (event) => {
+    // create local URLs for each image selected
+    // const objectURLs = Array.from(event.target.files).map((file) =>
+    //   URL.createObjectURL(file)
+    // );
+
+    // // store references to these image so we can display them in preview
+    // setImages(objectURLs);
+
+    setImages(event.target.files);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -79,14 +93,40 @@ const AddEntry = () => {
       content,
       shared,
       location,
+      images: Array.from(images),
+    };
+
+    const form_data = new FormData();
+
+    for (const field in payload) {
+      if (field === "images") {
+        payload[field].forEach((file, idx) => {
+          form_data.append(`image${idx}`, file);
+        });
+      } else if (field === "location") {
+        form_data.append(field, JSON.stringify(payload[field]));
+      } else {
+        form_data.append(field, payload[field]);
+      }
+    }
+
+    for (var value of form_data.values()) {
+      console.log(value);
+    }
+
+    const upload_config = {
+      withCredentials: true,
+      headers: { "Content-Type": "text/html; charset=utf-8" },
     };
 
     const {
       data: { success, message },
     } = await axios.post(
       "http://localhost:5000/homepage/create-entry",
-      payload,
-      config
+      // payload,
+      // "http://localhost:5000/test-upload",
+      form_data,
+      upload_config
     );
 
     setResponseMessage(message);
@@ -160,6 +200,8 @@ const AddEntry = () => {
           Share with friends
         </p>
       </CheckBoxContainer>
+
+      <ImageUpload images={images} handleSelectImage={handleSelectImage} />
 
       <FormButton type="submit" style={{ marginTop: "24px" }}>
         Save
