@@ -1,4 +1,4 @@
-const homepage = (diary, markers) => {
+const homepage = (diary, markers, media) => {
   let modules = {};
 
   /**
@@ -10,8 +10,11 @@ const homepage = (diary, markers) => {
   modules.arrangeUserData = async (id) => {
     const diaryEntries = await diary.getDiaryEntries(id);
     const promises = diaryEntries.map(async (entry) => {
-      const marker = await markers.getMarkers(entry.marker_id);
-      return {...entry, marker: marker[0]}
+      const marker = markers.getMarkers(entry.marker_id);
+      const photos = media.retrievePhotos(entry.id);
+      const info = await Promise.all([marker, photos]);
+      console.log(info[1]);
+      return {...entry, marker: info[0][0], photos: info[1]}
     })
     return Promise.all(promises)
       .then((result) => {
@@ -26,4 +29,4 @@ const homepage = (diary, markers) => {
 }
 
 
-module.exports = homepage(require('./diary.js'), require('./markers.js'));
+module.exports = homepage(require('./diary.js'), require('./markers.js'), require('./media.js'));

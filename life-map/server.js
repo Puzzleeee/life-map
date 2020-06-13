@@ -7,6 +7,8 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const initializePassport = require('./passport-config.js')
+const busboy = require('connect-busboy');
+const busboyBodyParser = require('busboy-body-parser');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,11 +22,14 @@ app.use(session({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
-
 initializePassport(passport, db.get_user_by_email.execute, db.get_user_by_id.execute)
 
+// busboy library for file upload
+app.use(busboy());
 
 app.use(express.json());
+app.use(busboyBodyParser());
+
 app.use(flash());
 
 
@@ -54,6 +59,24 @@ app.post('/login', passport.authenticate('local', {
   failureRedirect: '/failure',
   failureFlash: true
 }))
+
+// Testing create entry route with new photo upload
+// const busboyMiddleware = require('./middleware/file-upload/busboy.js');
+// const aws = require('./service/aws-upload/aws.js');
+// const { createEntry } = require('./controllers/homepage.js');
+// app.post('/test-upload', busboyMiddleware, (req, res) => {
+//   console.log(req.files);
+// })
+
+// // Testing file url retrival route
+// app.get('/test-retrieve', async (req, res) => {
+//   const awsResponse = await aws.retrieve('Capture3.JPG');
+//   if (awsResponse.success) {
+//     res.status(200).json(awsResponse);
+//   } else {
+//     res.status(400).json(awsResponse);
+//   }
+// })
 
 
 // Routes
