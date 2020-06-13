@@ -99,7 +99,15 @@ const AddEntry = () => {
     const form_data = new FormData();
 
     for (const field in payload) {
-      form_data.append(field, payload[field]);
+      if (field === "images") {
+        payload[field].forEach((file, idx) => {
+          form_data.append(`image${idx}`, file);
+        });
+      } else if (field === "location") {
+        form_data.append(field, JSON.stringify(payload[field]));
+      } else {
+        form_data.append(field, payload[field]);
+      }
     }
 
     for (var value of form_data.values()) {
@@ -108,7 +116,7 @@ const AddEntry = () => {
 
     const upload_config = {
       withCredentials: true,
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { "Content-Type": "text/html; charset=utf-8" },
     };
 
     const {

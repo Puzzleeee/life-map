@@ -26,14 +26,14 @@ const aws = () => {
     return s3bucket.upload(params).promise()
       .then(() => {
         console.log('File successfully uploaded');
-        resolve ({
+        return ({
           success: true,
           message: 'File uploaded to aws successfully',
           err: null
         })
       }).catch((err) => {
         console.log(err);
-        reject ({
+        return ({
           success: false,
           message: 'Failed to upload to aws',
           err: err
