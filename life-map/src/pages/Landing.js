@@ -1,10 +1,15 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
+import { makeStyles } from '@material-ui/core/styles';
 import { Redirect } from "react-router-dom";
 import axios from "axios";
 import mapImage from "../static/coffee-image.jpg";
 import loginImage from "../static/login-image.jpg";
 import registerImage from "../static/cover-image.jpg";
+import logo from "../static/logo.png"
+import Card from '@material-ui/core/Card';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 // config required to make requests specific to the user that is logged in,
 // include this when using axios so that back-end knows which user is logged in
@@ -15,7 +20,24 @@ const config = {
   },
 };
 
+const useStyles = makeStyles({
+  root: {
+    backgroundColor: 'rgba(247, 247, 247, 0.9)',
+    height: '70%',
+    width: '50%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  textInput: {
+    marginBottom: '1rem',
+  }
+})
+
+
 const Landing = () => {
+  const classes = useStyles();
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [userID, setUserID] = useState("");
 
@@ -49,8 +71,13 @@ const Landing = () => {
         <Container>
           <HeroImage>
             <HeroContainer>
-              <Title>Welcome to LifeMap</Title>
-              <Button onClick={scrollToLogin}>Register / Login</Button>
+              <Title>
+                <Logo src={logo}/>
+              </Title>
+              <Slogan>
+                Enter some slogan here
+              </Slogan>
+              <BorderlessButton onClick={scrollToLogin}>Register / Login</BorderlessButton>
             </HeroContainer>
           </HeroImage>
           <Login
@@ -66,6 +93,7 @@ const Landing = () => {
 };
 
 const Login = ({ loginRef, registerRef, redirect }) => {
+  const classes = useStyles();
   const [emailInput, setEmail] = useState("");
   const [passwordInput, setPassword] = useState("");
   const [hasError, setError] = useState(false);
@@ -104,41 +132,46 @@ const Login = ({ loginRef, registerRef, redirect }) => {
 
   return (
     <LoginContainer ref={loginRef}>
-      <h2 style={{ marginBottom: "36px", fontWeight: "100" }}>Login</h2>
-      <Form onSubmit={handleSubmit}>
-        <Label>Email</Label>
-        <TextInput
-          type="text"
-          placeholder="Email address"
-          value={emailInput}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <Label>Password</Label>
-        <TextInput
-          type="password"
-          placeholder="Password"
-          value={passwordInput}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <LoginFooter>
-          <FormButton
-            type="button"
-            style={{ fontSize: "0.75em" }}
-            onClick={scrollToRegister}
-          >
-            Don't have an account? Register here
-          </FormButton>
-          <p style={{ height: "24px", color: "red" }}>
-            {hasError ? "Invalid credentials" : ""}
-          </p>
-          <FormButton type="submit">Log in</FormButton>
-        </LoginFooter>
-      </Form>
+      <Card className={classes.root}>
+        <h2 style={{ marginBottom: "36px", fontWeight: "100", fontSize: "1.5rem" }}>Login</h2>
+        <Form onSubmit={handleSubmit}>
+          <TextField 
+            className={classes.textInput}
+            id="outlined-basic"
+            label="Email" 
+            variant="outlined" 
+            value={emailInput} 
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            className={classes.textInput}
+            id="outlined-basic"
+            label="Password"
+            variant="outlined" 
+            value={passwordInput} 
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <LoginFooter>
+            <BorderlessButton
+              type="button"
+              style={{ fontSize: "0.75em" }}
+              onClick={scrollToRegister}
+            >
+              Don't have an account? Register Now!
+            </BorderlessButton>
+            <p style={{ height: "24px", color: "red" }}>
+              {hasError ? "Invalid credentials" : ""}
+            </p>
+            <Button type="submit" variant="contained" color="primary"> Login </Button>
+          </LoginFooter>
+        </Form>
+      </Card>
     </LoginContainer>
   );
 };
 
 const Register = ({ registerRef, redirect }) => {
+  const classes = useStyles();
   const [emailInput, setEmail] = useState("");
   const [nameInput, setName] = useState("");
   const [passwordInput, setPassword] = useState("");
@@ -173,34 +206,37 @@ const Register = ({ registerRef, redirect }) => {
 
   return (
     <RegisterContainer ref={registerRef}>
-      <h2 style={{ marginBottom: "36px", fontWeight: "100" }}>Register</h2>
-      <Form onSubmit={handleSubmit}>
-        <Label>Email</Label>
-        <TextInput
-          type="email"
-          placeholder="Enter your email address"
-          value={emailInput}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <Label>Username</Label>
-        <TextInput
-          type="text"
-          placeholder="Enter a username"
-          value={nameInput}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <Label>Password</Label>
-        <TextInput
-          type="text"
-          placeholder="Enter a password"
-          value={passwordInput}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <FormButton type="submit" style={{ marginTop: "24px" }}>
-          Register
-        </FormButton>
-        <p style={{ height: "24px", color: "red" }}>{error}</p>
-      </Form>
+      <Card className={classes.root}>
+      <h2 style={{ marginBottom: "36px", fontWeight: "100", fontSize: "1.5rem" }}>Register an account</h2>
+        <Form onSubmit={handleSubmit}>
+          <TextField 
+            className={classes.textInput}
+            id="outlined-basic"
+            label="Email" 
+            variant="outlined" 
+            value={emailInput} 
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField 
+            className={classes.textInput}
+            id="outlined-basic"
+            label="Username" 
+            variant="outlined" 
+            value={nameInput} 
+            onChange={(e) => setName(e.target.value)}
+          />
+          <TextField 
+            className={classes.textInput}
+            id="outlined-basic"
+            label="Email" 
+            variant="outlined" 
+            value={passwordInput} 
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button type="submit" variant="contained" color="primary"> Register </Button>
+          <p style={{ height: "24px", color: "red" }}>{error}</p>
+        </Form>
+      </Card>
     </RegisterContainer>
   );
 };
@@ -230,35 +266,45 @@ const HeroContainer = styled.div`
   flex-direction: column;
   height: 100%;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  
 `;
 
 const Title = styled.h1`
   font-size: 2em;
   margin-top: 50px;
   letter-spacing: 2px;
-  font-weight: 100;
+  font-weight: 500;
 `;
 
-const Button = styled.button`
-  margin-bottom: 50px;
-  padding: 6px 36px;
-  border-radius: 25px;
-  border: 1px solid grey;
+const Slogan = styled.h4`
+  font-size: 1.5em;
+  margin-top: 1.5rem;
+  font-weight: 400;
+  font-family: 'Montserrat', sans-serif;
+`
+
+const Logo = styled.img`
+  max-width: 100%;
+  height: auto;
+`;
+
+
+const BorderlessButton = styled.button`
+  border: 0px;
   cursor: pointer;
 
-  text-align: center;
   font-size: 1.1em;
   font-weight: 100;
   letter-spacing: 2px;
 
-  background-color: rgb(17, 82, 168);
-  color: white;
+  background: none;
 
-  transition: all 0.1s ease;
+  transition: all 500ms cubic-bezier(0.77, 0, 0.175, 1);	
 
   &:hover {
-    background-color: rgba(17, 82, 168, 0.8);
+    text-decoration: underline
   }
 `;
 

@@ -2,7 +2,7 @@ const mysql = require("mysql2");
 
 var pool = mysql.createPool({
   multipleStatements: true,
-  host: "192.168.64.2",
+  host: 'localhost',
   user: "root",
   password: "",
   database: "orbital_development",
