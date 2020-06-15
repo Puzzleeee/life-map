@@ -32,7 +32,7 @@ const useStyles = makeStyles({
   },
   textInput: {
     marginBottom: '1rem',
-  }
+  },
 })
 
 
@@ -42,8 +42,8 @@ const Landing = () => {
   const [userID, setUserID] = useState("");
 
   // DOM refs for scrolling
-  const loginRef = React.useRef();
-  const registerRef = React.useRef();
+  const loginRef = useRef();
+  const registerRef = useRef();
 
   const scrollToLogin = () => {
     loginRef.current.scrollIntoView({
@@ -77,7 +77,7 @@ const Landing = () => {
               <Slogan>
                 Enter some slogan here
               </Slogan>
-              <BorderlessButton onClick={scrollToLogin}>Register / Login</BorderlessButton>
+              <BorderlessButton onClick={scrollToLogin} style={{ fontSize: "1.5rem" }}>Register / Login</BorderlessButton>
             </HeroContainer>
           </HeroImage>
           <Login
@@ -85,7 +85,11 @@ const Landing = () => {
             registerRef={registerRef}
             redirect={loginRedirect}
           />
-          <Register registerRef={registerRef} redirect={loginRedirect} />
+          <Register 
+            loginRef={loginRef}
+            registerRef={registerRef}
+            redirect={loginRedirect}
+          />
         </Container>
       )}
     </div>
@@ -151,7 +155,7 @@ const Login = ({ loginRef, registerRef, redirect }) => {
             value={passwordInput} 
             onChange={(e) => setPassword(e.target.value)}
           />
-          <LoginFooter>
+          <FormFooter>
             <BorderlessButton
               type="button"
               style={{ fontSize: "0.75em" }}
@@ -163,14 +167,14 @@ const Login = ({ loginRef, registerRef, redirect }) => {
               {hasError ? "Invalid credentials" : ""}
             </p>
             <Button type="submit" variant="contained" color="primary"> Login </Button>
-          </LoginFooter>
+          </FormFooter>
         </Form>
       </Card>
     </LoginContainer>
   );
 };
 
-const Register = ({ registerRef, redirect }) => {
+const Register = ({ loginRef, registerRef, redirect }) => {
   const classes = useStyles();
   const [emailInput, setEmail] = useState("");
   const [nameInput, setName] = useState("");
@@ -197,6 +201,13 @@ const Register = ({ registerRef, redirect }) => {
       // succesful registration
       redirect(emailInput);
     }
+  };
+
+  const scrollToLogin = () => {
+    loginRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   const handleSubmit = async (event) => {
@@ -233,8 +244,17 @@ const Register = ({ registerRef, redirect }) => {
             value={passwordInput} 
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button type="submit" variant="contained" color="primary"> Register </Button>
-          <p style={{ height: "24px", color: "red" }}>{error}</p>
+          <FormFooter>
+            <BorderlessButton
+                type="button"
+                style={{ fontSize: "0.75em" }}
+                onClick={scrollToLogin}
+            >
+              Back to login
+            </BorderlessButton>
+            <p style={{ height: "24px", color: "red" }}>{error}</p>
+            <Button type="submit" variant="contained" color="primary"> Register </Button>
+          </FormFooter>
         </Form>
       </Card>
     </RegisterContainer>
@@ -348,7 +368,7 @@ const TextInput = styled.input`
   border: 1px solid grey;
 `;
 
-const LoginFooter = styled.div`
+const FormFooter = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
