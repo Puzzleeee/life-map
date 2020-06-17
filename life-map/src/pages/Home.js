@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
-import Marker from "../components/Marker";
+import RoomIcon from "@material-ui/icons/Room";
+import Drawer from "@material-ui/core/Drawer";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
+import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 import AddEntry from "../components/AddEntry";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
@@ -31,6 +38,11 @@ const Home = ({
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [mapView, setMapView] = useState(true);
+  const [drawerState, setDrawerState] = useState({
+    title: "",
+    content: "",
+    isOpen: false,
+  });
 
   // on mounting component, check if user was already logged in and redirect
   // appropriately
@@ -103,15 +115,72 @@ const Home = ({
                 // somehow you need to do this cos of some bug in the package
                 distanceToMouse={() => {}}
               >
-                {entries.map(({ marker }) => (
-                  <Marker
+                {entries.map(({ title, content, marker }) => (
+                  <RoomIcon
+                    fontSize="large"
+                    color="primary"
+                    style={{ cursor: "pointer" }}
                     key={marker.name}
                     lat={marker.lat}
                     lng={marker.lng}
                     name={marker.name}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setDrawerState({
+                        title,
+                        content,
+                        isOpen: true,
+                      });
+                    }}
                   />
                 ))}
               </GoogleMapReact>
+              <Drawer
+                open={drawerState.isOpen}
+                anchor="bottom"
+                onClose={() =>
+                  setDrawerState({
+                    title: "",
+                    entries: "",
+                    isOpen: false,
+                  })
+                }
+              >
+                <Card>
+                  <CardContent
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="h4" color="primary">
+                      {drawerState.title}
+                    </Typography>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Button variant="outlined" color="secondary">
+                        view post
+                      </Button>
+                      <IconButton
+                        onClick={() =>
+                          setDrawerState({
+                            title: "",
+                            entries: "",
+                            isOpen: false,
+                          })
+                        }
+                      >
+                        <CloseIcon fontSize="large" />
+                      </IconButton>
+                    </div>
+                  </CardContent>
+                  <CardContent>
+                    <Typography variant="body1">
+                      {drawerState.content}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Drawer>
             </MapContainer>
           )}
 
