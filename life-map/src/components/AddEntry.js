@@ -7,6 +7,13 @@ import usePlacesAutocomplete, {
 } from "use-places-autocomplete";
 import useOnclickOutside from "react-cool-onclickoutside";
 import ImageUpload from "./ImageUpload";
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import TextField from '@material-ui/core/TextField';
+import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
+import createEntryBackground from "../static/create-entry-background.png";
+
 
 const config = {
   withCredentials: true,
@@ -15,6 +22,24 @@ const config = {
   },
 };
 
+const useStyles = makeStyles({
+  entryCard: {
+    backgroundColor: 'rgba(247, 247, 247, 0.9)',
+    flexGrow: '1',
+    width: '40%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginTop: '5%',
+    marginBottom: '5%',
+  },
+  textInput: {
+    marginTop: '1em',
+    marginBottom: '1em',
+  },
+})
+
 const AddEntry = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -22,6 +47,7 @@ const AddEntry = () => {
   const [location, setLocation] = useState({});
   const [images, setImages] = useState([]);
   const [responseMessage, setResponseMessage] = useState("");
+  const classes = useStyles();
 
   /* initialize Places API */
   const {
@@ -157,70 +183,86 @@ const AddEntry = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Label>Title</Label>
-      <TextInput
-        type="text"
-        placeholder=""
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
+    <Entry>
+      <Card className={classes.entryCard}>
+        <Form onSubmit={handleSubmit}>
+          <TextField
+            className={classes.textInput}
+            label="Title"
+            variant="outlined"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
 
-      <Label>Content</Label>
-      <TextArea value={content} onChange={(e) => setContent(e.target.value)} />
+          <TextField
+            className={classes.textInput}
+            label="Content"
+            variant="outlined"
+            value={content}
+            multiline
+            rows={5}
+            onChange={(e) => setContent(e.target.value)}
+          />
 
-      <Label>Location</Label>
-      <TextInput
-        type="text"
-        placeholder="type to search"
-        value={locationInput}
-        onChange={(e) => setLocationInput(e.target.value)}
-        style={{ marginBottom: "0" }}
-      />
-      {/* preconditions to check before rendering autocomplete results */}
-      {ready && status === "OK" && status !== "ZERO_RESULTS" && <Suggestions />}
+          <TextField
+            className={classes.textInput}
+            label="Location"
+            variant="outlined"
+            value={locationInput}
+            onChange={(e) => setLocationInput(e.target.value)}
+          />
+          {/* preconditions to check before rendering autocomplete results */}
+          {ready && status === "OK" && status !== "ZERO_RESULTS" && <Suggestions />}
 
-      <CheckBoxContainer>
-        <input
-          type="checkbox"
-          style={{
-            marginRight: "18px",
-            height: "18px",
-            width: "18px",
-            cursor: "pointer",
-          }}
-          onChange={() => setShared((prev) => !prev)}
-          checked={shared}
-        />
+          <CheckBoxContainer>
+            <Checkbox
+              checked={shared}
+              onChange={() => setShared((prev) => !prev)}
+              color="primary"
+              inputProps={{ 'aria-label': 'secondary checkbox' }}
+            />
 
-        <p
-          style={{ cursor: "pointer" }}
-          onClick={() => setShared((prev) => !prev)}
-        >
-          Share with friends
-        </p>
-      </CheckBoxContainer>
+            <p
+              style={{ cursor: "pointer" }}
+              onClick={() => setShared((prev) => !prev)}
+            >
+              Share with friends
+            </p>
+          </CheckBoxContainer>
 
-      <ImageUpload images={images} handleSelectImage={handleSelectImage} />
+          <ImageUpload images={images} handleSelectImage={handleSelectImage} />
 
-      <FormButton type="submit" style={{ marginTop: "24px" }}>
-        Save
-      </FormButton>
+          <Button variant="contained" color="primary" type="submit" style={{ marginTop: "24px" }}>
+            Save
+          </Button>
 
-      <p style={{ height: "30px", color: "red", textAlign: "center" }}>
-        {responseMessage}
-      </p>
-    </Form>
+          <p style={{ height: "30px", color: "red", textAlign: "center" }}>
+            {responseMessage}
+          </p>
+        </Form>
+      </Card>
+    </Entry>
   );
 };
 
 export default AddEntry;
 
-const Form = styled.form`
+const Entry = styled.div`
+  flex-grow: 2;
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 64px;
+  align-items: center;
+  justify-content: space-between;
+  background-image: url(${createEntryBackground});
+  background-repeat: repeat-y;
+  background-size: cover;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  width: 60%;
 `;
 
 const Label = styled.label`

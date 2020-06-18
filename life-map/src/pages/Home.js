@@ -127,20 +127,20 @@ export default Home;
 
 const Container = styled.section`
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
 `;
 
 const MapContainer = styled.div`
-  height: 100%;
+  height: 94.5vh;
   width: 100%;
 `;
 
 const SideBar = styled.nav`
-  width: 20%;
+  height: 15%;
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  padding: 24px;
   background-color: rgba(250, 249, 245, 0.8);
   box-shadow: 1px 0px 20px rgb(100, 100, 100);
   z-index: 1;

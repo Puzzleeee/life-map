@@ -141,7 +141,6 @@ const Login = ({ loginRef, registerRef, redirect }) => {
         <Form onSubmit={handleSubmit}>
           <TextField 
             className={classes.textInput}
-            id="outlined-basic"
             label="Email" 
             variant="outlined" 
             value={emailInput} 
@@ -149,7 +148,6 @@ const Login = ({ loginRef, registerRef, redirect }) => {
           />
           <TextField
             className={classes.textInput}
-            id="outlined-basic"
             label="Password"
             variant="outlined" 
             value={passwordInput} 
@@ -222,7 +220,6 @@ const Register = ({ loginRef, registerRef, redirect }) => {
         <Form onSubmit={handleSubmit}>
           <TextField 
             className={classes.textInput}
-            id="outlined-basic"
             label="Email" 
             variant="outlined" 
             value={emailInput} 
@@ -230,7 +227,6 @@ const Register = ({ loginRef, registerRef, redirect }) => {
           />
           <TextField 
             className={classes.textInput}
-            id="outlined-basic"
             label="Username" 
             variant="outlined" 
             value={nameInput} 
@@ -238,7 +234,6 @@ const Register = ({ loginRef, registerRef, redirect }) => {
           />
           <TextField 
             className={classes.textInput}
-            id="outlined-basic"
             label="Email" 
             variant="outlined" 
             value={passwordInput} 
