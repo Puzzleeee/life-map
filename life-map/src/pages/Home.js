@@ -10,6 +10,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import AddEntry from "../components/AddEntry";
+import Entries from "./Entries";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 
@@ -38,6 +39,8 @@ const Home = ({
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [mapView, setMapView] = useState(true);
+  const [addEntryView, setAddEntryView] = useState(false);
+  const [entriesView, setEntriesView] = useState(false);
   const [drawerState, setDrawerState] = useState({
     title: "",
     content: "",
@@ -75,8 +78,21 @@ const Home = ({
     setLoggedIn(false);
   };
 
-  const toggleMap = () => {
-    setMapView((prev) => !prev);
+  const toggleMapView = () => {
+    setMapView(true);
+    setAddEntryView(false);
+    setEntriesView(false);
+  };
+
+  const toggleFormView = () => {
+    setMapView(false);
+    setAddEntryView(true);
+  };
+
+  const toggleListView = () => {
+    setMapView(false);
+    setAddEntryView(false);
+    setEntriesView(true);
   };
 
   return (
@@ -97,10 +113,11 @@ const Home = ({
         <Container>
           <SideBar>
             <p style={{ textAlign: "center" }}>Welcome {userID}</p>
-            <NavButton onClick={toggleMap}>
-              {mapView ? `Add an entry` : `Back to map`}
-            </NavButton>
-            <NavButton>View all entries</NavButton>
+            {!mapView && (
+              <NavButton onClick={toggleMapView}>Back to map</NavButton>
+            )}
+            <NavButton onClick={toggleFormView}>Add an entry</NavButton>
+            <NavButton onClick={toggleListView}>View all entries</NavButton>
             <LogOutButton onClick={() => handleLogOut()}>Log Out</LogOutButton>
           </SideBar>
 
@@ -184,8 +201,10 @@ const Home = ({
             </MapContainer>
           )}
 
-          {/* render form if mapView is false */}
-          {!mapView && <AddEntry />}
+          {/* render form to add entry */}
+          {addEntryView && <AddEntry />}
+          {/* render list of entries*/}
+          {entriesView && <Entries />}
         </Container>
       )}
     </div>
