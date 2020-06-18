@@ -72,12 +72,12 @@ app.post(
 );
 
 // Testing create entry route with new photo upload
-const busboyMiddleware = require("./middleware/file-upload/busboy.js");
-const aws = require("./service/aws-upload/aws.js");
-const { createEntry } = require("./controllers/homepage.js");
-app.post("/test-upload", busboyMiddleware, (req, res) => {
-  console.log(req.body.images[0]);
-});
+// const busboyMiddleware = require("./middleware/file-upload/busboy.js");
+// const aws = require("./service/aws-upload/aws.js");
+// const { createEntry } = require("./controllers/homepage.js");
+// app.post("/test-upload", busboyMiddleware, (req, res) => {
+//   console.log(req.body.images[0]);
+// });
 
 // // Testing file url retrival route
 // app.get('/test-retrieve', async (req, res) => {
