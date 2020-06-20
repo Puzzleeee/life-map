@@ -295,42 +295,42 @@ const FormInput = styled.div`
   justify-content: space-between;
 `
 
-const Label = styled.label`
-  font-size: 1.1em;
-  letter-spacing: 1px;
-  margin: 12px 0px;
-`;
+// const Label = styled.label`
+//   font-size: 1.1em;
+//   letter-spacing: 1px;
+//   margin: 12px 0px;
+// `;
 
-const TextInput = styled.input`
-  margin-bottom: 18px;
-  font-size: 1.1em;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid grey;
-`;
+// const TextInput = styled.input`
+//   margin-bottom: 18px;
+//   font-size: 1.1em;
+//   padding: 8px;
+//   border-radius: 5px;
+//   border: 1px solid grey;
+// `;
 
-const TextArea = styled.textarea`
-  font-family: "Roboto";
-  font-size: 1.1em;
-  min-height: 40%;
-  flex-shrink: 0;
-  resize: none;
-  margin-bottom: 18px;
-`;
+// const TextArea = styled.textarea`
+//   font-family: "Roboto";
+//   font-size: 1.1em;
+//   min-height: 40%;
+//   flex-shrink: 0;
+//   resize: none;
+//   margin-bottom: 18px;
+// `;
 
-const FormButton = styled.button`
-  font-size: 1.1em;
-  padding: 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.1s ease;
-  border: 1px solid grey;
+// const FormButton = styled.button`
+//   font-size: 1.1em;
+//   padding: 8px;
+//   border-radius: 5px;
+//   cursor: pointer;
+//   transition: all 0.1s ease;
+//   border: 1px solid grey;
 
-  &:hover {
-    background-color: #1152a8;
-    color: white;
-  }
-`;
+//   &:hover {
+//     background-color: #1152a8;
+//     color: white;
+//   }
+// `;
 
 const CheckBoxContainer = styled.div`
   flex-grow: 1;

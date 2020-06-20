@@ -165,16 +165,18 @@ const Entries = ({ entries }) => {
 export default Entries;
 
 const Container = styled(Paper)`
+  flex-grow: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-image: url(${createEntryBackground});
   background-repeat: repeat-y;
-  background-size: contain;
+  background-size: cover;
 `;
 
 const StyledCard = styled(Card)`
+  min-width: 300px;
   width: 50%;
   margin: 28px 0px;
 `;

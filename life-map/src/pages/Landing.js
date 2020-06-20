@@ -37,7 +37,6 @@ const useStyles = makeStyles({
 
 
 const Landing = () => {
-  const classes = useStyles();
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [userID, setUserID] = useState("");
 
@@ -349,19 +348,19 @@ const Form = styled.form`
   width: 50%;
 `;
 
-const Label = styled.label`
-  font-size: 1.1em;
-  letter-spacing: 1px;
-  margin-bottom: 12px;
-`;
+// const Label = styled.label`
+//   font-size: 1.1em;
+//   letter-spacing: 1px;
+//   margin-bottom: 12px;
+// `;
 
-const TextInput = styled.input`
-  margin-bottom: 18px;
-  font-size: 1.1em;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid grey;
-`;
+// const TextInput = styled.input`
+//   margin-bottom: 18px;
+//   font-size: 1.1em;
+//   padding: 8px;
+//   border-radius: 5px;
+//   border: 1px solid grey;
+// `;
 
 const FormFooter = styled.div`
   display: flex;
@@ -369,19 +368,19 @@ const FormFooter = styled.div`
   justify-content: space-between;
 `;
 
-const FormButton = styled.button`
-  font-size: 1.1em;
-  padding: 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.1s ease;
-  border: 1px solid grey;
+// const FormButton = styled.button`
+//   font-size: 1.1em;
+//   padding: 8px;
+//   border-radius: 5px;
+//   cursor: pointer;
+//   transition: all 0.1s ease;
+//   border: 1px solid grey;
 
-  &:hover {
-    background-color: #1152a8;
-    color: white;
-  }
-`;
+//   &:hover {
+//     background-color: #1152a8;
+//     color: white;
+//   }
+// `;
 
 const RegisterContainer = styled.section`
   height: 100vh;
