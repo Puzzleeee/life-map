@@ -1,17 +1,28 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import clsx from "clsx";
+import { makeStyles } from "@material-ui/core";
+
+//--------start import Material-ui components---------//
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import CardMedia from "@material-ui/core/CardMedia";
 import Collapse from "@material-ui/core/Collapse";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles, Paper } from "@material-ui/core";
+//--------end import Material-ui components---------//
+
+//--------start import icons--------//
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import RoomIcon from "@material-ui/icons/Room";
 import IconButton from "@material-ui/core/IconButton";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 import createEntryBackground from "../static/create-entry-background.png";
+//--------end import icons--------//
 
 const useStyles = makeStyles((theme) => ({
   expand: {
@@ -26,23 +37,79 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/**
+ * This component is a single card that displays a diary entry.
+ * This display title, date, content, and photos.
+ * This receives a single Entry object as props.
+ */
 const EntryCard = ({ entry }) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
+
+  //------- start of menu handlers -------//
+  const [menuAnchor, setMenuAnchor] = React.useState(null);
+  const isMenuOpen = Boolean(menuAnchor);
+
+  const handleOpenMenu = (event) => {
+    setMenuAnchor(event.target);
+  };
+
+  const handleCloseMenu = () => {
+    setMenuAnchor(null);
+  };
+
+  const deleteEntry = () => {
+    handleCloseMenu();
+    // in future, add code to delete entry
+  };
+  //------- end of menu handlers -------//
 
   return (
     <StyledCard elevation={3}>
       <CardHeader
         title={entry.title}
-        subheader={new Date(entry.date_time).toString()}
+        subheader={
+          <div style={{ marginTop: "4px" }}>
+            <Typography variant="body1" color="textSecondary">
+              {`Posted: ${new Date(entry.date_time).toDateString()}`}
+            </Typography>
+            <Location>
+              <RoomIcon fontSize="small" color="primary" />
+              <Typography>{entry.marker.name}</Typography>
+            </Location>
+          </div>
+        }
+        action={
+          <div>
+            <IconButton aria-label="settings" onClick={handleOpenMenu}>
+              <MoreVertIcon />
+            </IconButton>
+
+            <Menu
+              anchorEl={menuAnchor}
+              keepMounted
+              open={isMenuOpen}
+              onClose={handleCloseMenu}
+            >
+              <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
+                Delete
+              </MenuItem>
+            </Menu>
+          </div>
+        }
       />
+
       <CardContent>
         <Typography variant="body1" color="textPrimary" component="p">
           {entry.content.slice(0, 130)}
+
+          {/* display ellipses if >130 chars long */}
           {entry.content.length > 130 ? "..." : ""}
         </Typography>
       </CardContent>
-      {entry.content.length > 130 && (
+
+      {/* display expansion card if >130 chars OR there are photos */}
+      {(entry.content.length > 130 || entry.photos.length) && (
         <div>
           <CardActions>
             <IconButton
@@ -54,6 +121,7 @@ const EntryCard = ({ entry }) => {
               <ExpandMoreIcon />
             </IconButton>
           </CardActions>
+
           <Collapse in={expanded} timeout="auto">
             <CardContent>
               <Typography variant="body1" color="textPrimary" component="p">
@@ -75,6 +143,14 @@ const EntryCard = ({ entry }) => {
   );
 };
 
+/**
+ * This is a list container for all entry cards
+ * It receives a list of Entry Objects as props
+ *
+ * Entries.propTypes = {
+ * entries: PropTypes.arrayOf(Entry).isRequired
+ * }
+ */
 const Entries = ({ entries }) => {
   console.log(entries);
   return (
@@ -101,6 +177,12 @@ const Container = styled(Paper)`
 const StyledCard = styled(Card)`
   width: 50%;
   margin: 28px 0px;
+`;
+
+const Location = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
 `;
 
 const ImageContainer = styled.div`
