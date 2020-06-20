@@ -24,6 +24,14 @@ const media = () => {
     return Promise.resolve(true);
   };
 
+  /**
+   * Delete all photos associated with a diary entry
+   * @param {number} id id of the diary entry that is going to be deleted
+   */
+  modules.deleteEntryPhotos = async (id) => {
+    return db.delete_photos_by_entry_id.execute(id);
+  }
+
   return Object.freeze(modules);
 };
 

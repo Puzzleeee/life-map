@@ -19,6 +19,14 @@ const homepage = () => {
     return db.create_marker.execute(user_id, lng, lat, name, address);
   }
 
+  /**
+   * Delete a map marker
+   * @param {number} id - the id of the marker to be deleted 
+   */
+  modules.deleteMarker = async (id) => {
+    return db.delete_marker.execute(id);
+  }
+
   return Object.freeze(modules);
 }
 

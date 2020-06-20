@@ -19,6 +19,14 @@ const diary = () => {
     return db.create_diary_entry.execute(user_id, marker_id, title, content, shared);
   }
 
+  /**
+   * Delete a diary entry
+   * @param {number} id - the id of the diary entry to be deleted 
+   */
+  modules.deleteDiaryEntry = async (id) => {
+    return db.delete_diary_entry.execute(id);
+  }
+
   return Object.freeze(modules);
 }
 

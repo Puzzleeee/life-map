@@ -9,9 +9,9 @@ module.exports = function (crud) {
       },
     };
     
-    return crud.delete('diary_entries', conditions)
+    return crud.delete('markers', conditions)
       .then((result) => {
-        console.log("diary entry deleted successfully");
+        console.log("marker deleted successfully");
         return result;
       }).catch((err) => {
         console.log(err);
