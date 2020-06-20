@@ -27,15 +27,14 @@ const ThumbnailContainer = styled.div`
   flex-wrap: wrap;
 
   margin-top: 12px;
-  background-color: rgba(85, 85, 85, 0.1);
   border-radius: 5px;
 `;
 
 const Thumbnail = styled.img`
   width: 150px;
+  min-height: 200px;
   height: auto;
   object-fit: contain;
-
   border: 1px solid rgba(45, 45, 45, 0.5);
   border-radius: 5px;
   margin: 16px;
