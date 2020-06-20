@@ -26,8 +26,13 @@ router.post(
   [checkAuthenticated, busboyMiddleware],
   homepageController.createEntry
 );
-// router.post("/create-entry", [checkAuthenticated, busboyMiddleware], () => {
-//   console.log("hitting");
-// });
+
+/**
+ * /homepage/delete-entry:
+ * post:
+ *   id: id of the diary entry to be deleted
+ *   marker_id: id of the marker associated witht he diary entry
+ */
+router.post("/delete-entry", checkAuthenticated, homepageController.deleteEntry);
 
 module.exports = router;

@@ -50,6 +50,26 @@ const homepageController = () => {
     }
   };
 
+  modules.deleteEntry = async (req, res) => {
+    const { id, marker_id } = req.body;
+    try {
+      // should we do it syncronously or asyncronously? 
+      await media.deleteEntryPhotos(id);
+      await marker.deleteMarker(marker_id);
+      await diary.deleteDiaryEntry(id);
+      res.status(200).json({
+        success: true,
+        message: "entry and all relevant media deleted successfully!"
+      })
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({
+        success: false,
+        message: "something went wrong",
+      })
+    }
+  }
+
   return Object.freeze(modules);
 };
 
