@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core";
+import axios from "axios";
 
 //--------start import Material-ui components---------//
 import Card from "@material-ui/core/Card";
@@ -23,6 +24,13 @@ import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import createEntryBackground from "../static/create-entry-background.png";
 //--------end import icons--------//
+
+const config = {
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+};
 
 const useStyles = makeStyles((theme) => ({
   expand: {
@@ -58,9 +66,13 @@ const EntryCard = ({ entry }) => {
     setMenuAnchor(null);
   };
 
-  const deleteEntry = () => {
+  const deleteEntry = async () => {
+    const payload = {
+      id: entry.id,
+      marker_id: entry.marker.id
+    }
+    await axios.post('/homepage/delete-entry', payload, config);
     handleCloseMenu();
-    // in future, add code to delete entry
   };
   //------- end of menu handlers -------//
 
