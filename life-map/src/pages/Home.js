@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios";
+import { Redirect } from "react-router-dom";
 import GoogleMapReact from "google-map-react";
-import RoomIcon from "@material-ui/icons/Room";
+import AddEntry from "../components/AddEntry";
+import Entries from "./Entries";
+//--------start import Material-ui components---------//
 import Drawer from "@material-ui/core/Drawer";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import CloseIcon from "@material-ui/icons/Close";
-import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
-import AddEntry from "../components/AddEntry";
-import Entries from "./Entries";
-import axios from "axios";
-import { Redirect } from "react-router-dom";
+import IconButton from "@material-ui/core/IconButton";
+import RoomIcon from "@material-ui/icons/Room";
+import CloseIcon from "@material-ui/icons/Close";
+//--------end import Material-ui components---------//
 
 const config = {
   withCredentials: true,
@@ -28,6 +30,269 @@ const mapDefaults = {
     lng: 103.8198,
   },
   zoom: 12,
+  styles: [
+    {
+      featureType: "administrative",
+      elementType: "labels.text.fill",
+      stylers: [
+        {
+          color: "#444444",
+        },
+      ],
+    },
+    {
+      featureType: "administrative.country",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "administrative.province",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "off",
+        },
+        {
+          saturation: "0",
+        },
+        {
+          lightness: "0",
+        },
+      ],
+    },
+    {
+      featureType: "administrative.locality",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "administrative.neighborhood",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "simplified",
+        },
+      ],
+    },
+    {
+      featureType: "landscape",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "off",
+        },
+        {
+          color: "#ffffff",
+        },
+      ],
+    },
+    {
+      featureType: "landscape",
+      elementType: "labels",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "landscape.man_made",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "landscape.natural",
+      elementType: "geometry.fill",
+      stylers: [
+        {
+          saturation: "17",
+        },
+        {
+          visibility: "on",
+        },
+      ],
+    },
+    {
+      featureType: "landscape.natural",
+      elementType: "labels",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "poi",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "on",
+        },
+        {
+          hue: "#91ff00",
+        },
+        {
+          lightness: "56",
+        },
+        {
+          saturation: "26",
+        },
+      ],
+    },
+    {
+      featureType: "road",
+      elementType: "all",
+      stylers: [
+        {
+          saturation: -100,
+        },
+        {
+          lightness: 45,
+        },
+      ],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "simplified",
+        },
+      ],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#f5d2c4",
+        },
+      ],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "labels",
+      stylers: [
+        {
+          visibility: "on",
+        },
+      ],
+    },
+    {
+      featureType: "road.arterial",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "on",
+        },
+      ],
+    },
+    {
+      featureType: "road.arterial",
+      elementType: "geometry.fill",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "road.arterial",
+      elementType: "geometry.stroke",
+      stylers: [
+        {
+          visibility: "on",
+        },
+        {
+          color: "#f5d2c4",
+        },
+        {
+          lightness: "60",
+        },
+      ],
+    },
+    {
+      featureType: "road.arterial",
+      elementType: "labels",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "road.local",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "on",
+        },
+      ],
+    },
+    {
+      featureType: "road.local",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#f3f3f3",
+        },
+        {
+          visibility: "simplified",
+        },
+      ],
+    },
+    {
+      featureType: "road.local",
+      elementType: "labels",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "transit",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "water",
+      elementType: "all",
+      stylers: [
+        {
+          color: "#e9f6f8",
+        },
+        {
+          visibility: "on",
+        },
+      ],
+    },
+  ],
 };
 
 const Home = ({
@@ -131,9 +396,9 @@ const Home = ({
             <MapContainer>
               <GoogleMapReact
                 // populate api key
-                bootstrapURLKeys={{ key: "" }}
                 defaultCenter={mapDefaults.center}
                 defaultZoom={mapDefaults.zoom}
+                options={() => ({ styles: mapDefaults.styles })}
                 // somehow you need to do this cos of some bug in the package
                 distanceToMouse={() => {}}
               >
