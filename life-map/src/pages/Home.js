@@ -38,6 +38,7 @@ const Home = ({
   const [entries, setEntries] = useState([]);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(true);
+  //-------- start of view states -------- //
   const [mapView, setMapView] = useState(true);
   const [addEntryView, setAddEntryView] = useState(false);
   const [entriesView, setEntriesView] = useState(false);
@@ -46,6 +47,7 @@ const Home = ({
     content: "",
     isOpen: false,
   });
+  //-------- end of view states -------- //
 
   // on mounting component, check if user was already logged in and redirect
   // appropriately
@@ -78,6 +80,7 @@ const Home = ({
     setLoggedIn(false);
   };
 
+  //-------- start of view setters --------//
   const toggleMapView = () => {
     setMapView(true);
     setAddEntryView(false);
@@ -94,6 +97,7 @@ const Home = ({
     setAddEntryView(false);
     setEntriesView(true);
   };
+  //-------- end of view setters --------//
 
   return (
     <div>
@@ -204,7 +208,7 @@ const Home = ({
           {/* render form to add entry */}
           {addEntryView && <AddEntry />}
           {/* render list of entries*/}
-          {entriesView && <Entries />}
+          {entriesView && <Entries entries={entries} />}
         </Container>
       )}
     </div>
