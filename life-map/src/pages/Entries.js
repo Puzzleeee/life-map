@@ -5,20 +5,15 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
+import CardMedia from "@material-ui/core/CardMedia";
 import Collapse from "@material-ui/core/Collapse";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, Paper } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import IconButton from "@material-ui/core/IconButton";
+import createEntryBackground from "../static/create-entry-background.png";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    maxWidth: 345,
-  },
-  media: {
-    height: 0,
-    paddingTop: "56.25%", // 16:9
-  },
   expand: {
     transform: "rotate(0deg)",
     marginLeft: "auto",
@@ -65,6 +60,14 @@ const EntryCard = ({ entry }) => {
                 {entry.content.slice(130)}
               </Typography>
             </CardContent>
+
+            <ImageContainer>
+              {entry.photos.map((photo) => (
+                <CardMedia>
+                  <Image src={photo.data} alt="card photo" />
+                </CardMedia>
+              ))}
+            </ImageContainer>
           </Collapse>
         </div>
       )}
@@ -73,6 +76,7 @@ const EntryCard = ({ entry }) => {
 };
 
 const Entries = ({ entries }) => {
+  console.log(entries);
   return (
     <Container>
       {entries.map((entry) => (
@@ -89,9 +93,27 @@ const Container = styled(Paper)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-image: url(${createEntryBackground});
+  background-repeat: repeat-y;
+  background-size: contain;
 `;
 
 const StyledCard = styled(Card)`
   width: 50%;
-  margin: 36px;
+  margin: 28px 0px;
+`;
+
+const ImageContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+`;
+
+const Image = styled.img`
+  height: 250px;
+  width: auto;
+  margin: 12px;
+  border-radius: 5px;
+  box-shadow: 3px 3px 10px rgba(150, 150, 150, 0.5);
 `;
