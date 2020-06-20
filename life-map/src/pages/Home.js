@@ -90,6 +90,7 @@ const Home = ({
   const toggleFormView = () => {
     setMapView(false);
     setAddEntryView(true);
+    setEntriesView(false);
   };
 
   const toggleListView = () => {
