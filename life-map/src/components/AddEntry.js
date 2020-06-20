@@ -13,6 +13,10 @@ import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import createEntryBackground from "../static/create-entry-background.png";
+import TitleTwoToneIcon from '@material-ui/icons/TitleTwoTone';
+import MenuBookTwoToneIcon from '@material-ui/icons/MenuBookTwoTone';
+import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
+import ShareTwoToneIcon from '@material-ui/icons/ShareTwoTone';
 
 
 const config = {
@@ -26,6 +30,7 @@ const useStyles = makeStyles({
   entryCard: {
     backgroundColor: 'rgba(247, 247, 247, 0.9)',
     flexGrow: '1',
+    minWidth: '300px',
     width: '40%',
     display: 'flex',
     flexDirection: 'column',
@@ -35,9 +40,11 @@ const useStyles = makeStyles({
     marginBottom: '5%',
   },
   textInput: {
-    marginTop: '1em',
-    marginBottom: '1em',
+    flexGrow: '1'
   },
+  icons: {
+    marginRight: '0.75em',
+  }
 })
 
 const AddEntry = () => {
@@ -186,49 +193,64 @@ const AddEntry = () => {
     <Entry>
       <Card className={classes.entryCard}>
         <Form onSubmit={handleSubmit}>
-          <TextField
-            className={classes.textInput}
-            label="Title"
-            variant="outlined"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <TextField
-            className={classes.textInput}
-            label="Content"
-            variant="outlined"
-            value={content}
-            multiline
-            rows={5}
-            onChange={(e) => setContent(e.target.value)}
-          />
-
-          <TextField
-            className={classes.textInput}
-            label="Location"
-            variant="outlined"
-            value={locationInput}
-            onChange={(e) => setLocationInput(e.target.value)}
-          />
-          {/* preconditions to check before rendering autocomplete results */}
-          {ready && status === "OK" && status !== "ZERO_RESULTS" && <Suggestions />}
-
-          <CheckBoxContainer>
-            <Checkbox
-              checked={shared}
-              onChange={() => setShared((prev) => !prev)}
-              color="primary"
-              inputProps={{ 'aria-label': 'secondary checkbox' }}
+          <FormInput>
+            <TitleTwoToneIcon className={classes.icons} color="primary"/>
+            <TextField
+              className={classes.textInput}
+              label="Title"
+              variant="outlined"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
+          </FormInput>
 
-            <p
-              style={{ cursor: "pointer" }}
-              onClick={() => setShared((prev) => !prev)}
-            >
-              Share with friends
-            </p>
-          </CheckBoxContainer>
+          <FormInput>
+            <MenuBookTwoToneIcon className={classes.icons} color="secondary"/>
+            <TextField
+              className={classes.textInput}
+              label="Content"
+              variant="outlined"
+              value={content}
+              multiline
+              rows={5}
+              onChange={(e) => setContent(e.target.value)}
+            />
+          </FormInput>
+
+          <FormInput>
+            <LocationOnTwoToneIcon className={classes.icons}/>
+            <LocationContainer> 
+              <TextField
+                className={classes.textInput}
+                label="Location"
+                variant="outlined"
+                value={locationInput}
+                onChange={(e) => setLocationInput(e.target.value)}
+              />
+              {/* preconditions to check before rendering autocomplete results */}
+              {ready && status === "OK" && status !== "ZERO_RESULTS" && <Suggestions />}
+            </LocationContainer>
+          </FormInput>
+
+          <FormInput>
+            <ShareTwoToneIcon className={classes.icons} color="primary"/>
+            <CheckBoxContainer>
+              <Checkbox
+                checked={shared}
+                onChange={() => setShared((prev) => !prev)}
+                color="primary"
+                inputProps={{ 'aria-label': 'secondary checkbox' }}
+                style={{ paddingLeft: "0" }}
+              />
+
+              <p
+                style={{ cursor: "pointer" }}
+                onClick={() => setShared((prev) => !prev)}
+              >
+                Share with friends
+              </p>
+            </CheckBoxContainer>
+          </FormInput>
 
           <ImageUpload images={images} handleSelectImage={handleSelectImage} />
 
@@ -264,6 +286,14 @@ const Form = styled.form`
   flex-direction: column;
   width: 60%;
 `;
+
+const FormInput = styled.div`
+  margin-top: 1em;
+  margin-bottom: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
 
 const Label = styled.label`
   font-size: 1.1em;
@@ -303,12 +333,15 @@ const FormButton = styled.button`
 `;
 
 const CheckBoxContainer = styled.div`
+  flex-grow: 1;
   display: flex;
-  align-items: center;
-  font-size: 1.1em;
-  letter-spacing: 1px;
 `;
 
+const LocationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+`
 const SuggestionTag = styled.div`
   padding: 8px;
   cursor: pointer;
