@@ -73,15 +73,14 @@ const EntryCard = ({ entry, removeEntry }) => {
       id: entry.id,
       marker_id: entry.marker.id
     }
-    try {
-      await axios.post('/homepage/delete-entry', payload, config);
+    const { success } = await axios.post('/homepage/delete-entry', payload, config);
+    if (success) {
       removeEntry();
       enqueueSnackbar("Successfully deleted entry!", { variant: "success"});
-    } catch (err) {
+    } else {
       enqueueSnackbar("Oops, something went wrong", { variant: "error"});
-    } finally {
-      handleCloseMenu();
     }
+    handleCloseMenu();
   };
   //------- end of menu handlers -------//
 

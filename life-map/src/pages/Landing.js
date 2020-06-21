@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { makeStyles } from '@material-ui/core/styles';
 import { Redirect } from "react-router-dom";
 import axios from "axios";
+import { useSnackbar } from "notistack";
 import mapImage from "../static/coffee-image.jpg";
 import loginImage from "../static/login-image.jpg";
 import registerImage from "../static/cover-image.jpg";
@@ -99,7 +100,7 @@ const Login = ({ loginRef, registerRef, redirect }) => {
   const classes = useStyles();
   const [emailInput, setEmail] = useState("");
   const [passwordInput, setPassword] = useState("");
-  const [hasError, setError] = useState(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   /* helper for credential authentication with backend */
   const authCheck = async () => {
@@ -122,7 +123,7 @@ const Login = ({ loginRef, registerRef, redirect }) => {
     if (response.success) {
       redirect(response.name);
     } else {
-      setError(true);
+      enqueueSnackbar("Wrong email or password!", { variant: "error"});
     }
   };
 
@@ -148,6 +149,7 @@ const Login = ({ loginRef, registerRef, redirect }) => {
           <TextField
             className={classes.textInput}
             label="Password"
+            type="password"
             variant="outlined" 
             value={passwordInput} 
             onChange={(e) => setPassword(e.target.value)}
@@ -160,9 +162,6 @@ const Login = ({ loginRef, registerRef, redirect }) => {
             >
               Don't have an account? Register Now!
             </BorderlessButton>
-            <p style={{ height: "24px", color: "red" }}>
-              {hasError ? "Invalid credentials" : ""}
-            </p>
             <Button type="submit" variant="contained" color="primary"> Login </Button>
           </FormFooter>
         </Form>
@@ -176,7 +175,7 @@ const Register = ({ loginRef, registerRef, redirect }) => {
   const [emailInput, setEmail] = useState("");
   const [nameInput, setName] = useState("");
   const [passwordInput, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   /* backend call to create account */
   const createAccount = async () => {
@@ -189,14 +188,11 @@ const Register = ({ loginRef, registerRef, redirect }) => {
     const response = await axios.post("http://localhost:5000/register", req);
 
     if (response.data.message === "duplicate") {
-      // email was taken
-      setError("Email has been taken");
+      enqueueSnackbar("Email already in use", { variant: "error"});
     } else if (!response.data.success) {
-      // unknown exception
-      setError("Something bad happened");
+      enqueueSnackbar("Oops, something went wrong", { variant: "error"});
     } else {
-      // succesful registration
-      redirect(emailInput);
+      enqueueSnackbar("Successfully registered!", { variant: "success"});
     }
   };
 
@@ -233,7 +229,8 @@ const Register = ({ loginRef, registerRef, redirect }) => {
           />
           <TextField 
             className={classes.textInput}
-            label="Email" 
+            label="Password"
+            type="password" 
             variant="outlined" 
             value={passwordInput} 
             onChange={(e) => setPassword(e.target.value)}
@@ -246,7 +243,6 @@ const Register = ({ loginRef, registerRef, redirect }) => {
             >
               Back to login
             </BorderlessButton>
-            <p style={{ height: "24px", color: "red" }}>{error}</p>
             <Button type="submit" variant="contained" color="primary"> Register </Button>
           </FormFooter>
         </Form>

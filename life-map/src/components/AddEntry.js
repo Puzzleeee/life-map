@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { useSnackbar } from "notistack";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -8,15 +9,21 @@ import usePlacesAutocomplete, {
 import useOnclickOutside from "react-cool-onclickoutside";
 import ImageUpload from "./ImageUpload";
 import { makeStyles } from '@material-ui/core/styles';
+import createEntryBackground from "../static/create-entry-background.png";
+
+//--------start import Material-ui components---------//
 import Card from '@material-ui/core/Card';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
-import createEntryBackground from "../static/create-entry-background.png";
+//--------end import Material-ui components---------//
+
+//--------start import icons--------//
 import TitleTwoToneIcon from '@material-ui/icons/TitleTwoTone';
 import MenuBookTwoToneIcon from '@material-ui/icons/MenuBookTwoTone';
 import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
 import ShareTwoToneIcon from '@material-ui/icons/ShareTwoTone';
+//--------end import icons--------//
 
 
 const config = {
@@ -53,7 +60,7 @@ const AddEntry = () => {
   const [shared, setShared] = useState(false);
   const [location, setLocation] = useState({});
   const [images, setImages] = useState([]);
-  const [responseMessage, setResponseMessage] = useState("");
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const classes = useStyles();
 
   /* initialize Places API */
@@ -155,14 +162,18 @@ const AddEntry = () => {
     const {
       data: { success, message },
     } = await axios.post(
-      "http://localhost:5000/homepage/create-entry",
-      // payload,
-      // "http://localhost:5000/test-upload",
-      form_data,
-      upload_config
+        "http://localhost:5000/homepage/create-entry",
+        // payload,
+        // "http://localhost:5000/test-upload",
+        form_data,
+        upload_config
     );
 
-    setResponseMessage(message);
+    if (success) {
+      enqueueSnackbar("Entry created successfully!", { variant: "success"});
+    } else {
+      enqueueSnackbar("Oops, something went wrong", { variant: "error"});
+    }
   };
 
   /* declare dom ref to close when user clicks outside the dropdown list */
@@ -257,10 +268,6 @@ const AddEntry = () => {
           <Button variant="contained" color="primary" type="submit" style={{ marginTop: "24px" }}>
             Save
           </Button>
-
-          <p style={{ height: "30px", color: "red", textAlign: "center" }}>
-            {responseMessage}
-          </p>
         </Form>
       </Card>
     </Entry>
