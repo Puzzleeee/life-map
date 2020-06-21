@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core";
+import { useSnackbar } from "notistack";
 import axios from "axios";
 
 //--------start import Material-ui components---------//
@@ -50,11 +51,10 @@ const useStyles = makeStyles((theme) => ({
  * This display title, date, content, and photos.
  * This receives a single Entry object as props.
  */
-const EntryCard = ({ entry }) => {
+const EntryCard = ({ entry, removeEntry }) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
-  // UI flag
-  const [isDeleted, setDeleted] = useState(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   //------- start of menu handlers -------//
   const [menuAnchor, setMenuAnchor] = React.useState(null);
@@ -71,9 +71,15 @@ const EntryCard = ({ entry }) => {
   const deleteEntry = async () => {
     const payload = {
       id: entry.id,
-      marker_id: entry.marker.id,
-    };
-
+      marker_id: entry.marker.id
+    }
+    const { success } = await axios.post('/homepage/delete-entry', payload, config);
+    if (success) {
+      removeEntry();
+      enqueueSnackbar("Successfully deleted entry!", { variant: "success"});
+    } else {
+      enqueueSnackbar("Oops, something went wrong", { variant: "error"});
+    }
     handleCloseMenu();
 
     const deleteResult = await axios.post(
@@ -180,13 +186,24 @@ const EntryCard = ({ entry }) => {
  * entries: PropTypes.arrayOf(Entry).isRequired
  * }
  */
-const Entries = ({ entries }) => (
-  <Container>
-    {entries.map((entry) => (
-      <EntryCard key={entry.id} entry={entry} />
-    ))}
-  </Container>
-);
+const Entries = ({ entries }) => {
+  const [diaryEntries, setEntries] = useState(entries);
+
+  const removeDeletedEntry = (entry) => {
+    return () => {
+      console.log("setting state");
+      setEntries(diaryEntries.filter(x => x !== entry));
+    }
+  }
+
+  return (
+    <Container>
+      {diaryEntries.map((entry) => (
+        <EntryCard key={entry.id} entry={entry} removeEntry={removeDeletedEntry(entry)} />
+      ))}
+    </Container>
+  );
+};
 
 export default Entries;
 
