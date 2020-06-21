@@ -25,6 +25,7 @@ const useStyles = makeStyles({
   root: {
     backgroundColor: 'rgba(247, 247, 247, 0.9)',
     height: '70%',
+    minWidth: '300px',
     width: '50%',
     display: 'flex',
     flexDirection: 'column',
