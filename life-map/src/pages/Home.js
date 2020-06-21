@@ -6,12 +6,17 @@ import GoogleMapReact from "google-map-react";
 import AddEntry from "../components/AddEntry";
 import Entries from "./Entries";
 //--------start import Material-ui components---------//
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
 import Drawer from "@material-ui/core/Drawer";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
 import RoomIcon from "@material-ui/icons/Room";
 import CloseIcon from "@material-ui/icons/Close";
 //--------end import Material-ui components---------//
@@ -304,9 +309,7 @@ const Home = ({
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(true);
   //-------- start of view states -------- //
-  const [mapView, setMapView] = useState(true);
-  const [addEntryView, setAddEntryView] = useState(false);
-  const [entriesView, setEntriesView] = useState(false);
+  const [page, setPage] = useState("Map");
   const [drawerState, setDrawerState] = useState({
     title: "",
     content: "",
@@ -316,52 +319,54 @@ const Home = ({
 
   // on mounting component, check if user was already logged in and redirect
   // appropriately
-  useEffect(() => {
-    let mounted = true;
+  useEffect(
+    () => {
+      let mounted = true;
 
-    (async () => {
-      const auth_response = await axios.get(
-        "http://localhost:5000/check-auth",
-        config
-      );
+      (async () => {
+        const auth_response = await axios.get(
+          "http://localhost:5000/check-auth",
+          config
+        );
 
-      if (mounted) {
-        setLoggedIn(auth_response.data.authenticated);
-        setLoading(false);
-      }
+        if (mounted) {
+          setLoggedIn(auth_response.data.authenticated);
+          setLoading(false);
+        }
 
-      const entries = await axios.get("http://localhost:5000/homepage", config);
-      setEntries(entries.data.data);
-    })();
+        const entries = await axios.get(
+          "http://localhost:5000/homepage",
+          config
+        );
+        setEntries(entries.data.data);
+      })();
 
-    return () => {
-      mounted = false;
-    };
-  }, []);
+      return () => {
+        mounted = false;
+      };
+    },
+    [
+      /* COMMENT THIS OUT TO PREVENT REMOUNTING ON PAGE CHANGE */
+      // page
+    ]
+  );
 
   const handleLogOut = async () => {
     await axios.post("http://localhost:5000/logout", config);
-    console.log("logging out");
     setLoggedIn(false);
   };
 
-  //-------- start of view setters --------//
-  const toggleMapView = () => {
-    setMapView(true);
-    setAddEntryView(false);
-    setEntriesView(false);
+  //-------- start of menu setters --------//
+  const [menuAnchor, setMenuAnchor] = React.useState(null);
+  const isMenuOpen = Boolean(menuAnchor);
+
+  const handleOpenMenu = (event) => {
+    setMenuAnchor(event.target);
   };
 
-  const toggleFormView = () => {
-    setMapView(false);
-    setAddEntryView(true);
-    setEntriesView(false);
-  };
-
-  const toggleListView = () => {
-    setMapView(false);
-    setAddEntryView(false);
-    setEntriesView(true);
+  const handlePageChange = (page) => {
+    setPage(page);
+    setMenuAnchor(null);
   };
   //-------- end of view setters --------//
 
@@ -381,21 +386,40 @@ const Home = ({
       {/* else, load the logged in homepage */}
       {!isLoading && isLoggedIn && (
         <Container>
-          <SideBar>
-            <p style={{ textAlign: "center" }}>Welcome {userID}</p>
-            {!mapView && (
-              <NavButton onClick={toggleMapView}>Back to map</NavButton>
-            )}
-            <NavButton onClick={toggleFormView}>Add an entry</NavButton>
-            <NavButton onClick={toggleListView}>View all entries</NavButton>
-            <LogOutButton onClick={() => handleLogOut()}>Log Out</LogOutButton>
-          </SideBar>
+          {/* start of navbar */}
+          <AppBar position="static">
+            <Toolbar
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <IconButton color="inherit" onClick={handleOpenMenu}>
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                anchorEl={menuAnchor}
+                keepMounted
+                open={isMenuOpen}
+                onClose={() => setMenuAnchor(null)}
+              >
+                <MenuItem onClick={() => handlePageChange("Map")}>Map</MenuItem>
+                <MenuItem onClick={() => handlePageChange("Add entry")}>
+                  Add entry
+                </MenuItem>
+                <MenuItem onClick={() => handlePageChange("View all entries")}>
+                  View all entries
+                </MenuItem>
+              </Menu>
+              <Typography variant="h6">{page}</Typography>
+              <Button color="inherit" onClick={handleLogOut}>
+                Logout
+              </Button>
+            </Toolbar>
+          </AppBar>
+          {/* end of navbar */}
 
-          {/* render map if mapView is true */}
-          {mapView && (
+          {/* render map */}
+          {page === "Map" && (
             <MapContainer>
               <GoogleMapReact
-                // populate api key
                 defaultCenter={mapDefaults.center}
                 defaultZoom={mapDefaults.zoom}
                 options={() => ({ styles: mapDefaults.styles })}
@@ -472,9 +496,9 @@ const Home = ({
           )}
 
           {/* render form to add entry */}
-          {addEntryView && <AddEntry />}
+          {page === "Add entry" && <AddEntry />}
           {/* render list of entries*/}
-          {entriesView && <Entries entries={entries} />}
+          {page === "View all entries" && <Entries entries={entries} />}
         </Container>
       )}
     </div>
@@ -495,53 +519,53 @@ const MapContainer = styled.div`
   width: 100%;
 `;
 
-const SideBar = styled.nav`
-  height: 15%;
-  width: 100%;
-  display: flex;
-  background-color: rgba(250, 249, 245, 0.8);
-  box-shadow: 1px 0px 20px rgb(100, 100, 100);
-  z-index: 1;
-`;
+// const SideBar = styled.nav`
+//   height: 15%;
+//   width: 100%;
+//   display: flex;
+//   background-color: rgba(250, 249, 245, 0.8);
+//   box-shadow: 1px 0px 20px rgb(100, 100, 100);
+//   z-index: 1;
+// `;
 
-const NavButton = styled.button`
-  color: white;
-  background-color: rgb(17, 82, 168);
-  margin: 12px 24px;
-  padding: 6px 0px;
-  border-radius: 25px;
-  border: 1px solid grey;
+// const NavButton = styled.button`
+//   color: white;
+//   background-color: rgb(17, 82, 168);
+//   margin: 12px 24px;
+//   padding: 6px 0px;
+//   border-radius: 25px;
+//   border: 1px solid grey;
 
-  font-size: 1.1em;
-  font-family: "Roboto";
-  font-weight: 200;
-  letter-spacing: 1px;
+//   font-size: 1.1em;
+//   font-family: "Roboto";
+//   font-weight: 200;
+//   letter-spacing: 1px;
 
-  cursor: pointer;
-  transition: all 0.2s ease;
+//   cursor: pointer;
+//   transition: all 0.2s ease;
 
-  &:hover {
-    background-color: rgb(17, 82, 168, 0.9);
-  }
-`;
+//   &:hover {
+//     background-color: rgb(17, 82, 168, 0.9);
+//   }
+// `;
 
-const LogOutButton = styled.button`
-  color: white;
-  background-color: rgba(168, 17, 50, 1);
-  margin: 12px 24px;
-  padding: 6px 0px;
-  border-radius: 25px;
-  border: none;
+// const LogOutButton = styled.button`
+//   color: white;
+//   background-color: rgba(168, 17, 50, 1);
+//   margin: 12px 24px;
+//   padding: 6px 0px;
+//   border-radius: 25px;
+//   border: none;
 
-  font-size: 1.1em;
-  font-family: "Roboto";
-  font-weight: 300;
-  letter-spacing: 1px;
+//   font-size: 1.1em;
+//   font-family: "Roboto";
+//   font-weight: 300;
+//   letter-spacing: 1px;
 
-  cursor: pointer;
-  transition: all 0.2s ease;
+//   cursor: pointer;
+//   transition: all 0.2s ease;
 
-  &:hover {
-    background-color: rgba(168, 17, 50, 0.9);
-  }
-`;
+//   &:hover {
+//     background-color: rgba(168, 17, 50, 0.9);
+//   }
+// `;

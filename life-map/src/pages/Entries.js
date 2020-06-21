@@ -71,16 +71,21 @@ const EntryCard = ({ entry, removeEntry }) => {
   const deleteEntry = async () => {
     const payload = {
       id: entry.id,
-      marker_id: entry.marker.id
-    }
-    const { success } = await axios.post('/homepage/delete-entry', payload, config);
+      marker_id: entry.marker.id,
+    };
+
+    handleCloseMenu();
+
+    const {
+      data: { success },
+    } = await axios.post("/homepage/delete-entry", payload, config);
+
     if (success) {
       removeEntry();
-      enqueueSnackbar("Successfully deleted entry!", { variant: "success"});
+      enqueueSnackbar("Successfully deleted entry!", { variant: "success" });
     } else {
-      enqueueSnackbar("Oops, something went wrong", { variant: "error"});
+      enqueueSnackbar("Oops, something went wrong", { variant: "error" });
     }
-    handleCloseMenu();
   };
   //------- end of menu handlers -------//
 
@@ -176,15 +181,18 @@ const Entries = ({ entries }) => {
 
   const removeDeletedEntry = (entry) => {
     return () => {
-      console.log("setting state");
-      setEntries(diaryEntries.filter(x => x !== entry));
-    }
-  }
+      setEntries(diaryEntries.filter((x) => x !== entry));
+    };
+  };
 
   return (
     <Container>
       {diaryEntries.map((entry) => (
-        <EntryCard key={entry.id} entry={entry} removeEntry={removeDeletedEntry(entry)} />
+        <EntryCard
+          key={entry.id}
+          entry={entry}
+          removeEntry={removeDeletedEntry(entry)}
+        />
       ))}
     </Container>
   );
