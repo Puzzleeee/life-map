@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core";
+import { useSnackbar } from "notistack";
 import axios from "axios";
 
 //--------start import Material-ui components---------//
@@ -50,9 +51,10 @@ const useStyles = makeStyles((theme) => ({
  * This display title, date, content, and photos.
  * This receives a single Entry object as props.
  */
-const EntryCard = ({ entry }) => {
+const EntryCard = ({ entry, removeEntry }) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   //------- start of menu handlers -------//
   const [menuAnchor, setMenuAnchor] = React.useState(null);
@@ -71,8 +73,15 @@ const EntryCard = ({ entry }) => {
       id: entry.id,
       marker_id: entry.marker.id
     }
-    await axios.post('/homepage/delete-entry', payload, config);
-    handleCloseMenu();
+    try {
+      await axios.post('/homepage/delete-entry', payload, config);
+      removeEntry();
+      enqueueSnackbar("Successfully deleted entry!", { variant: "success"});
+    } catch (err) {
+      enqueueSnackbar("Oops, something went wrong", { variant: "error"});
+    } finally {
+      handleCloseMenu();
+    }
   };
   //------- end of menu handlers -------//
 
@@ -164,11 +173,19 @@ const EntryCard = ({ entry }) => {
  * }
  */
 const Entries = ({ entries }) => {
-  console.log(entries);
+  const [diaryEntries, setEntries] = useState(entries);
+
+  const removeDeletedEntry = (entry) => {
+    return () => {
+      console.log("setting state");
+      setEntries(diaryEntries.filter(x => x !== entry));
+    }
+  }
+
   return (
     <Container>
-      {entries.map((entry) => (
-        <EntryCard key={entry.id} entry={entry} />
+      {diaryEntries.map((entry) => (
+        <EntryCard key={entry.id} entry={entry} removeEntry={removeDeletedEntry(entry)} />
       ))}
     </Container>
   );
