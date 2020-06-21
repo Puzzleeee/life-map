@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core";
@@ -69,9 +69,9 @@ const EntryCard = ({ entry }) => {
   const deleteEntry = async () => {
     const payload = {
       id: entry.id,
-      marker_id: entry.marker.id
-    }
-    await axios.post('/homepage/delete-entry', payload, config);
+      marker_id: entry.marker.id,
+    };
+    await axios.post("/homepage/delete-entry", payload, config);
     handleCloseMenu();
   };
   //------- end of menu handlers -------//
@@ -163,16 +163,13 @@ const EntryCard = ({ entry }) => {
  * entries: PropTypes.arrayOf(Entry).isRequired
  * }
  */
-const Entries = ({ entries }) => {
-  console.log(entries);
-  return (
-    <Container>
-      {entries.map((entry) => (
-        <EntryCard key={entry.id} entry={entry} />
-      ))}
-    </Container>
-  );
-};
+const Entries = ({ entries }) => (
+  <Container>
+    {entries.map((entry) => (
+      <EntryCard key={entry.id} entry={entry} />
+    ))}
+  </Container>
+);
 
 export default Entries;
 

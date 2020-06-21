@@ -319,28 +319,38 @@ const Home = ({
 
   // on mounting component, check if user was already logged in and redirect
   // appropriately
-  useEffect(() => {
-    let mounted = true;
+  useEffect(
+    () => {
+      console.log("remounting");
+      let mounted = true;
 
-    (async () => {
-      const auth_response = await axios.get(
-        "http://localhost:5000/check-auth",
-        config
-      );
+      (async () => {
+        const auth_response = await axios.get(
+          "http://localhost:5000/check-auth",
+          config
+        );
 
-      if (mounted) {
-        setLoggedIn(auth_response.data.authenticated);
-        setLoading(false);
-      }
+        if (mounted) {
+          setLoggedIn(auth_response.data.authenticated);
+          setLoading(false);
+        }
 
-      const entries = await axios.get("http://localhost:5000/homepage", config);
-      setEntries(entries.data.data);
-    })();
+        const entries = await axios.get(
+          "http://localhost:5000/homepage",
+          config
+        );
+        setEntries(entries.data.data);
+      })();
 
-    return () => {
-      mounted = false;
-    };
-  }, []);
+      return () => {
+        mounted = false;
+      };
+    },
+    [
+      /* COMMENT THIS OUT TO PREVENT REMOUNTING ON PAGE CHANGE */
+      // page
+    ]
+  );
 
   const handleLogOut = async () => {
     await axios.post("http://localhost:5000/logout", config);
