@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core";
@@ -71,110 +71,100 @@ const EntryCard = ({ entry, removeEntry }) => {
   const deleteEntry = async () => {
     const payload = {
       id: entry.id,
-      marker_id: entry.marker.id
-    }
-    const { success } = await axios.post('/homepage/delete-entry', payload, config);
-    if (success) {
-      removeEntry();
-      enqueueSnackbar("Successfully deleted entry!", { variant: "success"});
-    } else {
-      enqueueSnackbar("Oops, something went wrong", { variant: "error"});
-    }
+      marker_id: entry.marker.id,
+    };
+
     handleCloseMenu();
 
-    const deleteResult = await axios.post(
-      "/homepage/delete-entry",
-      payload,
-      config
-    );
+    const {
+      data: { success },
+    } = await axios.post("/homepage/delete-entry", payload, config);
 
-    // update UI if backend succeeds
-    if (deleteResult.data.success) {
-      setDeleted(true);
+    if (success) {
+      removeEntry();
+      enqueueSnackbar("Successfully deleted entry!", { variant: "success" });
     } else {
-      window.alert("Deletion failed: something happened on our end.");
+      enqueueSnackbar("Oops, something went wrong", { variant: "error" });
     }
   };
   //------- end of menu handlers -------//
 
   return (
-    isDeleted || (
-      <StyledCard elevation={3}>
-        <CardHeader
-          title={entry.title}
-          subheader={
-            <div style={{ marginTop: "4px" }}>
-              <Typography variant="body1" color="textSecondary">
-                {`Posted: ${new Date(entry.date_time).toDateString()}`}
-              </Typography>
-              <Location>
-                <RoomIcon fontSize="small" color="primary" />
-                <Typography>{entry.marker.name}</Typography>
-              </Location>
-            </div>
-          }
-          action={
-            <div>
-              <IconButton aria-label="settings" onClick={handleOpenMenu}>
-                <MoreVertIcon />
-              </IconButton>
-
-              <Menu
-                anchorEl={menuAnchor}
-                keepMounted
-                open={isMenuOpen}
-                onClose={handleCloseMenu}
-              >
-                <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
-                  Delete
-                </MenuItem>
-              </Menu>
-            </div>
-          }
-        />
-
-        <CardContent>
-          <Typography variant="body1" color="textPrimary" component="p">
-            {entry.content.slice(0, 130)}
-
-            {/* display ellipses if >130 chars long */}
-            {entry.content.length > 130 ? "..." : ""}
-          </Typography>
-        </CardContent>
-
-        {/* display expansion card if >130 chars OR there are photos */}
-        {(entry.content.length > 130 || entry.photos.length) && (
-          <div>
-            <CardActions>
-              <IconButton
-                className={clsx(classes.expand, {
-                  [classes.expandOpen]: expanded,
-                })}
-                onClick={() => setExpanded((prev) => !prev)}
-              >
-                <ExpandMoreIcon />
-              </IconButton>
-            </CardActions>
-
-            <Collapse in={expanded} timeout="auto">
-              <CardContent>
-                <Typography variant="body1" color="textPrimary" component="p">
-                  {entry.content.slice(130)}
-                </Typography>
-              </CardContent>
-
-              <ImageContainer>
-                {entry.photos.map((photo) => (
-                  <CardMedia>
-                    <Image src={photo.data} alt="card photo" />
-                  </CardMedia>
-                ))}
-              </ImageContainer>
-            </Collapse>
+    <StyledCard elevation={3}>
+      <CardHeader
+        title={entry.title}
+        subheader={
+          <div style={{ marginTop: "4px" }}>
+            <Typography variant="body1" color="textSecondary">
+              {`Posted: ${new Date(entry.date_time).toDateString()}`}
+            </Typography>
+            <Location>
+              <RoomIcon fontSize="small" color="primary" />
+              <Typography>{entry.marker.name}</Typography>
+            </Location>
           </div>
-        )}
-      </StyledCard>
-    )
+        }
+        action={
+          <div>
+            <IconButton aria-label="settings" onClick={handleOpenMenu}>
+              <MoreVertIcon />
+            </IconButton>
+
+            <Menu
+              anchorEl={menuAnchor}
+              keepMounted
+              open={isMenuOpen}
+              onClose={handleCloseMenu}
+            >
+              <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
+                Delete
+              </MenuItem>
+            </Menu>
+          </div>
+        }
+      />
+
+      <CardContent>
+        <Typography variant="body1" color="textPrimary" component="p">
+          {entry.content.slice(0, 130)}
+
+          {/* display ellipses if >130 chars long */}
+          {entry.content.length > 130 ? "..." : ""}
+        </Typography>
+      </CardContent>
+
+      {/* display expansion card if >130 chars OR there are photos */}
+      {(entry.content.length > 130 || entry.photos.length) && (
+        <div>
+          <CardActions>
+            <IconButton
+              className={clsx(classes.expand, {
+                [classes.expandOpen]: expanded,
+              })}
+              onClick={() => setExpanded((prev) => !prev)}
+            >
+              <ExpandMoreIcon />
+            </IconButton>
+          </CardActions>
+
+          <Collapse in={expanded} timeout="auto">
+            <CardContent>
+              <Typography variant="body1" color="textPrimary" component="p">
+                {entry.content.slice(130)}
+              </Typography>
+            </CardContent>
+
+            <ImageContainer>
+              {entry.photos.map((photo) => (
+                <CardMedia>
+                  <Image src={photo.data} alt="card photo" />
+                </CardMedia>
+              ))}
+            </ImageContainer>
+          </Collapse>
+        </div>
+      )}
+    </StyledCard>
   );
 };
 
@@ -191,15 +181,18 @@ const Entries = ({ entries }) => {
 
   const removeDeletedEntry = (entry) => {
     return () => {
-      console.log("setting state");
-      setEntries(diaryEntries.filter(x => x !== entry));
-    }
-  }
+      setEntries(diaryEntries.filter((x) => x !== entry));
+    };
+  };
 
   return (
     <Container>
       {diaryEntries.map((entry) => (
-        <EntryCard key={entry.id} entry={entry} removeEntry={removeDeletedEntry(entry)} />
+        <EntryCard
+          key={entry.id}
+          entry={entry}
+          removeEntry={removeDeletedEntry(entry)}
+        />
       ))}
     </Container>
   );
