@@ -53,6 +53,8 @@ const useStyles = makeStyles((theme) => ({
 const EntryCard = ({ entry }) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
+  // UI flag
+  const [isDeleted, setDeleted] = useState(false);
 
   //------- start of menu handlers -------//
   const [menuAnchor, setMenuAnchor] = React.useState(null);
@@ -71,87 +73,102 @@ const EntryCard = ({ entry }) => {
       id: entry.id,
       marker_id: entry.marker.id,
     };
-    await axios.post("/homepage/delete-entry", payload, config);
+
     handleCloseMenu();
+
+    const deleteResult = await axios.post(
+      "/homepage/delete-entry",
+      payload,
+      config
+    );
+
+    // update UI if backend succeeds
+    if (deleteResult.data.success) {
+      setDeleted(true);
+    } else {
+      window.alert("Deletion failed: something happened on our end.");
+    }
   };
   //------- end of menu handlers -------//
 
   return (
-    <StyledCard elevation={3}>
-      <CardHeader
-        title={entry.title}
-        subheader={
-          <div style={{ marginTop: "4px" }}>
-            <Typography variant="body1" color="textSecondary">
-              {`Posted: ${new Date(entry.date_time).toDateString()}`}
-            </Typography>
-            <Location>
-              <RoomIcon fontSize="small" color="primary" />
-              <Typography>{entry.marker.name}</Typography>
-            </Location>
-          </div>
-        }
-        action={
-          <div>
-            <IconButton aria-label="settings" onClick={handleOpenMenu}>
-              <MoreVertIcon />
-            </IconButton>
-
-            <Menu
-              anchorEl={menuAnchor}
-              keepMounted
-              open={isMenuOpen}
-              onClose={handleCloseMenu}
-            >
-              <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
-                Delete
-              </MenuItem>
-            </Menu>
-          </div>
-        }
-      />
-
-      <CardContent>
-        <Typography variant="body1" color="textPrimary" component="p">
-          {entry.content.slice(0, 130)}
-
-          {/* display ellipses if >130 chars long */}
-          {entry.content.length > 130 ? "..." : ""}
-        </Typography>
-      </CardContent>
-
-      {/* display expansion card if >130 chars OR there are photos */}
-      {(entry.content.length > 130 || entry.photos.length) && (
-        <div>
-          <CardActions>
-            <IconButton
-              className={clsx(classes.expand, {
-                [classes.expandOpen]: expanded,
-              })}
-              onClick={() => setExpanded((prev) => !prev)}
-            >
-              <ExpandMoreIcon />
-            </IconButton>
-          </CardActions>
-
-          <Collapse in={expanded} timeout="auto">
-            <CardContent>
-              <Typography variant="body1" color="textPrimary" component="p">
-                {entry.content.slice(130)}
+    isDeleted || (
+      <StyledCard elevation={3}>
+        <CardHeader
+          title={entry.title}
+          subheader={
+            <div style={{ marginTop: "4px" }}>
+              <Typography variant="body1" color="textSecondary">
+                {`Posted: ${new Date(entry.date_time).toDateString()}`}
               </Typography>
-            </CardContent>
+              <Location>
+                <RoomIcon fontSize="small" color="primary" />
+                <Typography>{entry.marker.name}</Typography>
+              </Location>
+            </div>
+          }
+          action={
+            <div>
+              <IconButton aria-label="settings" onClick={handleOpenMenu}>
+                <MoreVertIcon />
+              </IconButton>
 
-            <ImageContainer>
-              {entry.photos.map((photo) => (
-                <CardMedia>
-                  <Image src={photo.data} alt="card photo" />
-                </CardMedia>
-              ))}
-            </ImageContainer>
-          </Collapse>
-        </div>
-      )}
-    </StyledCard>
+              <Menu
+                anchorEl={menuAnchor}
+                keepMounted
+                open={isMenuOpen}
+                onClose={handleCloseMenu}
+              >
+                <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
+                  Delete
+                </MenuItem>
+              </Menu>
+            </div>
+          }
+        />
+
+        <CardContent>
+          <Typography variant="body1" color="textPrimary" component="p">
+            {entry.content.slice(0, 130)}
+
+            {/* display ellipses if >130 chars long */}
+            {entry.content.length > 130 ? "..." : ""}
+          </Typography>
+        </CardContent>
+
+        {/* display expansion card if >130 chars OR there are photos */}
+        {(entry.content.length > 130 || entry.photos.length) && (
+          <div>
+            <CardActions>
+              <IconButton
+                className={clsx(classes.expand, {
+                  [classes.expandOpen]: expanded,
+                })}
+                onClick={() => setExpanded((prev) => !prev)}
+              >
+                <ExpandMoreIcon />
+              </IconButton>
+            </CardActions>
+
+            <Collapse in={expanded} timeout="auto">
+              <CardContent>
+                <Typography variant="body1" color="textPrimary" component="p">
+                  {entry.content.slice(130)}
+                </Typography>
+              </CardContent>
+
+              <ImageContainer>
+                {entry.photos.map((photo) => (
+                  <CardMedia>
+                    <Image src={photo.data} alt="card photo" />
+                  </CardMedia>
+                ))}
+              </ImageContainer>
+            </Collapse>
+          </div>
+        )}
+      </StyledCard>
+    )
   );
 };
 

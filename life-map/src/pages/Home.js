@@ -321,7 +321,6 @@ const Home = ({
   // appropriately
   useEffect(
     () => {
-      console.log("remounting");
       let mounted = true;
 
       (async () => {
@@ -354,7 +353,6 @@ const Home = ({
 
   const handleLogOut = async () => {
     await axios.post("http://localhost:5000/logout", config);
-    console.log("logging out");
     setLoggedIn(false);
   };
 
@@ -422,7 +420,6 @@ const Home = ({
           {page === "Map" && (
             <MapContainer>
               <GoogleMapReact
-                // populate api key
                 defaultCenter={mapDefaults.center}
                 defaultZoom={mapDefaults.zoom}
                 options={() => ({ styles: mapDefaults.styles })}
