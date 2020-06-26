@@ -38,7 +38,7 @@ const useStyles = makeStyles({
     backgroundColor: 'rgba(247, 247, 247, 0.9)',
     flexGrow: '1',
     minWidth: '300px',
-    width: '40%',
+    width: '60%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-around',
@@ -264,8 +264,8 @@ const AddEntry = () => {
           </FormInput>
 
           <ImageUpload images={images} handleSelectImage={handleSelectImage} />
-
-          <Button variant="contained" color="primary" type="submit" style={{ marginTop: "24px" }}>
+          
+          <Button variant="contained" color="primary" type="submit" style={{ marginTop: "24px", marginBottom: "24px" }}>
             Save
           </Button>
         </Form>
@@ -291,7 +291,7 @@ const Entry = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  width: 60%;
+  width: 80%;
 `;
 
 const FormInput = styled.div`

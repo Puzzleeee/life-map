@@ -1,20 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { makeStyles } from '@material-ui/core/styles';
 import styled from "styled-components";
 
-const ImageUpload = ({ images, handleSelectImage }) => (
-  <Container>
-    <input type="file" onChange={handleSelectImage} multiple />
-    <ThumbnailContainer>
-      {Array.from(images).map((file) => (
-        <Thumbnail src={URL.createObjectURL(file)} />
-      ))}
-    </ThumbnailContainer>
-  </Container>
-);
+import CloudUploadTwoToneIcon from '@material-ui/icons/CloudUploadTwoTone';
+
+const ImageUpload = ({ images, handleSelectImage }) => {
+
+  const UploadButton = () => {
+    const input = useRef(null);
+    
+    const handleClick = (e) => {
+      input.current.click();
+    }
+  
+    return (
+      <>
+        <input type='file' style={{display: 'none'}} ref={input} onChange={handleSelectImage} multiple/>
+        <UploadBox onClick={handleClick}> 
+          <CloudUploadTwoToneIcon fontSize='large'/>
+          Upload photos 
+        </UploadBox>
+      </>
+    );
+  }
+
+  return (
+    <Container>
+      <UploadButton/>
+      <ThumbnailContainer>
+        {Array.from(images).map((file) => (
+          <Thumbnail src={URL.createObjectURL(file)} />
+        ))}
+      </ThumbnailContainer>
+    </Container>
+  );
+};
+
+
 
 export default ImageUpload;
 
-const Container = styled.section`
+const UploadBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+`
+
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
