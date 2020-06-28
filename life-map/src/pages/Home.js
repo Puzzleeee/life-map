@@ -322,7 +322,7 @@ const Home = ({
   useEffect(
     () => {
       let mounted = true;
-
+      console.log('use effect');
       (async () => {
         const auth_response = await axios.get(
           "http://localhost:5000/check-auth",
@@ -498,7 +498,7 @@ const Home = ({
           {/* render form to add entry */}
           {page === "Add entry" && <AddEntry />}
           {/* render list of entries*/}
-          {page === "View all entries" && <Entries entries={entries} />}
+          {page === "View all entries" && <Entries entries={entries} setEntries={setEntries}/>}
         </Container>
       )}
     </div>

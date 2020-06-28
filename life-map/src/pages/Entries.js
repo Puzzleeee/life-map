@@ -176,18 +176,17 @@ const EntryCard = ({ entry, removeEntry }) => {
  * entries: PropTypes.arrayOf(Entry).isRequired
  * }
  */
-const Entries = ({ entries }) => {
-  const [diaryEntries, setEntries] = useState(entries);
+const Entries = ({ entries, setEntries }) => {
 
   const removeDeletedEntry = (entry) => {
     return () => {
-      setEntries(diaryEntries.filter((x) => x !== entry));
+      setEntries(entries.filter((x) => x !== entry));
     };
   };
 
   return (
     <Container>
-      {diaryEntries.map((entry) => (
+      {entries.map((entry) => (
         <EntryCard
           key={entry.id}
           entry={entry}

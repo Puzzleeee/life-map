@@ -76,7 +76,7 @@ const Landing = () => {
                 <Logo src={logo}/>
               </Title>
               <Slogan>
-                Enter some slogan here
+                
               </Slogan>
               <BorderlessButton onClick={scrollToLogin} style={{ fontSize: "1.5rem" }}>Register / Login</BorderlessButton>
             </HeroContainer>
