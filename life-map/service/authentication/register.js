@@ -1,4 +1,5 @@
 const db = require('../../db/db.js')
+const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcrypt')
 
 const registerUser = async (email, name, password) => {
@@ -11,7 +12,8 @@ const registerUser = async (email, name, password) => {
       }
     } else {
       const hashedPassword = await bcrypt.hash(password, 10)
-      await db.register_user.execute(name, email, hashedPassword)
+      const uuid = uuidv4();
+      await db.register_user.execute(uuid, name, email, hashedPassword)
       return {
         success: true,
         message: `${name} registered with ${email}`

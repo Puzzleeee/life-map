@@ -29,7 +29,7 @@ const ImageUpload = ({ images, handleSelectImage }) => {
       <UploadButton/>
       <ThumbnailContainer>
         {Array.from(images).map((file) => (
-          <Thumbnail src={URL.createObjectURL(file)} />
+          <Thumbnail key={file.name} src={URL.createObjectURL(file)} />
         ))}
       </ThumbnailContainer>
     </Container>
