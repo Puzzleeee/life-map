@@ -69,7 +69,7 @@ module.exports = function (pool) {
                     })
                 }
             })
-        }).catch((err) => { console.error(err) })
+        })
     }
 
     module.read = function (table, fields, condition = false, order = false, limit = false) {
