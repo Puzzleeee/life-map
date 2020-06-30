@@ -12,6 +12,7 @@ module.exports = function (crud) {
     const columns = [
       '`follow_requests`.`id`',
       '`follow_requests`.`sender`',
+      '`follow_requests`.`recipient`',
       '`follow_requests`.`date_time`',
       '`registered_users`.`email`',
       '`registered_users`.`name`'
