@@ -7,6 +7,10 @@ const social = () => {
     return db.create_follow_request.execute(sender, recipient);
   }
 
+  modules.getFollowRequests = async (recipient) => {
+    return db.get_follow_requests.execute(recipient);
+  }
+
   return Object.freeze(modules);
 }
 
