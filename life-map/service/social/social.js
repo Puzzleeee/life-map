@@ -52,19 +52,19 @@ const social = () => {
   return Object.freeze(modules);
 }
 
-const testcases = async () => {
-  const test = social();
-  await test.createFollowRequest(9, 8);
-  await test.createFollowRequest(2, 8);
-  await test.createFollowRequest(8, 10);
-  const requests = await test.getFollowRequests(8);
-  await test.acceptFollowRequest(requests[0]);
-  const requests2 = await test.getFollowRequests(10);
-  await test.acceptFollowRequest(requests2[0]);
-  const socialInfo = await test.arrangeSocialInfo(8);
-  console.log("SOCIAL INFO:", socialInfo);
-}
+// const testcases = async () => {
+//   const test = social();
+//   await test.createFollowRequest(9, 8);
+//   await test.createFollowRequest(2, 8);
+//   await test.createFollowRequest(8, 10);
+//   const requests = await test.getFollowRequests(8);
+//   await test.acceptFollowRequest(requests[0]);
+//   const requests2 = await test.getFollowRequests(10);
+//   await test.acceptFollowRequest(requests2[0]);
+//   const socialInfo = await test.arrangeSocialInfo(8);
+//   console.log("SOCIAL INFO:", socialInfo);
+// }
 
-testcases();
+// testcases();
 
 module.exports = social();

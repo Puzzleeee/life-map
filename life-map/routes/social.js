@@ -4,13 +4,23 @@ const { checkAuthenticated } = require("../middleware/authentication/auth.js");
 const socialController = require("../controllers/social.js");
 
 
-/**
- * /follow:
+/** POST
+ * /social/follow:
  *   post:
  *      recipient: UUID of the follow request recipient
  */
 router.post('/follow', socialController.newFollowRequest);
 
 router.get('/social-info', socialController.getSocialInfo);
+
+/** POST
+ * /social/accept-follow-request && /social/decline-follow-request
+ *   post:
+ *      id: id of the follow request
+ *      sender: id of the request sender
+ *      recipient: id of the request recipient
+ */
+router.post('/accept-follow-request', socialController.acceptFollowRequest);
+router.post('/decline-follow-request', socialController.declineFollowRequest);
 
 module.exports = router;

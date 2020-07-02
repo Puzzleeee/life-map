@@ -21,7 +21,8 @@ const socialController = () => {
   }
 
   modules.getSocialInfo = async (req, res) => {
-    const id = req.user.id;
+    const id = 1;
+    // const id = req.user.id;
     try {
       const data = await social.arrangeSocialInfo(id);
       res.status(200).json({
@@ -32,6 +33,38 @@ const socialController = () => {
       console.log(err);
       res.status(400).json({
         success: false,
+      })
+    }
+  }
+
+  modules.acceptFollowRequest = async (req, res) => {
+    const { id, sender, recipient } = req.body;
+    const followRequest = { id, sender, recipient };
+    try {
+      await social.acceptFollowRequest(followRequest);
+      res.status(200).json({
+        success: true
+      })
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({
+        success: false
+      })
+    }
+  }
+
+  modules.declineFollowRequest = async (req, res) => {
+    const { id, sender, recipient } = req.body;
+    const followRequest = { id, sender, recipient };
+    try {
+      await social.declineFollowRequest(followRequest);
+      res.status(200).json({
+        success: true
+      })
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({
+        success: false
       })
     }
   }
