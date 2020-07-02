@@ -37,19 +37,34 @@ const social = () => {
     return db.get_followers.execute(id);
   }
 
+  modules.getFollowing = async (id) => {
+    return db.get_following.execute(id);
+  }
+
+  modules.arrangeSocialInfo = async (id) => {
+    return {
+      followRequests: await modules.getFollowRequests(id),
+      followers: await modules.getFollowers(id),
+      following: await modules.getFollowing(id),
+    };
+  }
+
   return Object.freeze(modules);
 }
 
-// const testcases = async () => {
-//   const test = social();
-//   await test.createFollowRequest(9, 8);
-//   const requests = await test.getFollowRequests(8);
-//   console.log("REQUESTS", requests);
-//   await test.declineFollowRequest(requests[0]);
-//   const followers = await test.getFollowers(8);
-//   console.log("FOLLOWERS", followers);
-// }
+const testcases = async () => {
+  const test = social();
+  await test.createFollowRequest(9, 8);
+  await test.createFollowRequest(2, 8);
+  await test.createFollowRequest(8, 10);
+  const requests = await test.getFollowRequests(8);
+  await test.acceptFollowRequest(requests[0]);
+  const requests2 = await test.getFollowRequests(10);
+  await test.acceptFollowRequest(requests2[0]);
+  const socialInfo = await test.arrangeSocialInfo(8);
+  console.log("SOCIAL INFO:", socialInfo);
+}
 
-// testcases();
+testcases();
 
 module.exports = social();

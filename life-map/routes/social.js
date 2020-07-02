@@ -11,4 +11,6 @@ const socialController = require("../controllers/social.js");
  */
 router.post('/follow', socialController.newFollowRequest);
 
+router.get('/social-info', socialController.getSocialInfo);
+
 module.exports = router;

@@ -20,6 +20,22 @@ const socialController = () => {
     }
   }
 
+  modules.getSocialInfo = async (req, res) => {
+    const id = req.user.id;
+    try {
+      const data = await social.arrangeSocialInfo(id);
+      res.status(200).json({
+        ...data,
+        success: true
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({
+        success: false,
+      })
+    }
+  }
+
   return Object.freeze(modules);
 }
 
