@@ -3,6 +3,23 @@ const db = require('../../db/db.js')
 const social = () => {
   let modules = {};
 
+  /**
+   * Follow requests are created and retrived in the following shape: 
+   * {
+   *   id (auto generated) - id of the follow request
+   *   sender - uuid of the follow request sender
+   *   recipient - uuid of the follow request recipient
+   *   date_time (auto generated) - date/time request was created
+   * }
+   */
+
+
+   /**
+    * Create a follow request
+    * 
+    * @param {string} sender - uuid of follow request sender 
+    * @param {string} recipient - uuid of follow request recipient
+    */
   modules.createFollowRequest = async (sender, recipient) => {
     return db.create_follow_request.execute(sender, recipient);
   }
@@ -33,6 +50,18 @@ const social = () => {
     return db.delete_follow_request.execute(id);
   }
 
+  /**
+   * Follower and following data returned in the following shape:
+   * {
+   *   id (auto generated): id of the relationship
+   *   followee: id of the user being followed
+   *   follower: id of the user that is following
+   *   email: email of the follower/followee if retrieving follower/following respectively
+   *   name: username of the follower/followee if retrieving follower/following respecitively
+   * }
+   * 
+   */
+
   modules.getFollowers = async (id) => {
     return db.get_followers.execute(id);
   }
@@ -41,6 +70,12 @@ const social = () => {
     return db.get_following.execute(id);
   }
 
+  /**
+   * Gets the basic social info of user
+   * 
+   * @param {string} id - UUID of requesting user
+   * @return {Object} Object containing the basic social info of the user
+   */
   modules.arrangeSocialInfo = async (id) => {
     return {
       followRequests: await modules.getFollowRequests(id),

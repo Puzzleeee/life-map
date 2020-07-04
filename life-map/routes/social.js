@@ -11,6 +11,15 @@ const socialController = require("../controllers/social.js");
  */
 router.post('/follow', socialController.newFollowRequest);
 
+/** GET 
+ * /social/social-info
+ *   response:
+ *      { 
+ *        followRequest: array of user's follow requests
+ *        followers: array of user's followers 
+ *        following: array of user's following 
+ *      }
+ */
 router.get('/social-info', socialController.getSocialInfo);
 
 /** POST

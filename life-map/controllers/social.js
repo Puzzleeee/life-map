@@ -4,8 +4,8 @@ const socialController = () => {
   let modules = {};
 
   modules.newFollowRequest = async (req, res) => {
-    // const sender = req.user.id;
-    const sender = 'ccfe1fec-7153-430d-9805-2ebcf821c937';
+    const sender = req.user.id;
+    // const sender = 'ccfe1fec-7153-430d-9805-2ebcf821c937';
     const recipient = req.body.recipient;
     try {
       await social.createFollowRequest(sender, recipient);
@@ -21,8 +21,8 @@ const socialController = () => {
   }
 
   modules.getSocialInfo = async (req, res) => {
-    const id = 1;
-    // const id = req.user.id;
+    const id = req.user.id;
+    // const id = 1;
     try {
       const data = await social.arrangeSocialInfo(id);
       res.status(200).json({
