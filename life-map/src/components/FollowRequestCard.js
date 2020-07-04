@@ -13,11 +13,11 @@ const FollowRequestCard = ({ request, UIhandler }) => {
     const payload = { id, sender, recipient };
     axios
       .post("http://localhost:5000/social/accept-follow-request", payload)
-      .then((res) => {
-        console.log(res);
+      .then(() => {
+        UIhandler(id, "hide");
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 
@@ -25,11 +25,11 @@ const FollowRequestCard = ({ request, UIhandler }) => {
     const payload = { id, sender, recipient };
     axios
       .post("http://localhost:5000/social/decline-follow-request", payload)
-      .then((res) => {
-        console.log(res);
+      .then(() => {
+        UIhandler(id, "hide");
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 

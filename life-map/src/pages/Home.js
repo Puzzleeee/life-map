@@ -325,7 +325,6 @@ const Home = ({
   useEffect(
     () => {
       let mounted = true;
-      console.log("use effect");
       (async () => {
         const auth_response = await axios.get(
           "http://localhost:5000/check-auth",
@@ -347,7 +346,6 @@ const Home = ({
           "http://localhost:5000/social/social-info",
           config
         );
-        console.log(socialInfo);
         setFollowRequests(socialInfo.followRequests);
       })();
 
@@ -366,11 +364,9 @@ const Home = ({
     setLoggedIn(false);
   };
 
-  //-------- start of menu setters --------//
+  //-------- start of nav menu setters --------//
   const [menuAnchor, setMenuAnchor] = React.useState(null);
-  const [followMenuAnchor, setFollowMenuAnchor] = React.useState(null);
   const isMenuOpen = Boolean(menuAnchor);
-  const isFollowMenuOpen = Boolean(followMenuAnchor);
 
   const handleOpenMenu = (event) => {
     setMenuAnchor(event.target);
@@ -381,10 +377,29 @@ const Home = ({
     setMenuAnchor(null);
   };
 
+  //-------- end of nav menu setters --------//
+
+  //-------- start of follow menu handlers --------//
+  const [followMenuAnchor, setFollowMenuAnchor] = React.useState(null);
+  const isFollowMenuOpen = Boolean(followMenuAnchor);
+
   const handleOpenFollow = (event) => {
     setFollowMenuAnchor(event.target);
   };
-  //-------- end of view setters --------//
+
+  /**
+   * @description Updates in-state list of follow requests based on update type.
+   * @param {string} id the follow request's id
+   * @param {string} type the type of update to perform. Currently only supports 'hide'.
+   *
+   * @returns {void}
+   */
+  const handleFollowUIUpdate = (id, type) => {
+    if (type === "hide") {
+      setFollowRequests((prev) => prev.filter((request) => request.id !== id));
+    }
+  };
+  //-------- end of follow menu handlers --------//
 
   return (
     <div>
@@ -410,6 +425,8 @@ const Home = ({
               <IconButton color="inherit" onClick={handleOpenMenu}>
                 <MenuIcon />
               </IconButton>
+
+              {/* nav bar menu modal */}
               <Menu
                 anchorEl={menuAnchor}
                 keepMounted
@@ -424,22 +441,39 @@ const Home = ({
                   View all entries
                 </MenuItem>
               </Menu>
+              {/* end nav bar menu modal */}
 
+              {/* follow requests modal */}
               <Menu
                 anchorEl={followMenuAnchor}
                 keepMounted
                 open={isFollowMenuOpen}
                 onClose={() => setFollowMenuAnchor(null)}
               >
-                {followRequests.map((req) => (
-                  <FollowRequestCard key={req.id} request={req} />
-                ))}
+                {!!followRequests.length &&
+                  followRequests.map((req) => (
+                    <FollowRequestCard
+                      key={req.id}
+                      request={req}
+                      UIhandler={handleFollowUIUpdate}
+                    />
+                  ))}
+
+                {!followRequests.length && (
+                  <MenuItem style={{ width: "350px" }}>
+                    No follow requests
+                  </MenuItem>
+                )}
               </Menu>
+              {/* end follow requests modal */}
+
               <Typography variant="h6">{page}</Typography>
+
               <div style={{ display: "flex" }}>
                 <IconButton color="inherit" onClick={handleOpenFollow}>
                   <NotificationsIcon />
                 </IconButton>
+
                 <Button color="inherit" onClick={handleLogOut}>
                   Logout
                 </Button>
