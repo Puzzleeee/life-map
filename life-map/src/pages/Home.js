@@ -5,6 +5,7 @@ import { Redirect } from "react-router-dom";
 import GoogleMapReact from "google-map-react";
 import AddEntry from "../components/AddEntry";
 import Entries from "./Entries";
+import FollowRequestCard from "../components/FollowRequestCard";
 //--------start import Material-ui components---------//
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -17,6 +18,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 import RoomIcon from "@material-ui/icons/Room";
 import CloseIcon from "@material-ui/icons/Close";
 //--------end import Material-ui components---------//
@@ -306,6 +308,7 @@ const Home = ({
   },
 }) => {
   const [entries, setEntries] = useState([]);
+  const [followRequests, setFollowRequests] = useState([]);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(true);
   //-------- start of view states -------- //
@@ -322,7 +325,7 @@ const Home = ({
   useEffect(
     () => {
       let mounted = true;
-      console.log('use effect');
+      console.log("use effect");
       (async () => {
         const auth_response = await axios.get(
           "http://localhost:5000/check-auth",
@@ -339,6 +342,13 @@ const Home = ({
           config
         );
         setEntries(entries.data.data);
+
+        const { data: socialInfo } = await axios.get(
+          "http://localhost:5000/social/social-info",
+          config
+        );
+        console.log(socialInfo);
+        setFollowRequests(socialInfo.followRequests);
       })();
 
       return () => {
@@ -358,7 +368,9 @@ const Home = ({
 
   //-------- start of menu setters --------//
   const [menuAnchor, setMenuAnchor] = React.useState(null);
+  const [followMenuAnchor, setFollowMenuAnchor] = React.useState(null);
   const isMenuOpen = Boolean(menuAnchor);
+  const isFollowMenuOpen = Boolean(followMenuAnchor);
 
   const handleOpenMenu = (event) => {
     setMenuAnchor(event.target);
@@ -367,6 +379,10 @@ const Home = ({
   const handlePageChange = (page) => {
     setPage(page);
     setMenuAnchor(null);
+  };
+
+  const handleOpenFollow = (event) => {
+    setFollowMenuAnchor(event.target);
   };
   //-------- end of view setters --------//
 
@@ -408,10 +424,26 @@ const Home = ({
                   View all entries
                 </MenuItem>
               </Menu>
+
+              <Menu
+                anchorEl={followMenuAnchor}
+                keepMounted
+                open={isFollowMenuOpen}
+                onClose={() => setFollowMenuAnchor(null)}
+              >
+                {followRequests.map((req) => (
+                  <FollowRequestCard key={req.id} request={req} />
+                ))}
+              </Menu>
               <Typography variant="h6">{page}</Typography>
-              <Button color="inherit" onClick={handleLogOut}>
-                Logout
-              </Button>
+              <div style={{ display: "flex" }}>
+                <IconButton color="inherit" onClick={handleOpenFollow}>
+                  <NotificationsIcon />
+                </IconButton>
+                <Button color="inherit" onClick={handleLogOut}>
+                  Logout
+                </Button>
+              </div>
             </Toolbar>
           </AppBar>
           {/* end of navbar */}
@@ -498,7 +530,9 @@ const Home = ({
           {/* render form to add entry */}
           {page === "Add entry" && <AddEntry />}
           {/* render list of entries*/}
-          {page === "View all entries" && <Entries entries={entries} setEntries={setEntries}/>}
+          {page === "View all entries" && (
+            <Entries entries={entries} setEntries={setEntries} />
+          )}
         </Container>
       )}
     </div>
