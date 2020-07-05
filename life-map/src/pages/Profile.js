@@ -173,11 +173,11 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
         </Tabs>
       </Paper>
 
-      <Paper>
-        {tabIndex === 0 &&
-          !!profileInfo.entries &&
-          profileInfo.entries.map((entry) => <EntryCard entry={entry} />)}
+      {tabIndex === 0 &&
+        !!profileInfo.entries &&
+        profileInfo.entries.map((entry) => <EntryCard entry={entry} />)}
 
+      <Paper>
         {tabIndex === 1 &&
           !!profileInfo.followers &&
           profileInfo.followers.map((followRelationship) => (
