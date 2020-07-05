@@ -84,6 +84,17 @@ const social = () => {
     };
   }
 
+  /**
+   * Search for users given a search string. Search is done based on user's
+   * email and name, search string will be appended with regex wildcards at the start and end
+   * 
+   * @param {string} searchString - String to search for users  
+   * @return {Array} Array of objects containing information of users whose email or username match the search string
+   */
+  modules.searchUsers = async (searchString) => {
+    return db.search_users.execute(searchString);
+  }
+
   return Object.freeze(modules);
 }
 

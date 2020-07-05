@@ -69,6 +69,25 @@ const socialController = () => {
     }
   }
 
+  modules.searchUsers = async (req, res) => {
+    const { searchString } = req.body;
+    try {
+      const results = await social.searchUsers(searchString);
+      res.status(200).json({
+        results,
+        success: true,
+        message: "Search success"
+      })
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({
+        results: [],
+        success: false,
+        message: "Search unsuccessful"
+      })
+    }
+  }
+
   return Object.freeze(modules);
 }
 
