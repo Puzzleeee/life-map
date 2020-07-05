@@ -5,6 +5,7 @@ import { Redirect } from "react-router-dom";
 import GoogleMapReact from "google-map-react";
 import AddEntry from "../components/AddEntry";
 import Entries from "./Entries";
+import Profile from "./Profile";
 import FollowRequestCard from "../components/FollowRequestCard";
 //--------start import Material-ui components---------//
 import AppBar from "@material-ui/core/AppBar";
@@ -19,6 +20,7 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import RoomIcon from "@material-ui/icons/Room";
 import CloseIcon from "@material-ui/icons/Close";
 //--------end import Material-ui components---------//
@@ -470,6 +472,13 @@ const Home = ({
               <Typography variant="h6">{page}</Typography>
 
               <div style={{ display: "flex" }}>
+                <IconButton
+                  color="inherit"
+                  onClick={() => handlePageChange("Profile")}
+                >
+                  <AccountCircleIcon />
+                </IconButton>
+
                 <IconButton color="inherit" onClick={handleOpenFollow}>
                   <NotificationsIcon />
                 </IconButton>
@@ -563,10 +572,14 @@ const Home = ({
 
           {/* render form to add entry */}
           {page === "Add entry" && <AddEntry />}
+
           {/* render list of entries*/}
           {page === "View all entries" && (
             <Entries entries={entries} setEntries={setEntries} />
           )}
+
+          {/* render user profile page */}
+          {page === "Profile" && <Profile />}
         </Container>
       )}
     </div>
