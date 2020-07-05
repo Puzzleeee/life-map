@@ -2,8 +2,11 @@ module.exports = function (crud) {
 
   let module = {};
 
-  module.execute = async function (name, email, password) {
+  module.execute = async function (id, name, email, password) {
     let values = {
+      id: {
+        value: id
+      },
       name: {
         value: name
       },

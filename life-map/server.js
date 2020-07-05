@@ -92,5 +92,6 @@ app.post(
 // Routes
 app.use("/", require("./routes/auth.js"));
 app.use("/homepage", require("./routes/homepage.js"));
+app.use("/social", require("./routes/social.js"));
 
 app.listen(PORT, console.log(`Server running on port ${PORT}`));

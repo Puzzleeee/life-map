@@ -20,6 +20,89 @@ module.exports = function (pool) {
         CANNOT_BE_NULL: 1048
     }
 
+    module.read_like = function (table, fields, like, order = false, limit = false) {
+        let sql = `SELECT `
+        
+        let arr = []
+
+        let p_fields = ` FROM ${table} `
+
+        if (fields.length > 0) {
+            for (let i = 0; i < fields.length; i++) {
+                sql += fields[i]
+                if (i != fields.length - 1) {
+                    sql += ','
+                }
+            }
+        } else {
+            sql += '*'
+        }
+
+        let like_fields = Object.keys(like);
+        p_fields += ' WHERE ';
+
+        for (let i = 0; i < like_fields.length; i++) {
+            p_fields += '`' + like_fields[i] + '` LIKE ? '
+            arr.push(`%${like[like_fields[i]].value}%`);
+            if (like[like_fields[i]].next) {
+                p_fields += `${like[like_fields[i]].next} `
+            }
+        }
+
+        sql += p_fields
+
+        if (order != false) {
+
+            sql += " ORDER BY `"
+
+            let o_fields = Object.keys(order)
+
+            for (var i = 0; i < o_fields.length; i++) {
+
+                let type = order[o_fields[i]].descending ? "DESC" : "ASC"
+
+                sql += o_fields[i] + "` " + type
+
+                if (i != o_fields.length - 1) {
+                    sql += ","
+                }
+            }
+        }
+
+        if (limit != false) {
+            if (typeof limit === 'string') {
+                sql += " LIMIT " + limit + ";"
+            } else {
+                sql += ' LIMIT ' + limit.limit + ' OFFSET ' + limit.offset + ';'
+            }
+        }
+
+        console.log("SQL", sql);
+        console.log("ARRAY", arr);
+        
+        return new Promise(function (resolve, reject) {
+            pool.getConnection(function (err, conn) {
+                if (errorHandle(err, reject)) {
+                    conn.execute(sql, arr, function (error, results, fields) {
+                        if (error) {
+                            conn.query('ROLLBACK;', function (error, results, fields) {
+                                if (error) console.log(error)
+                                pool.releaseConnection(conn)
+                            })
+                            reject(error)
+                        } else {
+                            resolve(results)
+                            conn.query('COMMIT;', function (error, results, fields) {
+                                if (error) console.log(error)
+                                pool.releaseConnection(conn)
+                            })
+                        }
+                    })
+                }
+            })
+        })
+    }
+
     module.create = function (table, fields, retrieveLastIndex = false) {
 
         let t_fields = Object.keys(fields)
@@ -69,7 +152,7 @@ module.exports = function (pool) {
                     })
                 }
             })
-        }).catch((err) => { console.error(err) })
+        })
     }
 
     module.read = function (table, fields, condition = false, order = false, limit = false) {

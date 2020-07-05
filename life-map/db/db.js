@@ -17,5 +17,6 @@ const user_auth = require("./db_includes/user_auth.js")(crud);
 const markers = require("./db_includes/markers.js")(crud);
 const diary = require("./db_includes/diary_entries.js")(crud);
 const photos = require("./db_includes/photos.js")(crud);
+const social = require("./db_includes/social.js")(crud);
 
-module.exports = { ...user_auth, ...markers, ...diary, ...photos };
+module.exports = { ...user_auth, ...markers, ...diary, ...photos, ...social };
