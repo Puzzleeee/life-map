@@ -6,13 +6,16 @@ const profile = () => {
   let modules = {};
 
   modules.getUserProfile = async (id) => {
-    const results = {
-      profile : await db.get_user_profile.execute(id),
-      entries : await homepage.arrangeUserData(id),
-      social_info : await social.arrangeSocialInfo(id),
+    const [profile, entries, socialInfo] = await Promise.all([
+      db.get_user_profile.execute(id), 
+      homepage.arrangeUserData(id),
+      social.arrangeSocialInfo(id)
+    ]);
+    return {
+      ...profile[0],
+      entries: entries,
+      ...socialInfo
     }
-
-    return { ...results.profile[0], entries: results.entries, ...results.social_info }
   }
 
   return modules;
