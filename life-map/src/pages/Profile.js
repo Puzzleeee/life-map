@@ -24,17 +24,22 @@ const config = {
  * @props {string} viewer - the viewer's ID. Used to check if the viewer follows the user or not.
  * @props {object} user - the user object to render
  */
-const UserCard = ({ viewer, user }) => {
+const UserCard = ({ viewerInfo, user }) => {
   const [isFollowing, setIsFollowing] = useState(
-    user.followers.includes(viewer)
+    // go through array of follow relationships and check if followee is the user in this card
+    viewerInfo.following.some(
+      (followRelationship) => followRelationship.followee === user.id
+    )
   );
 
   const handleClick = () => {
     if (!isFollowing) {
       axios
-        .post("http://localhost:5000/social/follow", config, {
-          recipient: user.id,
-        })
+        .post(
+          "http://localhost:5000/social/follow",
+          { recipient: user.id },
+          config
+        )
         .then(() => setIsFollowing(true))
         .catch((error) => {
           console.error(error);
@@ -48,8 +53,8 @@ const UserCard = ({ viewer, user }) => {
     <CardContainer>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Avatar
-          src={user.avatar && ""}
-          alt={user.username}
+          src={user.profile_pic && ""}
+          alt={user.name}
           style={{ marginRight: "16px" }}
         />
         <Typography variant="subtitle2">{user.name}</Typography>
@@ -73,14 +78,10 @@ const UserCard = ({ viewer, user }) => {
  * @props {string} userID - the userID of the user to fetch and display
  */
 const Profile = ({ viewerID, userID }) => {
-  const [profileInfo, setProfileInfo] = useState({
-    // test data. delete once backend works. i.e. useState({})
-    username: "Sam",
-    bio: "I'm a student at NUS. I'm also an intern. I am a coder.",
-  });
+  const [profileInfo, setProfileInfo] = useState({});
   const [tabIndex, setTabIndex] = useState(0);
 
-  const [nameInput, setNameInput] = useState(profileInfo.username);
+  const [nameInput, setNameInput] = useState(profileInfo.name);
   const [isEditingName, setIsEditingName] = useState(false);
 
   const [bioInput, setBioInput] = useState(profileInfo.bio);
@@ -98,8 +99,7 @@ const Profile = ({ viewerID, userID }) => {
           config
         );
         console.log(data);
-        // temporarily commented out since data is not correct
-        // setProfileInfo(data);
+        setProfileInfo(data);
       } catch (error) {
         console.error(error);
       }
@@ -111,7 +111,7 @@ const Profile = ({ viewerID, userID }) => {
     switch (field) {
       case "username":
         setIsEditingName(false);
-        setProfileInfo((prev) => ({ ...prev, username: value }));
+        setProfileInfo((prev) => ({ ...prev, name: value }));
         return;
       case "bio":
         setIsEditingBio(false);
@@ -127,7 +127,7 @@ const Profile = ({ viewerID, userID }) => {
       <Header>
         <Avatar
           src={profileInfo.profile_pic && ""}
-          alt={profileInfo.username}
+          alt={profileInfo.name}
           style={{ height: "92px", width: "92px" }}
         />
 
@@ -137,7 +137,7 @@ const Profile = ({ viewerID, userID }) => {
             {!isEditingName && (
               <>
                 <Typography variant="h4" style={{ marginBottom: "4px" }}>
-                  {profileInfo.username}
+                  {profileInfo.name}
                 </Typography>
 
                 {/* only display edit button if at your own profile */}
@@ -216,22 +216,34 @@ const Profile = ({ viewerID, userID }) => {
           variant="fullWidth"
         >
           <Tab label="entries" />
-          <Tab label="following" />
           <Tab label="followers" />
+          <Tab label="following" />
         </Tabs>
       </Paper>
 
       <Paper>
         {tabIndex === 1 &&
           !!profileInfo.followers &&
-          profileInfo.followers.map((user) => (
-            <UserCard viewer={viewerID} user={user} />
+          profileInfo.followers.map((followRelationship) => (
+            <UserCard
+              viewerInfo={profileInfo}
+              user={{
+                id: followRelationship.follower,
+                name: followRelationship.name,
+              }}
+            />
           ))}
 
         {tabIndex === 2 &&
           !!profileInfo.following &&
-          profileInfo.following.map((user) => (
-            <UserCard viewer={viewerID} user={user} />
+          profileInfo.following.map((followRelationship) => (
+            <UserCard
+              viewerInfo={profileInfo}
+              user={{
+                id: followRelationship.followee,
+                name: followRelationship.name,
+              }}
+            />
           ))}
       </Paper>
     </Container>
