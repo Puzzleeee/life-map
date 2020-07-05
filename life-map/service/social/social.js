@@ -77,10 +77,16 @@ const social = () => {
    * @return {Object} Object containing the basic social info of the user
    */
   modules.arrangeSocialInfo = async (id) => {
+    const [followRequests, followers, following] = await Promise.all([
+      modules.getFollowRequests(id),
+      modules.getFollowers(id),
+      modules.getFollowing(id),
+    ]);
+
     return {
-      followRequests: await modules.getFollowRequests(id),
-      followers: await modules.getFollowers(id),
-      following: await modules.getFollowing(id),
+      followRequests,
+      followers,
+      following
     };
   }
 
