@@ -579,7 +579,7 @@ const Home = ({
           )}
 
           {/* render user profile page */}
-          {page === "Profile" && <Profile />}
+          {page === "Profile" && <Profile userID={userID} />}
         </Container>
       )}
     </div>
