@@ -7,6 +7,10 @@ import Typography from "@material-ui/core/Typography";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Paper from "@material-ui/core/Paper";
+import IconButton from "@material-ui/core/IconButton";
+import CheckIcon from "@material-ui/icons/Check";
+import EditIcon from "@material-ui/icons/Edit";
+import TextField from "@material-ui/core/TextField";
 
 const config = {
   withCredentials: true,
@@ -19,7 +23,6 @@ const UserCard = ({ viewer, user }) => {
   const [isFollowing, setIsFollowing] = useState(
     user.followers.includes(viewer)
   );
-  // const [isFollowing, setIsFollowing] = useState(false);
 
   const handleClick = () => {
     if (!isFollowing) {
@@ -58,40 +61,125 @@ const UserCard = ({ viewer, user }) => {
 };
 
 const Profile = ({ viewerID, userID }) => {
-  const [socialInfo, setSocialInfo] = useState({
+  const [profileInfo, setProfileInfo] = useState({
+    // test data. delete once backend works. i.e. useState({})
     username: "Sam",
-    biography: "I'm a student at NUS. I'm also an intern. I am a coder.",
+    bio: "I'm a student at NUS. I'm also an intern. I am a coder.",
   });
   const [tabIndex, setTabIndex] = useState(0);
+  const [nameInput, setNameInput] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [bioInput, setBioInput] = useState("");
+  const [isEditingBio, setIsEditingBio] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:5000/social/social-info",
-          config
+        const { data } = await axios.post(
+          "http://localhost:5000/profile/user",
+          { id: userID, ...config }
         );
         console.log(data);
-        setSocialInfo((prev) => ({ ...prev, ...data }));
+        // temporarily commented out since data is not correct
+        // setProfileInfo(data);
+        setNameInput(profileInfo.username);
+        setBioInput(profileInfo.bio);
       } catch (error) {
         console.error(error);
       }
     })();
-  }, []);
+  }, [profileInfo.bio, profileInfo.username, userID]);
+
+  const handleEdit = (value, field) => {
+    // in future, add call to post and edit user profile before updating UI state
+    switch (field) {
+      case "username":
+        setIsEditingName(false);
+        setProfileInfo((prev) => ({ ...prev, username: value }));
+        return;
+      case "bio":
+        setIsEditingBio(false);
+        setProfileInfo((prev) => ({ ...prev, bio: value }));
+        return;
+      default:
+        return;
+    }
+  };
 
   return (
     <Container>
       <Header>
         <Avatar
-          src={socialInfo.avatar && ""}
-          alt={socialInfo.username}
+          src={profileInfo.profile_pic && ""}
+          alt={profileInfo.username}
           style={{ height: "92px", width: "92px" }}
         />
+
         <UserInfo>
-          <Typography variant="h4" style={{ marginBottom: "4px" }}>
-            {socialInfo.username}
-          </Typography>
-          <Typography variant="subtitle1">{socialInfo.biography}</Typography>
+          {/* start name component */}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {!isEditingName && (
+              <>
+                <Typography variant="h4" style={{ marginBottom: "4px" }}>
+                  {profileInfo.username}
+                </Typography>
+                <IconButton
+                  color="primary"
+                  onClick={() => setIsEditingName(true)}
+                >
+                  <EditIcon />
+                </IconButton>
+              </>
+            )}
+
+            {!!isEditingName && (
+              <>
+                <TextField
+                  value={nameInput}
+                  onChange={(event) => setNameInput(event.target.value)}
+                />
+                <IconButton
+                  color="primary"
+                  onClick={() => handleEdit(nameInput, "username")}
+                >
+                  <CheckIcon />
+                </IconButton>
+              </>
+            )}
+          </div>
+          {/* end name component */}
+
+          {/* start bio component */}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {!isEditingBio && (
+              <>
+                <Typography variant="subtitle1">{profileInfo.bio}</Typography>
+                <IconButton
+                  color="primary"
+                  onClick={() => setIsEditingBio(true)}
+                >
+                  <EditIcon />
+                </IconButton>
+              </>
+            )}
+
+            {!!isEditingBio && (
+              <>
+                <TextField
+                  value={bioInput}
+                  onChange={(event) => setBioInput(event.target.value)}
+                  multiline
+                />
+                <IconButton
+                  color="primary"
+                  onClick={() => handleEdit(bioInput, "bio")}
+                >
+                  <CheckIcon />
+                </IconButton>
+              </>
+            )}
+          </div>
+          {/* end bio component */}
         </UserInfo>
       </Header>
 
@@ -111,14 +199,14 @@ const Profile = ({ viewerID, userID }) => {
 
       <Paper>
         {tabIndex === 1 &&
-          !!socialInfo.followers &&
-          socialInfo.followers.map((user) => (
+          !!profileInfo.followers &&
+          profileInfo.followers.map((user) => (
             <UserCard viewer={viewerID} user={user} />
           ))}
 
         {tabIndex === 2 &&
-          !!socialInfo.following &&
-          socialInfo.following.map((user) => (
+          !!profileInfo.following &&
+          profileInfo.following.map((user) => (
             <UserCard viewer={viewerID} user={user} />
           ))}
       </Paper>
