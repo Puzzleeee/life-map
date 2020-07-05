@@ -14,6 +14,7 @@ const registerUser = async (email, name, password) => {
       const hashedPassword = await bcrypt.hash(password, 10)
       const uuid = uuidv4();
       await db.register_user.execute(uuid, name, email, hashedPassword)
+      await db.create_profile.execute(uuid, 'Describe yourself!', null);
       return {
         success: true,
         message: `${name} registered with ${email}`

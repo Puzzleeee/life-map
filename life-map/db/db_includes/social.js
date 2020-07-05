@@ -13,6 +13,7 @@ module.exports = function (crud) {
 
     search_users: require('../tables/social/search_users.js')(crud),
 
-    get_user_profile: require('../tables/social/get_user_profile.js')(crud)
+    get_user_profile: require('../tables/social/get_user_profile.js')(crud),
+    create_profile: require('../tables/social/create_profile.js')(crud),
   }
 }
