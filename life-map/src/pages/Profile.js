@@ -24,7 +24,7 @@ const config = {
  * @props {string} viewer - the viewer's ID. Used to check if the viewer follows the user or not.
  * @props {object} user - the user object to render
  */
-const UserCard = ({ viewerInfo, user }) => {
+const UserCard = ({ viewerInfo, user, changeProfile }) => {
   const [isFollowing, setIsFollowing] = useState(
     // go through array of follow relationships and check if followee is the user in this card
     viewerInfo.following.some(
@@ -32,7 +32,10 @@ const UserCard = ({ viewerInfo, user }) => {
     )
   );
 
-  const handleClick = () => {
+  const handleButtonClick = (event) => {
+    // don't propagate click event to parent listener (which changes profile page)
+    event.stopPropagation();
+
     if (!isFollowing) {
       axios
         .post(
@@ -50,7 +53,7 @@ const UserCard = ({ viewerInfo, user }) => {
   };
 
   return (
-    <CardContainer>
+    <CardContainer onClick={() => changeProfile(user.id)}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Avatar
           src={user.profile_pic && ""}
@@ -64,7 +67,7 @@ const UserCard = ({ viewerInfo, user }) => {
         size="small"
         variant="contained"
         color={isFollowing ? "secondary " : "primary"}
-        onClick={handleClick}
+        onClick={handleButtonClick}
       >
         {isFollowing ? "Unfollow" : "Follow"}
       </Button>
@@ -77,7 +80,7 @@ const UserCard = ({ viewerInfo, user }) => {
  * @props {string} viewerID - the viewer's ID. Used to determine if you're viewing your own profile
  * @props {string} userID - the userID of the user to fetch and display
  */
-const Profile = ({ viewerID, userID }) => {
+const Profile = ({ viewerID, userID, changeProfile }) => {
   const [profileInfo, setProfileInfo] = useState({});
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -227,6 +230,7 @@ const Profile = ({ viewerID, userID }) => {
           profileInfo.followers.map((followRelationship) => (
             <UserCard
               viewerInfo={profileInfo}
+              changeProfile={changeProfile}
               user={{
                 id: followRelationship.follower,
                 name: followRelationship.name,
@@ -239,6 +243,7 @@ const Profile = ({ viewerID, userID }) => {
           profileInfo.following.map((followRelationship) => (
             <UserCard
               viewerInfo={profileInfo}
+              changeProfile={changeProfile}
               user={{
                 id: followRelationship.followee,
                 name: followRelationship.name,
@@ -281,6 +286,7 @@ const CardContainer = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 12px 24px;
+  cursor: pointer;
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
   &:hover {

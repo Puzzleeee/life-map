@@ -320,6 +320,7 @@ const Home = ({
     content: "",
     isOpen: false,
   });
+  const [profileUserID, setProfileUserID] = useState("");
   //-------- end of view states -------- //
 
   // on mounting component, check if user was already logged in and redirect
@@ -375,6 +376,10 @@ const Home = ({
   };
 
   const handlePageChange = (page) => {
+    if (page === "Profile") {
+      setProfileUserID(userID);
+    }
+
     setPage(page);
     setMenuAnchor(null);
   };
@@ -579,7 +584,13 @@ const Home = ({
           )}
 
           {/* render user profile page */}
-          {page === "Profile" && <Profile viewerID={userID} userID={userID} />}
+          {page === "Profile" && (
+            <Profile
+              viewerID={userID}
+              userID={profileUserID}
+              changeProfile={setProfileUserID}
+            />
+          )}
         </Container>
       )}
     </div>
