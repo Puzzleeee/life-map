@@ -20,3 +20,5 @@ const photos = require("./db_includes/photos.js")(crud);
 const social = require("./db_includes/social.js")(crud);
 
 module.exports = { ...user_auth, ...markers, ...diary, ...photos, ...social };
+
+social.search_users.execute('test').then(result => console.log(result));
