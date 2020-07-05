@@ -32,4 +32,11 @@ router.get('/social-info', socialController.getSocialInfo);
 router.post('/accept-follow-request', socialController.acceptFollowRequest);
 router.post('/decline-follow-request', socialController.declineFollowRequest);
 
+/** POST
+ * /social/user
+ *   post:
+ *      searchString: string to run search on
+ */
+router.post('/user', socialController.searchUsers);
+
 module.exports = router;
