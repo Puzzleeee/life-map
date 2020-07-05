@@ -113,7 +113,7 @@ const Login = ({ loginRef, registerRef, redirect }) => {
       },
       config
     );
-    return { success: response.data.success, name: response.data.user.name };
+    return { success: response.data.success, name: response.data.user.name, id: response.data.user.id };
   };
 
   const handleSubmit = async (event) => {
@@ -122,7 +122,7 @@ const Login = ({ loginRef, registerRef, redirect }) => {
     const response = await authCheck();
 
     if (response.success) {
-      redirect(response.name);
+      redirect(response.id);
     } else {
       enqueueSnackbar("Wrong email or password!", { variant: "error"});
     }

@@ -94,7 +94,8 @@ const Profile = ({ viewerID, userID }) => {
       try {
         const { data } = await axios.post(
           "http://localhost:5000/profile/user",
-          { id: userID, ...config }
+          { id: userID },
+          config
         );
         console.log(data);
         // temporarily commented out since data is not correct
