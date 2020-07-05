@@ -13,7 +13,6 @@ const homepage = (diary, markers, media) => {
       const marker = markers.getMarkers(entry.marker_id);
       const photos = media.retrievePhotos(entry.id);
       const info = await Promise.all([marker, photos]);
-      console.log("info", info[1]);
       return { ...entry, marker: info[0][0], photos: info[1] };
     });
     return Promise.all(promises)
