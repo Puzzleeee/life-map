@@ -13,7 +13,7 @@ module.exports = function (crud) {
       }
     }
 
-    return crud.update('profile', values);
+    return crud.update('registered_users', values);
   }
   
   return modules;

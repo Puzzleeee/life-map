@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { useSnackbar } from "notistack";
 import EntryCard from "../components/EntryCard";
 import UserCard from "../components/UserCard";
 import Avatar from "@material-ui/core/Avatar";
@@ -28,6 +29,7 @@ const config = {
  * the profile page
  */
 const Profile = ({ viewerID, userID, changeProfile }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [profileInfo, setProfileInfo] = useState({});
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -58,8 +60,20 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
     })();
   }, [userID]);
 
-  const handleEdit = (value, field) => {
+  const handleEdit = async (value, field) => {
     // in future, add call to post and edit user profile before updating UI state
+    let payload = {
+      profile_id : profileInfo.profile_id,
+      id: profileInfo.id,
+      bio: bioInput,
+      name: nameInput
+    }
+    const response = await axios.post("/profile/update-user", payload, config);
+    if (response.data.success) {
+      enqueueSnackbar("Successfully edited profile!", { variant: "success"});
+    } else {
+      enqueueSnackbar("Oops something went wrong :(", { variant: "error"});
+    }
     switch (field) {
       case "username":
         setIsEditingName(false);
