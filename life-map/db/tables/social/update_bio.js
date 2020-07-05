@@ -15,4 +15,6 @@ module.exports = function (crud) {
 
     return crud.update('profile', values);
   }
+
+  return modules;
 }

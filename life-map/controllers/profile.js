@@ -20,6 +20,23 @@ const profileController = () => {
       })
     }
   }
+
+  modules.updateUserProfile = async (req, res) => {
+    const { profile_id, id, bio, name } = req.body;
+    try {
+      await profile.updateUserProfile(profile_id, id, bio, name);
+      res.status(200).json({
+        success: true,
+        message: 'Successfully updated profile'
+      })
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({
+        success: false,
+        message: 'Failed to update profile'
+      })
+    }
+  }
   return Object.freeze(modules);
 }
 

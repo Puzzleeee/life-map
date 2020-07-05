@@ -1,4 +1,4 @@
-module.execute = function (crud) {
+module.exports = function (crud) {
   let modules = {};
 
   modules.execute = async function (user_id, name) {
@@ -15,4 +15,6 @@ module.execute = function (crud) {
 
     return crud.update('profile', values);
   }
+  
+  return modules;
 }

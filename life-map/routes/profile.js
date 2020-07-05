@@ -10,4 +10,6 @@ const profileController = require("../controllers/profile.js");
  */
 router.post('/user', profileController.getUserProfile);
 
+router.post('/update-user', profileController.updateUserProfile);
+
 module.exports = router; 

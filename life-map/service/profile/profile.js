@@ -18,6 +18,13 @@ const profile = () => {
     }
   }
 
+  modules.updateUserProfile = async (profile_id, id, bio, name) => {
+    return Promise.all([
+      db.update_bio.execute(profile_id, bio),
+      db.update_name.execute(id, name)
+    ]);
+  }
+
   return modules;
 }
 
