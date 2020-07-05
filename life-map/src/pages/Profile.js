@@ -19,6 +19,11 @@ const config = {
   },
 };
 
+/**
+ * @description Component to display a single user card in a list of followers/following users
+ * @props {string} viewer - the viewer's ID. Used to check if the viewer follows the user or not.
+ * @props {object} user - the user object to render
+ */
 const UserCard = ({ viewer, user }) => {
   const [isFollowing, setIsFollowing] = useState(
     user.followers.includes(viewer)
@@ -35,6 +40,8 @@ const UserCard = ({ viewer, user }) => {
           console.error(error);
         });
     }
+
+    // in future, handle unfollow action
   };
 
   return (
@@ -60,6 +67,11 @@ const UserCard = ({ viewer, user }) => {
   );
 };
 
+/**
+ * @description A page to fetch and display a single user's profile
+ * @props {string} viewerID - the viewer's ID. Used to determine if you're viewing your own profile
+ * @props {string} userID - the userID of the user to fetch and display
+ */
 const Profile = ({ viewerID, userID }) => {
   const [profileInfo, setProfileInfo] = useState({
     // test data. delete once backend works. i.e. useState({})
@@ -67,10 +79,15 @@ const Profile = ({ viewerID, userID }) => {
     bio: "I'm a student at NUS. I'm also an intern. I am a coder.",
   });
   const [tabIndex, setTabIndex] = useState(0);
-  const [nameInput, setNameInput] = useState("");
+
+  const [nameInput, setNameInput] = useState(profileInfo.username);
   const [isEditingName, setIsEditingName] = useState(false);
-  const [bioInput, setBioInput] = useState("");
+
+  const [bioInput, setBioInput] = useState(profileInfo.bio);
   const [isEditingBio, setIsEditingBio] = useState(false);
+
+  // is the viewer visiting his own profile, or someone else's?
+  const isViewingOwn = viewerID === userID;
 
   useEffect(() => {
     (async () => {
@@ -82,13 +99,11 @@ const Profile = ({ viewerID, userID }) => {
         console.log(data);
         // temporarily commented out since data is not correct
         // setProfileInfo(data);
-        setNameInput(profileInfo.username);
-        setBioInput(profileInfo.bio);
       } catch (error) {
         console.error(error);
       }
     })();
-  }, [profileInfo.bio, profileInfo.username, userID]);
+  }, [userID]);
 
   const handleEdit = (value, field) => {
     // in future, add call to post and edit user profile before updating UI state
@@ -123,12 +138,16 @@ const Profile = ({ viewerID, userID }) => {
                 <Typography variant="h4" style={{ marginBottom: "4px" }}>
                   {profileInfo.username}
                 </Typography>
-                <IconButton
-                  color="primary"
-                  onClick={() => setIsEditingName(true)}
-                >
-                  <EditIcon />
-                </IconButton>
+
+                {/* only display edit button if at your own profile */}
+                {!!isViewingOwn && (
+                  <IconButton
+                    color="primary"
+                    onClick={() => setIsEditingName(true)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                )}
               </>
             )}
 
@@ -154,12 +173,16 @@ const Profile = ({ viewerID, userID }) => {
             {!isEditingBio && (
               <>
                 <Typography variant="subtitle1">{profileInfo.bio}</Typography>
-                <IconButton
-                  color="primary"
-                  onClick={() => setIsEditingBio(true)}
-                >
-                  <EditIcon />
-                </IconButton>
+
+                {/* only display edit button if at your own profile */}
+                {!!isViewingOwn && (
+                  <IconButton
+                    color="primary"
+                    onClick={() => setIsEditingBio(true)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                )}
               </>
             )}
 
