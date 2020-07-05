@@ -579,7 +579,7 @@ const Home = ({
           )}
 
           {/* render user profile page */}
-          {page === "Profile" && <Profile userID={userID} />}
+          {page === "Profile" && <Profile viewerID={userID} userID={userID} />}
         </Container>
       )}
     </div>
@@ -599,54 +599,3 @@ const MapContainer = styled.div`
   height: 94.5vh;
   width: 100%;
 `;
-
-// const SideBar = styled.nav`
-//   height: 15%;
-//   width: 100%;
-//   display: flex;
-//   background-color: rgba(250, 249, 245, 0.8);
-//   box-shadow: 1px 0px 20px rgb(100, 100, 100);
-//   z-index: 1;
-// `;
-
-// const NavButton = styled.button`
-//   color: white;
-//   background-color: rgb(17, 82, 168);
-//   margin: 12px 24px;
-//   padding: 6px 0px;
-//   border-radius: 25px;
-//   border: 1px solid grey;
-
-//   font-size: 1.1em;
-//   font-family: "Roboto";
-//   font-weight: 200;
-//   letter-spacing: 1px;
-
-//   cursor: pointer;
-//   transition: all 0.2s ease;
-
-//   &:hover {
-//     background-color: rgb(17, 82, 168, 0.9);
-//   }
-// `;
-
-// const LogOutButton = styled.button`
-//   color: white;
-//   background-color: rgba(168, 17, 50, 1);
-//   margin: 12px 24px;
-//   padding: 6px 0px;
-//   border-radius: 25px;
-//   border: none;
-
-//   font-size: 1.1em;
-//   font-family: "Roboto";
-//   font-weight: 300;
-//   letter-spacing: 1px;
-
-//   cursor: pointer;
-//   transition: all 0.2s ease;
-
-//   &:hover {
-//     background-color: rgba(168, 17, 50, 0.9);
-//   }
-// `;

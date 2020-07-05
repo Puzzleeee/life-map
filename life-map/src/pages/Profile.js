@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -14,15 +15,54 @@ const config = {
   },
 };
 
-const Profile = ({ userID }) => {
-  // const [socialInfo, setSocialInfo] = useState({});
-  const [tabIndex, setTabIndex] = useState(0);
+const UserCard = ({ viewer, user }) => {
+  const [isFollowing, setIsFollowing] = useState(
+    user.followers.includes(viewer)
+  );
+  // const [isFollowing, setIsFollowing] = useState(false);
 
-  // test data
-  const socialInfo = {
+  const handleClick = () => {
+    if (!isFollowing) {
+      axios
+        .post("http://localhost:5000/social/follow", config, {
+          recipient: user.id,
+        })
+        .then(() => setIsFollowing(true))
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
+
+  return (
+    <CardContainer>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <Avatar
+          src={user.avatar && ""}
+          alt={user.username}
+          style={{ marginRight: "16px" }}
+        />
+        <Typography variant="subtitle2">{user.name}</Typography>
+      </div>
+
+      <Button
+        size="small"
+        variant="contained"
+        color={isFollowing ? "secondary " : "primary"}
+        onClick={handleClick}
+      >
+        {isFollowing ? "Unfollow" : "Follow"}
+      </Button>
+    </CardContainer>
+  );
+};
+
+const Profile = ({ viewerID, userID }) => {
+  const [socialInfo, setSocialInfo] = useState({
     username: "Sam",
     biography: "I'm a student at NUS. I'm also an intern. I am a coder.",
-  };
+  });
+  const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -31,7 +71,8 @@ const Profile = ({ userID }) => {
           "http://localhost:5000/social/social-info",
           config
         );
-        // setSocialInfo(data);
+        console.log(data);
+        setSocialInfo((prev) => ({ ...prev, ...data }));
       } catch (error) {
         console.error(error);
       }
@@ -67,6 +108,20 @@ const Profile = ({ userID }) => {
           <Tab label="followers" />
         </Tabs>
       </Paper>
+
+      <Paper>
+        {tabIndex === 1 &&
+          !!socialInfo.followers &&
+          socialInfo.followers.map((user) => (
+            <UserCard viewer={viewerID} user={user} />
+          ))}
+
+        {tabIndex === 2 &&
+          !!socialInfo.following &&
+          socialInfo.following.map((user) => (
+            <UserCard viewer={viewerID} user={user} />
+          ))}
+      </Paper>
     </Container>
   );
 };
@@ -96,4 +151,15 @@ const UserInfo = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 0px 24px;
+`;
+
+const CardContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 24px;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
 `;
