@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import CheckIcon from "@material-ui/icons/Check";
@@ -6,7 +6,13 @@ import ClearIcon from "@material-ui/icons/Clear";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 
-const FollowRequestCard = ({ request, UIhandler }) => {
+/**
+ * @description UI component to show a single follow request as a card in a menu modal
+ * @props {object} request - the request object
+ * @props {function} UIhandler - a UI update handler to mutate UI state in the parent
+ * that renders this component
+ */
+const FollowRequestCard = forwardRef(({ request, UIhandler }, ref) => {
   const { id, sender, recipient } = request;
 
   const handleAccept = () => {
@@ -34,7 +40,7 @@ const FollowRequestCard = ({ request, UIhandler }) => {
   };
 
   return (
-    <li>
+    <li ref={ref}>
       <Container>
         <Typography variant="body1">
           {request.name} wants to follow you
@@ -50,7 +56,7 @@ const FollowRequestCard = ({ request, UIhandler }) => {
       </Container>
     </li>
   );
-};
+});
 
 export default FollowRequestCard;
 
