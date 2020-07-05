@@ -84,10 +84,10 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
   const [profileInfo, setProfileInfo] = useState({});
   const [tabIndex, setTabIndex] = useState(0);
 
-  const [nameInput, setNameInput] = useState(profileInfo.name);
+  const [nameInput, setNameInput] = useState("");
   const [isEditingName, setIsEditingName] = useState(false);
 
-  const [bioInput, setBioInput] = useState(profileInfo.bio);
+  const [bioInput, setBioInput] = useState("");
   const [isEditingBio, setIsEditingBio] = useState(false);
 
   // is the viewer visiting his own profile, or someone else's?
@@ -103,6 +103,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
         );
         console.log(data);
         setProfileInfo(data);
+        setNameInput(data.name);
+        setBioInput(data.bio);
       } catch (error) {
         console.error(error);
       }
