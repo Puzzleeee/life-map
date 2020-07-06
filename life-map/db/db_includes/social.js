@@ -16,5 +16,6 @@ module.exports = function (crud) {
     get_user_profile: require('../tables/social/get_user_profile.js')(crud),
     create_profile: require('../tables/social/create_profile.js')(crud),
     update_bio: require('../tables/social/update_bio.js')(crud),
+    update_profile_pic: require('../tables/social/upload_profile_pic.js')(crud)
   }
 }

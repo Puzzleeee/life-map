@@ -92,7 +92,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
     <Container>
       <Header>
         <Avatar
-          src={profileInfo.profile_pic && ""}
+          src={profileInfo.profile_pic || ""}
           alt={profileInfo.name}
           style={{ height: "92px", width: "92px" }}
         />

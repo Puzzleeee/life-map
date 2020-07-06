@@ -26,3 +26,6 @@ yarn-error.log*
 #keys
 constants.js
 db.js
+
+#profile pics
+profile-pics/*

@@ -37,6 +37,25 @@ const profileController = () => {
       })
     }
   }
+
+  modules.updateProfilePic = async (req, res) => {
+    const profile_id = req.body.profile_id;
+    const photo = (req.files)[0];
+
+    try {
+      await profile.updateProfilePic(profile_id, photo);
+      res.status(200).json({
+        success: true,
+        message: 'Successfully updated profile picture'
+      })
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({
+        success: false,
+        message: 'Failed to update profile picture'
+      })
+    }
+  }
   return Object.freeze(modules);
 }
 
