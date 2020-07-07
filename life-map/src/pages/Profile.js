@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useSnackbar } from "notistack";
@@ -39,6 +39,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
   const [bioInput, setBioInput] = useState("");
   const [isEditingBio, setIsEditingBio] = useState(false);
 
+  const [profilePic, setProfilePic] = useState("");
+
   // is the viewer visiting his own profile, or someone else's?
   const isViewingOwn = viewerID === userID;
 
@@ -54,6 +56,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
         setProfileInfo(data);
         setNameInput(data.name);
         setBioInput(data.bio);
+        setProfilePic(data.profile_pic);
       } catch (error) {
         console.error(error);
       }
@@ -91,10 +94,9 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
   return (
     <Container>
       <Header>
-        <Avatar
-          src={profileInfo.profile_pic || ""}
-          alt={profileInfo.name}
-          style={{ height: "92px", width: "92px" }}
+        <UserAvatar
+          profilePic={profilePic}
+          setProfilePic={setProfilePic}
         />
 
         <UserInfo>
@@ -221,6 +223,34 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
     </Container>
   );
 };
+
+const UserAvatar = ({ profilePic, setProfilePic }) => {
+
+  const input = useRef(null);
+
+  const handleClick = (e) => {
+    input.current.click();
+  }
+
+  const handleInput = (e) => {
+    if (e.target.files.length > 0) {
+      setProfilePic(URL.createObjectURL(e.target.files[0]));
+    } else {
+      setProfilePic(null);
+    }
+  }
+
+  return (
+    <>
+      <input type='file' style={{display: 'none'}} ref={input} onChange={handleInput}/>
+      <Avatar
+          onClick={handleClick}
+          src={profilePic || ""}
+          style={{ height: "92px", width: "92px", cursor: 'pointer' }}
+        />
+    </>
+  )
+}
 
 export default Profile;
 
