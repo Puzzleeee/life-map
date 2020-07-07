@@ -13,6 +13,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CheckIcon from "@material-ui/icons/Check";
 import EditIcon from "@material-ui/icons/Edit";
 import TextField from "@material-ui/core/TextField";
+import ClearIcon from '@material-ui/icons/Clear';
 
 const config = {
   withcredentials: true,
@@ -97,6 +98,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
         <UserAvatar
           profilePic={profilePic}
           setProfilePic={setProfilePic}
+          profileId={profileInfo.profile_id}
         />
 
         <UserInfo>
@@ -224,31 +226,92 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
   );
 };
 
-const UserAvatar = ({ profilePic, setProfilePic }) => {
+const UserAvatar = ({ profilePic, setProfilePic, profileId }) => {
 
+  const { enqueueSnackbar } = useSnackbar();
   const input = useRef(null);
+
+  const upload_config = {
+    withCredentials: true,
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  };
 
   const handleClick = (e) => {
     input.current.click();
   }
 
-  const handleInput = (e) => {
-    if (e.target.files.length > 0) {
-      setProfilePic(URL.createObjectURL(e.target.files[0]));
-    } else {
+  const removeProfilePic = async (e) => {
+    const form_data = new FormData();
+    form_data.append(`image`, null);
+    form_data.append('profile_id', profileId);
+
+    const {
+      data: { success, message },
+    } = await axios.post(
+        "http://localhost:5000/profile/profile-pic",
+        form_data,
+        upload_config
+    );
+
+    if (success) {
       setProfilePic(null);
+      enqueueSnackbar("Profile picture removed successfully!", { variant: "success"});
+    } else {
+      enqueueSnackbar("Oops, something went wrong", { variant: "error"});
+    }
+  }
+
+  const handleInput = async (e) => {
+    if (e.target.files.length > 0) {
+      const image = e.target.files[0];
+      const payload = {
+        profile_id: profileId,
+        image
+      }
+
+      const form_data = new FormData();
+      for (const field in payload) {
+        if (field === 'image') {
+          form_data.append(`image`, payload[field]);
+        } else {
+          form_data.append(field, payload[field]);
+        }
+      }
+
+      const {
+        data: { success, message },
+      } = await axios.post(
+          "http://localhost:5000/profile/profile-pic",
+          form_data,
+          upload_config
+      );
+
+      if (success) {
+        setProfilePic(URL.createObjectURL(image));
+        enqueueSnackbar("Profile picture updated successfully!", { variant: "success"});
+      } else {
+        enqueueSnackbar("Oops, something went wrong", { variant: "error"});
+      }
+    } else {
+      return;
     }
   }
 
   return (
-    <>
+    <div style={{display: 'flex', alignItems: 'start'}}>
       <input type='file' style={{display: 'none'}} ref={input} onChange={handleInput}/>
       <Avatar
-          onClick={handleClick}
-          src={profilePic || ""}
-          style={{ height: "92px", width: "92px", cursor: 'pointer' }}
-        />
-    </>
+        onClick={handleClick}
+        src={profilePic || ""}
+        style={{ height: "92px", width: "92px", cursor: 'pointer' }}
+      />
+      <IconButton
+        color="secondary"
+        onClick={removeProfilePic}
+      >
+        <ClearIcon/>
+      </IconButton>
+    </div>
   )
 }
 

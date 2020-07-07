@@ -31,9 +31,12 @@ const profile = () => {
   }
 
   modules.updateProfilePic = async (profile_id, file) => {
+    const file_name = file ? file.name : null;
     let promises = [];
-    promises.push(db.update_profile_pic.execute(profile_id, file.name));
-    promises.push(AWS.upload(file));
+    promises.push(db.update_profile_pic.execute(profile_id, file_name));
+    if (file_name) {
+      promises.push(AWS.upload(file));
+    }
     return Promise.all(promises);
   }
 

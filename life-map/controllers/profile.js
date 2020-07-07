@@ -40,7 +40,7 @@ const profileController = () => {
 
   modules.updateProfilePic = async (req, res) => {
     const profile_id = req.body.profile_id;
-    const photo = (req.files)[0];
+    const photo = req.files.length > 0 ? req.files[0] : null;
 
     try {
       await profile.updateProfilePic(profile_id, photo);
