@@ -11,6 +11,8 @@ const socialController = require("../controllers/social.js");
  */
 router.post('/follow', socialController.newFollowRequest);
 
+router.post('/remove-follower-relationship', socialController.unfollow);
+
 /** GET 
  * /social/social-info
  *   response:

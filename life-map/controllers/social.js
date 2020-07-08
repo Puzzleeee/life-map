@@ -8,16 +8,34 @@ const socialController = () => {
     // const sender = 'ccfe1fec-7153-430d-9805-2ebcf821c937';
     const recipient = req.body.recipient;
     try {
-      await social.createFollowRequest(sender, recipient);
+      const request_id = await social.createFollowRequest(sender, recipient);
       res.status(200).json({
         success: true,
+        request_id
       });
     } catch (err) {
       console.log(err);
       res.status(400).json({
         success: false,
+        request_id: null
       })
     }
+  }
+
+  modules.unfollow = async (req, res) => {
+    const id = req.body.id;
+    try {
+      await social.deleteFollowerRelationship({id});
+      res.status(200).json({
+        success: true
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({
+        success: false
+      });
+    }
+
   }
 
   modules.getSocialInfo = async (req, res) => {

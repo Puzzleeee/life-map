@@ -54,6 +54,10 @@ const social = () => {
     return db.delete_follow_request.execute(id);
   }
 
+  modules.deleteFollowerRelationship = async ({id}) => {
+    return db.delete_follower_relationship.execute(id);
+  }
+
   /**
    * Follower and following data returned in the following shape:
    * {

@@ -201,11 +201,14 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           profileInfo.followers.map((followRelationship) => (
             <UserCard
               viewerInfo={profileInfo}
+              setViewerInfo={setProfileInfo}
               changeProfile={changeProfile}
               user={{
                 id: followRelationship.follower,
                 name: followRelationship.name,
               }}
+              isViewingOwn = {isViewingOwn}
+              type='follower'
             />
           ))}
 
@@ -219,6 +222,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
                 id: followRelationship.followee,
                 name: followRelationship.name,
               }}
+              isViewingOwn = {isViewingOwn}
+              type='following'
             />
           ))}
       </Paper>

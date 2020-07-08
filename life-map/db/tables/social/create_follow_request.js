@@ -11,7 +11,7 @@ module.exports = function (crud) {
         value: recipient
       }
     }
-    return crud.create('follow_requests', values)
+    return crud.create('follow_requests', values, true)
   }
 
   return module;

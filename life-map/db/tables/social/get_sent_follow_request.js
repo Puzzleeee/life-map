@@ -9,4 +9,5 @@ module.exports = function (crud) {
     }
     return crud.read('follow_requests', [], where);
   }
+  return modules;
 }
