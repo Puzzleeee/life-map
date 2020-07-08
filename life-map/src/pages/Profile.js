@@ -16,7 +16,7 @@ import TextField from "@material-ui/core/TextField";
 import ClearIcon from '@material-ui/icons/Clear';
 
 const config = {
-  withcredentials: true,
+  withCredentials: true,
   headers: {
     "content-type": "application/json",
   },

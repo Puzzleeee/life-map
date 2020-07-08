@@ -28,6 +28,10 @@ const social = () => {
     return db.get_follow_requests.execute(recipient);
   }
 
+  modules.getSentRequests = async (sender) => {
+    return db.get_sent_follow_requests.execute(sender);
+  }
+
   /**
    * Accept a follow request
    * 
@@ -77,14 +81,16 @@ const social = () => {
    * @return {Object} Object containing the basic social info of the user
    */
   modules.arrangeSocialInfo = async (id) => {
-    const [followRequests, followers, following] = await Promise.all([
+    const [followRequests, sentRequests, followers, following] = await Promise.all([
       modules.getFollowRequests(id),
+      modules.getSentRequests(id),
       modules.getFollowers(id),
       modules.getFollowing(id),
     ]);
 
     return {
       followRequests,
+      sentRequests,
       followers,
       following
     };

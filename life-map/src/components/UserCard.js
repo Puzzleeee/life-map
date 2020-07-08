@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
 const config = {
-  withcredentials: true,
+  withCredentials: true,
   headers: {
     "content-type": "application/json",
   },
