@@ -14,6 +14,8 @@ import CheckIcon from "@material-ui/icons/Check";
 import EditIcon from "@material-ui/icons/Edit";
 import TextField from "@material-ui/core/TextField";
 import ClearIcon from '@material-ui/icons/Clear';
+import Button from "@material-ui/core/Button";
+import useSocialButton from "../hooks/useSocialButton.js";
 
 const config = {
   withCredentials: true,
@@ -41,6 +43,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
   const [isEditingBio, setIsEditingBio] = useState(false);
 
   const [profilePic, setProfilePic] = useState("");
+
+  const [isFollowing, requestSent, handleClick] = useSocialButton(profileInfo, setProfileInfo, {id: viewerID});
 
   // is the viewer visiting his own profile, or someone else's?
   const isViewingOwn = viewerID === userID;
@@ -99,8 +103,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           profilePic={profilePic}
           setProfilePic={setProfilePic}
           profileId={profileInfo.profile_id}
+          isViewingOwn={isViewingOwn}
         />
-
         <UserInfo>
           {/* start name component */}
           <div style={{ display: "flex", alignItems: "center" }}>
@@ -164,6 +168,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
                   onChange={(event) => setBioInput(event.target.value)}
                   multiline
                 />
+                
                 <IconButton
                   color="primary"
                   onClick={() => handleEdit(bioInput, "bio")}
@@ -175,6 +180,21 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           </div>
           {/* end bio component */}
         </UserInfo>
+
+        {!isViewingOwn && 
+          <Button
+            style = {{width: '20%'}}
+            size="small"
+            variant="contained"
+            color="primary"
+            onClick= {handleClick}
+          >
+            {requestSent ? "Requested"
+              : isFollowing ? "Following"
+                : "Follow"}
+
+          </Button>
+        }
       </Header>
 
       <Paper square>
@@ -200,8 +220,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           !!profileInfo.followers &&
           profileInfo.followers.map((followRelationship) => (
             <UserCard
-              viewerInfo={profileInfo}
-              setViewerInfo={setProfileInfo}
+              profileInfo={profileInfo}
+              setProfileInfo={setProfileInfo}
               changeProfile={changeProfile}
               user={{
                 id: followRelationship.follower,
@@ -216,7 +236,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           !!profileInfo.following &&
           profileInfo.following.map((followRelationship) => (
             <UserCard
-              viewerInfo={profileInfo}
+              profileInfo={profileInfo}
+              setProfileInfo={setProfileInfo}
               changeProfile={changeProfile}
               user={{
                 id: followRelationship.followee,
@@ -231,7 +252,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
   );
 };
 
-const UserAvatar = ({ profilePic, setProfilePic, profileId }) => {
+const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const input = useRef(null);
@@ -306,16 +327,19 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId }) => {
     <div style={{display: 'flex', alignItems: 'start'}}>
       <input type='file' style={{display: 'none'}} ref={input} onChange={handleInput}/>
       <Avatar
-        onClick={handleClick}
+        onClick={isViewingOwn ? handleClick : null}
         src={profilePic || ""}
         style={{ height: "92px", width: "92px", cursor: 'pointer' }}
       />
-      <IconButton
-        color="secondary"
-        onClick={removeProfilePic}
-      >
-        <ClearIcon/>
-      </IconButton>
+      {isViewingOwn &&
+        <IconButton
+          color="secondary"
+          onClick={removeProfilePic}
+        >
+          <ClearIcon/>
+        </IconButton>
+      }
+
     </div>
   )
 }
