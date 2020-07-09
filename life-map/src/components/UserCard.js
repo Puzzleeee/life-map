@@ -17,20 +17,21 @@ const config = {
 
 /**
  * @description Component to display a single user card in a list of followers/following users
- * @props {object} profileInfo - the profile's info. Used to check profile user relationship with the user displayed in this Card
- * @props {function} setProfileInfo - function to set profileInfo state
+ * @props {object} viewerInfo - the viewer's social info. Used to check relationship with the user displayed in this Card
+ * @props {function} setViewerInfo - function to set viewerInfo state
  * @props {object} user - the user object to render
  * @props {function} changeProfile - a route handler to change the current user being displayed on
  * @props {boolean} isViewingOwn - Viewing own profile or other's profile
  * @props {string} type - Describing the role of the Card, either in the followers tab or following tab
  * the profile page
  */
-const UserCard = ({ profileInfo, setProfileInfo, user, changeProfile, isViewingOwn, type }) => {
-
-  const [isFollowing, requestSent, handleButtonClick] = useSocialButton(profileInfo, setProfileInfo, user);
+const UserCard = ({ viewerInfo, setViewerInfo, user, changeProfile, isViewingOwn, type }) => {
+  
+  const [isFollowing, requestSent, handleButtonClick] = useSocialButton(viewerInfo, setViewerInfo, user);
   const [profilePic, setProfilePic] = useState(null);
 
   useEffect(() => {
+    console.log("UserCard use effect called");
     (async () => {
       try {
         const { data } = await axios.post(
@@ -52,15 +53,15 @@ const UserCard = ({ profileInfo, setProfileInfo, user, changeProfile, isViewingO
   
   const removeFollower = (event) => {
     event.stopPropagation();
-    const relationship = profileInfo.followers.filter((relation) => relation.follower === user.id)[0];
+    const relationship = viewerInfo.followers.filter((relation) => relation.follower === user.id)[0];
     return axios.post(
       "/social/remove-follower-relationship",
       relationship,
       config
     ).then(() => {
-      const new_followers = profileInfo.followers.filter((relation) => relation.follower !== user.id);
-      setProfileInfo({
-        ...profileInfo,
+      const new_followers = viewerInfo.followers.filter((relation) => relation.follower !== user.id);
+      setViewerInfo({
+        ...viewerInfo,
         followers: new_followers
       });
     })

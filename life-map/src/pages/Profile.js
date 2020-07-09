@@ -36,6 +36,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
   const [profileInfo, setProfileInfo] = useState({});
   const [tabIndex, setTabIndex] = useState(0);
 
+  const [viewerInfo, setViewerInfo] = useState({});
+
   const [nameInput, setNameInput] = useState("");
   const [isEditingName, setIsEditingName] = useState(false);
 
@@ -46,25 +48,28 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
 
   const [entries, setEntries] = useState([]);
 
-  const [isFollowing, requestSent, handleClick] = useSocialButton(profileInfo, setProfileInfo, {id: viewerID});
+  const [isFollowing, requestSent, handleClick] = useSocialButton(viewerInfo, setViewerInfo, {id: userID});
 
   // is the viewer visiting his own profile, or someone else's?
   const isViewingOwn = viewerID === userID;
 
   useEffect(() => {
+    console.log("Profile use effect called");
     (async () => {
       try {
-        const { data } = await axios.post(
-          "http://localhost:5000/profile/user",
-          { id: userID },
-          config
+        const [profileData, viewerData] = await Promise.all([
+          axios.post("/profile/user", { id: userID }, config),
+          axios.get("/social/social-info", config)
+        ]);
+        setProfileInfo(profileData.data);
+        setNameInput(profileData.data.name);
+        setBioInput(profileData.data.bio);
+        setProfilePic(profileData.data.profile_pic);
+        setEntries(profileData.data.entries);
+        setViewerInfo({
+          ...viewerData.data,
+          id: viewerID}
         );
-        console.log(data);
-        setProfileInfo(data);
-        setNameInput(data.name);
-        setBioInput(data.bio);
-        setProfilePic(data.profile_pic);
-        setEntries(data.entries);
       } catch (error) {
         console.error(error);
       }
@@ -234,8 +239,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           !!profileInfo.followers &&
           profileInfo.followers.map((followRelationship) => (
             <UserCard
-              profileInfo={profileInfo}
-              setProfileInfo={setProfileInfo}
+              viewerInfo={viewerInfo}
+              setViewerInfo={setViewerInfo}
               changeProfile={changeProfile}
               user={{
                 id: followRelationship.follower,
@@ -250,8 +255,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           !!profileInfo.following &&
           profileInfo.following.map((followRelationship) => (
             <UserCard
-              profileInfo={profileInfo}
-              setProfileInfo={setProfileInfo}
+              viewerInfo={viewerInfo}
+              setViewerInfo={setViewerInfo}
               changeProfile={changeProfile}
               user={{
                 id: followRelationship.followee,

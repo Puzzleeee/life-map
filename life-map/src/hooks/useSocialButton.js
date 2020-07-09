@@ -11,22 +11,22 @@ const config = {
  * Custom hook for social button that changes between "Follow", "Unfollow" and "Requested" based on relationship
  * between the viewer and the user being displayed
  * 
- * @param {object} profileInfo - information of the profile the button is on
- * @param {function} setProfile - function to set profileInfo to initiate rerender
- * @param {object} user - information of the user using the button 
+ * @param {object} viewerInfo - information of the viewer 
+ * @param {function} setViewerInfo - function to set viewerInfo to initiate rerender
+ * @param {object} user - information of the user the button will interact with
  */
-export default function useSocialButton(profileInfo, setProfile, user) {
+export default function useSocialButton(viewerInfo, setViewerInfo, user) {
 
-  if (Object.keys(profileInfo).length === 0) {
-    // profileInfo not retrieved yet
+  if (Object.keys(viewerInfo).length === 0) {
+    // viewerInfo not retrieved yet
     return [null, null, null];
   }
 
-  // go through array of follow relationships and check if followee is the user in this card
-  const isFollowing = profileInfo.following.some((followRelationship) => followRelationship.followee === user.id);
+  // go through array of follow relationships and check if follower is the user using the button
+  const isFollowing = viewerInfo.following.some((followRelationship) => followRelationship.followee === user.id);
 
-  // go through array of sent follow requests and check if recipient is the user in this card
-  const requestSent = profileInfo.sentRequests.some((request) => request.recipient === user.id);
+  // go through array of sent follow requests and check if sender is the user using the button
+  const requestSent = viewerInfo.sentRequests.some((request) => request.recipient === user.id);
 
   // The function that will handle the click on the button
   function handleClick(event) {
@@ -53,15 +53,15 @@ export default function useSocialButton(profileInfo, setProfile, user) {
    * Functions to perform the 3 possible actions: unfollow, follow and cancelling of request sent 
    */
   function unfollow() {
-    const relationship = profileInfo.following.filter((relation) => relation.followee === user.id)[0];
+    const relationship = viewerInfo.following.filter((relation) => relation.followee === user.id)[0];
     return axios.post(
       "/social/remove-follower-relationship",
       relationship,
       config
     ).then(() => {
-      const new_following = profileInfo.following.filter((relation) => relation.followee !== user.id);
-      setProfile({
-        ...profileInfo,
+      const new_following = viewerInfo.following.filter((relation) => relation.followee !== user.id);
+      setViewerInfo({
+        ...viewerInfo,
         following: new_following
       })
     })
@@ -74,31 +74,31 @@ export default function useSocialButton(profileInfo, setProfile, user) {
           { recipient: user.id },
           config
         )
-        .then(({request_id}) => {
+        .then(({data: {request_id}}) => {
           // make a follow request object to avoid having to query endpoint again 
           const new_request = {
             id: request_id,
-            sender: profileInfo.id,
+            sender: viewerInfo.id,
             recipient: user.id,
             date_time: new Date(),
           }
-          const requests = profileInfo.sentRequests.splice(0)
+          const requests = viewerInfo.sentRequests.splice(0)
           requests.push(new_request);
-          setProfile({...profileInfo, sentRequests: requests});
+          setViewerInfo({...viewerInfo, sentRequests: requests});
         })
   }
 
   function undoRequest() {
-    const request = profileInfo.sentRequests.filter(req => req.recipient === user.id)[0];
+    const request = viewerInfo.sentRequests.filter(req => req.recipient === user.id)[0];
     return axios.post(
       "/social/decline-follow-request",
       request,
       config
     )
     .then(() => {
-      const new_sent_requests = profileInfo.sentRequests.filter(req => req.recipient !== user.id);
-      setProfile({
-        ...profileInfo,
+      const new_sent_requests = viewerInfo.sentRequests.filter(req => req.recipient !== user.id);
+      setViewerInfo({
+        ...viewerInfo,
         sentRequests: new_sent_requests
       })
     })
