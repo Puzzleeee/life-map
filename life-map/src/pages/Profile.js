@@ -106,22 +106,10 @@ const inputStateReducer = (state, action) => {
  */
 const Profile = ({ viewerID, userID, changeProfile }) => {
   const { enqueueSnackbar } = useSnackbar();
-  // const [profileInfo, setProfileInfo] = useState({});
   const [tabIndex, setTabIndex] = useState(0);
   const [userState, dispatchUser] = useReducer(userStateReducer, initialUserState);
   const [inputState, dispatchInput] = useReducer(inputStateReducer, initialInputState);
 
-  // const [viewerInfo, setViewerInfo] = useState({});
-
-  // const [nameInput, setNameInput] = useState("");
-  // const [isEditingName, setIsEditingName] = useState(false);
-
-  // const [bioInput, setBioInput] = useState("");
-  // const [isEditingBio, setIsEditingBio] = useState(false);
-
-  // const [profilePic, setProfilePic] = useState("");
-
-  // const [entries, setEntries] = useState([]);
   const setViewerInfo = (viewerInfo) => {
     dispatchUser({ type: 'setViewer', payload: {viewerInfo} });
   }
@@ -160,7 +148,6 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
   }, [userID, viewerID]);
 
   const handleEdit = async (value, field) => {
-    // in future, add call to post and edit user profile before updating UI state
     let payload = {
       profile_id : userState.profileInfo.profile_id,
       id: userState.profileInfo.id,
