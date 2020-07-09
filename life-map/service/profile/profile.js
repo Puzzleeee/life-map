@@ -30,6 +30,15 @@ const profile = () => {
     ]);
   }
 
+  modules.getProfilePic = async (id) => {
+    const file_name = (await db.get_profile_pic.execute(id))[0].profile_pic;
+    if (file_name) {
+      return AWS.retrieve(file_name).data;
+    } else {
+      return null;
+    }
+  }
+
   modules.updateProfilePic = async (profile_id, file) => {
     const file_name = file ? file.name : null;
     let promises = [];

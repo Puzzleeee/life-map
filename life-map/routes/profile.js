@@ -15,4 +15,6 @@ router.post('/update-user', checkAuthenticated, profileController.updateUserProf
 
 router.post('/profile-pic', [checkAuthenticated, busboyMiddleware], profileController.updateProfilePic);
 
+router.get('/profile-pic', checkAuthenticated, profileController.getProfilePic);
+
 module.exports = router; 

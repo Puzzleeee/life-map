@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import Avatar from "@material-ui/core/Avatar";
@@ -28,6 +28,27 @@ const config = {
 const UserCard = ({ profileInfo, setProfileInfo, user, changeProfile, isViewingOwn, type }) => {
 
   const [isFollowing, requestSent, handleButtonClick] = useSocialButton(profileInfo, setProfileInfo, user);
+  const [profilePic, setProfilePic] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.post(
+          "http://localhost:5000/profile/user",
+          { id: user.id },
+          config
+        );
+        if (data.success) {
+          setProfilePic(data.profile_pic);
+        } else {
+          // display some error to front end here
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, [user]);
+
   
   const removeFollower = (event) => {
     event.stopPropagation();
@@ -49,7 +70,7 @@ const UserCard = ({ profileInfo, setProfileInfo, user, changeProfile, isViewingO
     <CardContainer onClick={() => changeProfile(user.id)}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Avatar
-          src={user.profile_pic && ""}
+          src={profilePic || ""}
           alt={user.name}
           style={{ marginRight: "16px" }}
         />

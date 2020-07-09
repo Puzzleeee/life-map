@@ -56,6 +56,25 @@ const profileController = () => {
       })
     }
   }
+
+  modules.getProfilePic = async (req, res) => {
+    const id = req.query.id;
+    try {
+      const profile_pic = await profile.getProfilePic(id);
+      res.status(200).json({
+        success: true,
+        message: 'Successfully get profile picture',
+        profile_pic
+      })
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({
+        success: false,
+        message: 'Failed to get profile picture',
+        profile_pic: null
+      })
+    }
+  }
   return Object.freeze(modules);
 }
 
