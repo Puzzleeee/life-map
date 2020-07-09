@@ -44,6 +44,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
 
   const [profilePic, setProfilePic] = useState("");
 
+  const [entries, setEntries] = useState([]);
+
   const [isFollowing, requestSent, handleClick] = useSocialButton(profileInfo, setProfileInfo, {id: viewerID});
 
   // is the viewer visiting his own profile, or someone else's?
@@ -62,11 +64,18 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
         setNameInput(data.name);
         setBioInput(data.bio);
         setProfilePic(data.profile_pic);
+        setEntries(data.entries);
       } catch (error) {
         console.error(error);
       }
     })();
   }, [userID]);
+
+  const removeEntry = (entry) => {
+    return () => {
+      setEntries(entries.filter(x => x.id !== entry.id));
+    }
+  }
 
   const handleEdit = async (value, field) => {
     // in future, add call to post and edit user profile before updating UI state
@@ -212,8 +221,13 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
       </Paper>
 
       {tabIndex === 0 &&
-        !!profileInfo.entries &&
-        profileInfo.entries.map((entry) => <EntryCard entry={entry} />)}
+        !!entries &&
+        entries.map((entry) => 
+          <EntryCard 
+            entry={entry}
+            removeEntry={removeEntry(entry)}
+            isOwnEntry={isViewingOwn} 
+          />)}
 
       <Paper>
         {tabIndex === 1 &&

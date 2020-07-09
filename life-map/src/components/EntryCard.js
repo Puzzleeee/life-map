@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
  * This display title, date, content, and photos.
  * This receives a single Entry object as props.
  */
-const EntryCard = ({ entry, removeEntry }) => {
+const EntryCard = ({ entry, removeEntry, isOwnEntry }) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -98,27 +98,28 @@ const EntryCard = ({ entry, removeEntry }) => {
             </Typography>
             <Location>
               <RoomIcon fontSize="small" color="primary" />
-              <Typography>{entry.marker.name}</Typography>
+              <Typography>{entry.marker && entry.marker.name}</Typography>
             </Location>
           </div>
         }
         action={
-          <div>
-            <IconButton aria-label="settings" onClick={handleOpenMenu}>
-              <MoreVertIcon />
-            </IconButton>
+          isOwnEntry &&
+            <div>
+              <IconButton aria-label="settings" onClick={handleOpenMenu}>
+                <MoreVertIcon />
+              </IconButton>
 
-            <Menu
-              anchorEl={menuAnchor}
-              keepMounted
-              open={isMenuOpen}
-              onClose={handleCloseMenu}
-            >
-              <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
-                Delete
-              </MenuItem>
-            </Menu>
-          </div>
+              <Menu
+                anchorEl={menuAnchor}
+                keepMounted
+                open={isMenuOpen}
+                onClose={handleCloseMenu}
+              >
+                <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
+                  Delete
+                </MenuItem>
+              </Menu>
+            </div>
         }
       />
 
