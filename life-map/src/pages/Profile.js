@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useReducer } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useSnackbar } from "notistack";
@@ -24,6 +24,79 @@ const config = {
   },
 };
 
+const initialUserState = {
+  profileInfo: {},
+  viewerInfo: {},
+}
+
+const userStateReducer = (state, action) => {
+  console.log('dispatch called');
+  switch (action.type) {
+    case 'initialize':
+      return action.payload;
+    case 'setViewer':
+      return {
+        ...state,
+        viewerInfo: action.payload.viewerInfo
+      };
+    default:
+      return state;
+  }
+}
+
+const initialInputState = {
+  nameInput: "",
+  isEditingName: false,
+  bioInput: "",
+  isEditingBio: false,
+  profilePic: "",
+  entries: []
+}
+
+const inputStateReducer = (state, action) => {
+  switch (action.type) {
+    case 'initialize':
+      return {
+        ...state,
+        nameInput: action.payload.nameInput,
+        bioInput: action.payload.bioInput,
+        profilePic: action.payload.profilePic,
+        entries: action.payload.entries
+      };
+    case 'toggleEditName':
+      return {
+        ...state,
+        isEditingName: !state.isEditingName
+      }
+    case 'setNameInput':
+      return {
+        ...state,
+        nameInput: action.payload.nameInput
+      }
+    case 'toggleEditBio':
+      return {
+        ...state,
+        isEditingBio: !state.isEditingBio
+      }
+    case 'setBioInput':
+      return {
+        ...state,
+        bioInput: action.payload.bioInput
+      }
+    case 'setProfilePic':
+      return {
+        ...state,
+        profilePic: action.payload.profilePic
+      }
+    case 'removeEntry':
+      return {
+        ...state,
+        entries: state.entries.filter(x => x.id !== action.payload.entry.id)
+      }
+    default:
+      return state;
+  }
+}
 /**
  * @description A page to fetch and display a single user's profile
  * @props {string} viewerID - the viewer's ID. Used to determine if you're viewing your own profile
@@ -33,22 +106,31 @@ const config = {
  */
 const Profile = ({ viewerID, userID, changeProfile }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const [profileInfo, setProfileInfo] = useState({});
+  // const [profileInfo, setProfileInfo] = useState({});
   const [tabIndex, setTabIndex] = useState(0);
+  const [userState, dispatchUser] = useReducer(userStateReducer, initialUserState);
+  const [inputState, dispatchInput] = useReducer(inputStateReducer, initialInputState);
 
-  const [viewerInfo, setViewerInfo] = useState({});
+  // const [viewerInfo, setViewerInfo] = useState({});
 
-  const [nameInput, setNameInput] = useState("");
-  const [isEditingName, setIsEditingName] = useState(false);
+  // const [nameInput, setNameInput] = useState("");
+  // const [isEditingName, setIsEditingName] = useState(false);
 
-  const [bioInput, setBioInput] = useState("");
-  const [isEditingBio, setIsEditingBio] = useState(false);
+  // const [bioInput, setBioInput] = useState("");
+  // const [isEditingBio, setIsEditingBio] = useState(false);
 
-  const [profilePic, setProfilePic] = useState("");
+  // const [profilePic, setProfilePic] = useState("");
 
-  const [entries, setEntries] = useState([]);
+  // const [entries, setEntries] = useState([]);
+  const setViewerInfo = (viewerInfo) => {
+    dispatchUser({ type: 'setViewer', payload: {viewerInfo} });
+  }
 
-  const [isFollowing, requestSent, handleClick] = useSocialButton(viewerInfo, setViewerInfo, {id: userID});
+  const removeEntry = (entry) => {
+    dispatchInput({ type: 'removeEntry', payload: {entry}})
+  }
+
+  const [isFollowing, requestSent, handleClick] = useSocialButton(userState.viewerInfo, (viewerInfo) => setViewerInfo(viewerInfo), {id: userID});
 
   // is the viewer visiting his own profile, or someone else's?
   const isViewingOwn = viewerID === userID;
@@ -61,34 +143,29 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           axios.post("/profile/user", { id: userID }, config),
           axios.get("/social/social-info", config)
         ]);
-        setProfileInfo(profileData.data);
-        setNameInput(profileData.data.name);
-        setBioInput(profileData.data.bio);
-        setProfilePic(profileData.data.profile_pic);
-        setEntries(profileData.data.entries);
-        setViewerInfo({
-          ...viewerData.data,
-          id: viewerID}
-        );
+        const profileInfo =  (({entries, ...o}) => o)(profileData.data);
+        const viewerInfo = {...viewerData.data, id: viewerID};
+        const inputState = {
+          nameInput: profileData.data.name,
+          bioInput: profileData.data.bio,
+          profilePic: profileData.data.profile_pic,
+          entries: profileData.data.entries
+        }
+        dispatchUser({type: 'initialize', payload: { profileInfo, viewerInfo }});
+        dispatchInput({type: 'initialize', payload: { ...inputState }})
       } catch (error) {
         console.error(error);
       }
     })();
-  }, [userID]);
-
-  const removeEntry = (entry) => {
-    return () => {
-      setEntries(entries.filter(x => x.id !== entry.id));
-    }
-  }
+  }, [userID, viewerID]);
 
   const handleEdit = async (value, field) => {
     // in future, add call to post and edit user profile before updating UI state
     let payload = {
-      profile_id : profileInfo.profile_id,
-      id: profileInfo.id,
-      bio: bioInput,
-      name: nameInput
+      profile_id : userState.profileInfo.profile_id,
+      id: userState.profileInfo.id,
+      bio: inputState.bioInput,
+      name: inputState.nameInput
     }
     const response = await axios.post("/profile/update-user", payload, config);
     if (response.data.success) {
@@ -98,12 +175,10 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
     }
     switch (field) {
       case "username":
-        setIsEditingName(false);
-        setProfileInfo((prev) => ({ ...prev, name: value }));
+        dispatchInput({type: 'toggleEditName', payload: {}});
         return;
       case "bio":
-        setIsEditingBio(false);
-        setProfileInfo((prev) => ({ ...prev, bio: value }));
+        dispatchInput({type: 'toggleEditBio', payload: {}});
         return;
       default:
         return;
@@ -114,25 +189,25 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
     <Container>
       <Header>
         <UserAvatar
-          profilePic={profilePic}
-          setProfilePic={setProfilePic}
-          profileId={profileInfo.profile_id}
+          profilePic={inputState.profilePic}
+          setProfilePic={(pic) => dispatchInput({type: 'setProfilePic', payload: {profilePic: pic}})}
+          profileId={userState.profileInfo.profile_id}
           isViewingOwn={isViewingOwn}
         />
         <UserInfo>
           {/* start name component */}
           <div style={{ display: "flex", alignItems: "center" }}>
-            {!isEditingName && (
+            {!inputState.isEditingName && (
               <>
                 <Typography variant="h4" style={{ marginBottom: "4px" }}>
-                  {profileInfo.name}
+                  {inputState.nameInput}
                 </Typography>
 
                 {/* only display edit button if at your own profile */}
                 {!!isViewingOwn && (
                   <IconButton
                     color="primary"
-                    onClick={() => setIsEditingName(true)}
+                    onClick={() => dispatchInput({type: 'toggleEditName', payload: {}})}
                   >
                     <EditIcon />
                   </IconButton>
@@ -140,15 +215,15 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
               </>
             )}
 
-            {!!isEditingName && (
+            {!!inputState.isEditingName && (
               <>
                 <TextField
-                  value={nameInput}
-                  onChange={(event) => setNameInput(event.target.value)}
+                  value={inputState.nameInput}
+                  onChange={(event) => dispatchInput({type: 'setNameInput', payload: { nameInput: event.target.value }})}
                 />
                 <IconButton
                   color="primary"
-                  onClick={() => handleEdit(nameInput, "username")}
+                  onClick={() => handleEdit(inputState.nameInput, "username")}
                 >
                   <CheckIcon />
                 </IconButton>
@@ -159,15 +234,17 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
 
           {/* start bio component */}
           <div style={{ display: "flex", alignItems: "center" }}>
-            {!isEditingBio && (
+            {!inputState.isEditingBio && (
               <>
-                <Typography variant="subtitle1">{profileInfo.bio}</Typography>
+                <Typography variant="subtitle1">
+                  {inputState.bioInput}
+                </Typography>
 
                 {/* only display edit button if at your own profile */}
                 {!!isViewingOwn && (
                   <IconButton
                     color="primary"
-                    onClick={() => setIsEditingBio(true)}
+                    onClick={() => dispatchInput({type: 'toggleEditBio', payload: {}})}
                   >
                     <EditIcon />
                   </IconButton>
@@ -175,17 +252,17 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
               </>
             )}
 
-            {!!isEditingBio && (
+            {!!inputState.isEditingBio && (
               <>
                 <TextField
-                  value={bioInput}
-                  onChange={(event) => setBioInput(event.target.value)}
+                  value={inputState.bioInput}
+                  onChange={(event) => dispatchInput({type: 'setBioInput', payload: { bioInput: event.target.value }})}
                   multiline
                 />
                 
                 <IconButton
                   color="primary"
-                  onClick={() => handleEdit(bioInput, "bio")}
+                  onClick={() => handleEdit(inputState.bioInput, "bio")}
                 >
                   <CheckIcon />
                 </IconButton>
@@ -226,21 +303,21 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
       </Paper>
 
       {tabIndex === 0 &&
-        !!entries &&
-        entries.map((entry) => 
+        !!inputState.entries &&
+        inputState.entries.map((entry) => 
           <EntryCard 
             entry={entry}
-            removeEntry={removeEntry(entry)}
+            removeEntry={(entry) => removeEntry(entry)}
             isOwnEntry={isViewingOwn} 
           />)}
 
       <Paper>
         {tabIndex === 1 &&
-          !!profileInfo.followers &&
-          profileInfo.followers.map((followRelationship) => (
+          !!userState.profileInfo.followers &&
+          userState.profileInfo.followers.map((followRelationship) => (
             <UserCard
-              viewerInfo={viewerInfo}
-              setViewerInfo={setViewerInfo}
+              viewerInfo={userState.viewerInfo}
+              setViewerInfo={(viewerInfo) => setViewerInfo(viewerInfo)}
               changeProfile={changeProfile}
               user={{
                 id: followRelationship.follower,
@@ -252,11 +329,11 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           ))}
 
         {tabIndex === 2 &&
-          !!profileInfo.following &&
-          profileInfo.following.map((followRelationship) => (
+          !!userState.profileInfo.following &&
+          userState.profileInfo.following.map((followRelationship) => (
             <UserCard
-              viewerInfo={viewerInfo}
-              setViewerInfo={setViewerInfo}
+              viewerInfo={userState.viewerInfo}
+              setViewerInfo={(viewerInfo) => setViewerInfo(viewerInfo)}
               changeProfile={changeProfile}
               user={{
                 id: followRelationship.followee,
@@ -291,7 +368,7 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
     form_data.append('profile_id', profileId);
 
     const {
-      data: { success, message },
+      data: { success },
     } = await axios.post(
         "http://localhost:5000/profile/profile-pic",
         form_data,
@@ -324,7 +401,7 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
       }
 
       const {
-        data: { success, message },
+        data: { success },
       } = await axios.post(
           "http://localhost:5000/profile/profile-pic",
           form_data,
