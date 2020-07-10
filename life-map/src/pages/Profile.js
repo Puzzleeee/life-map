@@ -4,6 +4,7 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 import EntryCard from "../components/EntryCard";
 import UserCard from "../components/UserCard";
+import PrivateAccount from "../components/PrivateAccount"
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Tabs from "@material-ui/core/Tabs";
@@ -29,7 +30,11 @@ const initialUserState = {
     followers: [],
     following: []
   },
-  viewerInfo: {},
+  viewerInfo: {
+    followers: [],
+    following: [],
+    sentRequests: [],
+  },
 }
 
 const userStateReducer = (state, action) => {
@@ -295,6 +300,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
       </Paper>
 
       {tabIndex === 0 &&
+        (isFollowing || isViewingOwn) &&
         !!inputState.entries &&
         inputState.entries.map((entry) => 
           <EntryCard 
@@ -302,6 +308,9 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
             removeEntry={removeEntry(entry)}
             isOwnEntry={isViewingOwn} 
           />)}
+      
+      {tabIndex === 0 && !(isFollowing || isViewingOwn)
+        && <PrivateAccount/>}
 
       <Paper>
         {tabIndex === 1 &&
@@ -441,6 +450,7 @@ const Container = styled.section`
   padding: 48px 0px;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 `;
 
 const Header = styled.div`
@@ -450,6 +460,7 @@ const Header = styled.div`
   align-items: center;
   margin-bottom: 24px;
   padding: 5px 5px;
+  box-sizing: border-box;
 `;
 
 const UserInfo = styled.div`
