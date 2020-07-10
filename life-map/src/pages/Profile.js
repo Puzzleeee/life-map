@@ -25,7 +25,10 @@ const config = {
 };
 
 const initialUserState = {
-  profileInfo: {},
+  profileInfo: {
+    followers: [],
+    following: []
+  },
   viewerInfo: {},
 }
 
@@ -285,9 +288,9 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           }}
           variant="fullWidth"
         >
-          <Tab label="entries" />
-          <Tab label="followers" />
-          <Tab label="following" />
+          <Tab label={`${inputState.entries.length} entries`} />
+          <Tab label={`${userState.profileInfo.followers.length} followers`} />
+          <Tab label={`${userState.profileInfo.following.length} following`} />
         </Tabs>
       </Paper>
 
