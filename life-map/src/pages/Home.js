@@ -6,23 +6,16 @@ import GoogleMapReact from "google-map-react";
 import AddEntry from "../components/AddEntry";
 import Entries from "./Entries";
 import Profile from "./Profile";
-import FollowRequestCard from "../components/FollowRequestCard";
+import NavBar from "../components/NavBar";
 //--------start import Material-ui components---------//
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Drawer from "@material-ui/core/Drawer";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import Drawer from "@material-ui/core/Drawer";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import RoomIcon from "@material-ui/icons/Room";
 import CloseIcon from "@material-ui/icons/Close";
+import RoomIcon from "@material-ui/icons/Room";
 //--------end import Material-ui components---------//
 
 const config = {
@@ -32,6 +25,7 @@ const config = {
   },
 };
 
+//============= THEMES ===============//
 // initialize constants for map
 const mapDefaults = {
   center: {
@@ -309,6 +303,7 @@ const Home = ({
     state: { userID },
   },
 }) => {
+  //============= STATES ===============//
   const [entries, setEntries] = useState([]);
   const [followRequests, setFollowRequests] = useState([]);
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -323,6 +318,7 @@ const Home = ({
   const [profileUserID, setProfileUserID] = useState("");
   //-------- end of view states -------- //
 
+  //============= LIFECYCLE ===============//
   // on mounting component, check if user was already logged in and redirect
   // appropriately
   useEffect(
@@ -367,31 +363,12 @@ const Home = ({
     setLoggedIn(false);
   };
 
-  //-------- start of nav menu setters --------//
-  const [menuAnchor, setMenuAnchor] = React.useState(null);
-  const isMenuOpen = Boolean(menuAnchor);
-
-  const handleOpenMenu = (event) => {
-    setMenuAnchor(event.target);
-  };
-
   const handlePageChange = (page) => {
     if (page === "Profile") {
       setProfileUserID(userID);
     }
 
     setPage(page);
-    setMenuAnchor(null);
-  };
-
-  //-------- end of nav menu setters --------//
-
-  //-------- start of follow menu handlers --------//
-  const [followMenuAnchor, setFollowMenuAnchor] = React.useState(null);
-  const isFollowMenuOpen = Boolean(followMenuAnchor);
-
-  const handleOpenFollow = (event) => {
-    setFollowMenuAnchor(event.target);
   };
 
   /**
@@ -406,7 +383,6 @@ const Home = ({
       setFollowRequests((prev) => prev.filter((request) => request.id !== id));
     }
   };
-  //-------- end of follow menu handlers --------//
 
   return (
     <div>
@@ -424,77 +400,13 @@ const Home = ({
       {/* else, load the logged in homepage */}
       {!isLoading && isLoggedIn && (
         <Container>
-          {/* start of navbar */}
-          <AppBar position="static" style={{ padding: 0}}>
-            <Toolbar
-              style={{ display: "flex", justifyContent: "space-between" }}
-            >
-              <IconButton color="inherit" onClick={handleOpenMenu}>
-                <MenuIcon />
-              </IconButton>
-
-              {/* nav bar menu modal */}
-              <Menu
-                anchorEl={menuAnchor}
-                keepMounted
-                open={isMenuOpen}
-                onClose={() => setMenuAnchor(null)}
-              >
-                <MenuItem onClick={() => handlePageChange("Map")}>Map</MenuItem>
-                <MenuItem onClick={() => handlePageChange("Add entry")}>
-                  Add entry
-                </MenuItem>
-                <MenuItem onClick={() => handlePageChange("View all entries")}>
-                  View all entries
-                </MenuItem>
-              </Menu>
-              {/* end nav bar menu modal */}
-
-              {/* follow requests modal */}
-              <Menu
-                anchorEl={followMenuAnchor}
-                keepMounted
-                open={isFollowMenuOpen}
-                onClose={() => setFollowMenuAnchor(null)}
-              >
-                {!!followRequests.length &&
-                  followRequests.map((req) => (
-                    <FollowRequestCard
-                      key={req.id}
-                      request={req}
-                      UIhandler={handleFollowUIUpdate}
-                    />
-                  ))}
-
-                {!followRequests.length && (
-                  <MenuItem style={{ width: "350px" }}>
-                    No follow requests
-                  </MenuItem>
-                )}
-              </Menu>
-              {/* end follow requests modal */}
-
-              <Typography variant="h6">{page}</Typography>
-
-              <div style={{ display: "flex" }}>
-                <IconButton
-                  color="inherit"
-                  onClick={() => handlePageChange("Profile")}
-                >
-                  <AccountCircleIcon />
-                </IconButton>
-
-                <IconButton color="inherit" onClick={handleOpenFollow}>
-                  <NotificationsIcon />
-                </IconButton>
-
-                <Button color="inherit" onClick={handleLogOut}>
-                  Logout
-                </Button>
-              </div>
-            </Toolbar>
-          </AppBar>
-          {/* end of navbar */}
+          <NavBar
+            page={page}
+            followRequests={followRequests}
+            handlePageChange={handlePageChange}
+            handleFollowUIUpdate={handleFollowUIUpdate}
+            handleLogOut={handleLogOut}
+          />
 
           {/* render map */}
           {page === "Map" && (
@@ -604,7 +516,7 @@ const Container = styled.section`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #F2F9FF;
+  background-color: #f2f9ff;
 `;
 
 const MapContainer = styled.div`
