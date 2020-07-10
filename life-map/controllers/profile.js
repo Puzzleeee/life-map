@@ -21,6 +21,24 @@ const profileController = () => {
     }
   }
 
+  modules.getUserSummary = async (req, res) => {
+    const id = req.body.id;
+    try {
+      const result = await profile.getUserSummary(id);
+      res.status(200).json({
+        ...result,
+        success: true,
+        message: "Successfully retrieved profile summary"
+      })
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({
+        success: false,
+        message: 'Failed to retrieve profile summary'
+      })
+    }
+  }
+
   modules.updateUserProfile = async (req, res) => {
     const { profile_id, id, bio, name } = req.body;
     try {

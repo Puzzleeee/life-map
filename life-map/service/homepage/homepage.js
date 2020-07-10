@@ -2,7 +2,7 @@ const homepage = (diary, markers, media) => {
   let modules = {};
 
   /**
-   * Arranges user's diary entries data for front-end use
+   * Arranges a user's own diary entries data for front-end use
    *
    * @param {number} id - the id of the user
    * @return An array of objects, each object representing a diary entry and its corresponding map marker
@@ -23,7 +23,7 @@ const homepage = (diary, markers, media) => {
         console.log(err);
       });
   };
-
+  
   return Object.freeze(modules);
 };
 

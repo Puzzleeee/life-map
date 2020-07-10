@@ -4,6 +4,7 @@ import axios from "axios";
 import { Redirect } from "react-router-dom";
 import GoogleMapReact from "google-map-react";
 import AddEntry from "../components/AddEntry";
+import UserBar from "../components/UserBar";
 import Entries from "./Entries";
 import Profile from "./Profile";
 import FollowRequestCard from "../components/FollowRequestCard";
@@ -316,8 +317,7 @@ const Home = ({
   //-------- start of view states -------- //
   const [page, setPage] = useState("Map");
   const [drawerState, setDrawerState] = useState({
-    title: "",
-    content: "",
+    entry: {},
     isOpen: false,
   });
   const [profileUserID, setProfileUserID] = useState("");
@@ -343,7 +343,6 @@ const Home = ({
           "http://localhost:5000/homepage",
           config
         );
-        console.log(entries.data.data);
         setEntries(entries.data.data);
 
         const { data: socialInfo } = await axios.get(
@@ -507,20 +506,19 @@ const Home = ({
                 // somehow you need to do this cos of some bug in the package
                 distanceToMouse={() => {}}
               >
-                {entries.map(({ title, content, marker }) => (
+                {entries.map((entry) => (
                   <RoomIcon
                     fontSize="large"
                     color="primary"
                     style={{ cursor: "pointer" }}
-                    key={marker.name}
-                    lat={marker.lat}
-                    lng={marker.lng}
-                    name={marker.name}
+                    key={entry.marker.name}
+                    lat={entry.marker.lat}
+                    lng={entry.marker.lng}
+                    name={entry.marker.name}
                     onClick={(e) => {
                       e.preventDefault();
                       setDrawerState({
-                        title,
-                        content,
+                        entry,
                         isOpen: true,
                       });
                     }}
@@ -538,40 +536,56 @@ const Home = ({
                   })
                 }
               >
-                <Card>
-                  <CardContent
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography variant="h4" color="primary">
-                      {drawerState.title}
-                    </Typography>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <Button variant="outlined" color="secondary">
-                        view post
-                      </Button>
-                      <IconButton
-                        onClick={() =>
-                          setDrawerState({
-                            title: "",
-                            entries: "",
-                            isOpen: false,
-                          })
-                        }
-                      >
-                        <CloseIcon fontSize="large" />
-                      </IconButton>
-                    </div>
-                  </CardContent>
-                  <CardContent>
-                    <Typography variant="body1">
-                      {drawerState.content}
-                    </Typography>
-                  </CardContent>
-                </Card>
+                {drawerState.isOpen &&
+                  <Card>
+                    <CardContent
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <DrawerHeader>
+                        <UserBar
+                          userID = {drawerState.entry.user_id}
+                          navigateToProfile = {(id) => {setPage("Profile"); setProfileUserID(id)}}
+                        />
+                        <div style = {{ display: "flex", justifyContent: "flex-end", flexGrow: 1 }}>
+                          <IconButton
+                            onClick={() =>
+                              setDrawerState({
+                                entry: {},
+                                isOpen: false,
+                              })
+                            }
+                          >
+                            <CloseIcon fontSize="large" />
+                          </IconButton>
+                        </div>
+                      </DrawerHeader>
+                      <Typography variant="h4" color="primary">
+                        {drawerState.entry.title}
+                      </Typography>
+                      <Typography variant="body1" color="textSecondary">
+                        {`Posted: ${new Date(drawerState.entry.date_time).toDateString()}`}
+                      </Typography>
+                      <Location>
+                        <RoomIcon fontSize="small" color="primary" />
+                        <Typography>{drawerState.entry.marker && drawerState.entry.marker.name}</Typography>
+                      </Location>
+                      <Typography variant="body1" color="textPrimary" component="p">
+                        {drawerState.entry.content}
+                      </Typography>
+
+                    </CardContent>
+                    <CardContent>
+                      <Typography variant="body1">
+                        {drawerState.content}
+                      </Typography>
+                    </CardContent>
+                  </Card> 
+                }
               </Drawer>
             </MapContainer>
           )}
@@ -612,3 +626,15 @@ const MapContainer = styled.div`
   height: 94.5vh;
   width: 100%;
 `;
+
+const Location = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+`;
+
+const DrawerHeader = styled.div`
+  display: flex;
+  width: 100%;
+`
+

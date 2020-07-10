@@ -13,7 +13,7 @@ const profile = () => {
    * @return {object} object containing the keys id, email, name, bio, profile_pic and profile_id
    */
   modules.getUserSummary = async (id) => {
-    const profile = await (db.get_user_profile.execute(id))[0]
+    const profile = (await db.get_user_profile.execute(id))[0];
     if (profile.profile_pic) {
       const pic = await AWS.retrieve(profile.profile_pic);
       profile.profile_pic = pic.data;
@@ -23,13 +23,13 @@ const profile = () => {
 
   modules.getUserProfile = async (id) => {
     const [profile, entries, socialInfo] = await Promise.all([
-      modules.getUserSummary(),
+      modules.getUserSummary(id),
       homepage.arrangeUserData(id),
       social.arrangeSocialInfo(id)
     ]);
 
     return {
-      ...profile[0],
+      ...profile,
       entries: entries,
       ...socialInfo
     }
