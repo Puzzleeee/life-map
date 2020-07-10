@@ -6,18 +6,30 @@ const AWS = require("../aws-upload/aws.js");
 const profile = () => {
   let modules = {};
 
+  /**
+   * Get a summary of a user's profile: their id, email, name, bio, profile id and profile picture
+   * 
+   * @param {string} id - id of the user 
+   * @return {object} object containing the keys id, email, name, bio, profile_pic and profile_id
+   */
+  modules.getUserSummary = async (id) => {
+    const profile = (await db.get_user_profile.execute(id))[0];
+    if (profile.profile_pic) {
+      const pic = await AWS.retrieve(profile.profile_pic);
+      profile.profile_pic = pic.data;
+    }
+    return profile;
+  }
+
   modules.getUserProfile = async (id) => {
     const [profile, entries, socialInfo] = await Promise.all([
-      db.get_user_profile.execute(id), 
+      modules.getUserSummary(id),
       homepage.arrangeUserData(id),
       social.arrangeSocialInfo(id)
     ]);
-    if (profile[0].profile_pic) {
-      const picture = await AWS.retrieve(profile[0].profile_pic);
-      profile[0].profile_pic = picture.data;
-    }
+
     return {
-      ...profile[0],
+      ...profile,
       entries: entries,
       ...socialInfo
     }

@@ -11,6 +11,8 @@ const profileController = require("../controllers/profile.js");
  */
 router.post('/user', checkAuthenticated, profileController.getUserProfile);
 
+router.post('/user-summary', checkAuthenticated, profileController.getUserSummary);
+
 router.post('/update-user', checkAuthenticated, profileController.updateUserProfile);
 
 router.post('/profile-pic', [checkAuthenticated, busboyMiddleware], profileController.updateProfilePic);
