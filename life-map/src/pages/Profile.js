@@ -299,6 +299,9 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
         </Tabs>
       </Paper>
 
+      {!(isFollowing || isViewingOwn)
+        && <PrivateAccount/>}
+        
       {tabIndex === 0 &&
         (isFollowing || isViewingOwn) &&
         !!inputState.entries &&
@@ -308,12 +311,10 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
             removeEntry={removeEntry(entry)}
             isOwnEntry={isViewingOwn} 
           />)}
-      
-      {tabIndex === 0 && !(isFollowing || isViewingOwn)
-        && <PrivateAccount/>}
-
+    
       <Paper>
         {tabIndex === 1 &&
+          (isFollowing || isViewingOwn) &&
           !!userState.profileInfo.followers &&
           userState.profileInfo.followers.map((followRelationship) => (
             <UserCard
@@ -330,6 +331,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           ))}
 
         {tabIndex === 2 &&
+          (isFollowing || isViewingOwn) &&
           !!userState.profileInfo.following &&
           userState.profileInfo.following.map((followRelationship) => (
             <UserCard
@@ -447,7 +449,7 @@ const Container = styled.section`
   width: 100%;
   max-width: 850px;
   margin: 0 auto;
-  padding: 48px 0px;
+  padding: 0.5vh 0px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -459,7 +461,7 @@ const Header = styled.div`
   flex-direction: row;
   align-items: center;
   margin-bottom: 24px;
-  padding: 5px 5px;
+  padding: 0.5vh 0.5vw;
   box-sizing: border-box;
 `;
 
