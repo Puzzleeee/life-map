@@ -30,7 +30,6 @@ const initialUserState = {
 }
 
 const userStateReducer = (state, action) => {
-  console.log('dispatch called');
   switch (action.type) {
     case 'initialize':
       return action.payload;
@@ -115,7 +114,9 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
   }
 
   const removeEntry = (entry) => {
-    dispatchInput({ type: 'removeEntry', payload: {entry}})
+    return () => {
+      dispatchInput({ type: 'removeEntry', payload: {entry}})
+    }
   }
 
   const [isFollowing, requestSent, handleClick] = useSocialButton(userState.viewerInfo, (viewerInfo) => setViewerInfo(viewerInfo), {id: userID});
@@ -186,7 +187,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           <div style={{ display: "flex", alignItems: "center" }}>
             {!inputState.isEditingName && (
               <>
-                <Typography variant="h4" style={{ marginBottom: "4px" }}>
+                <Typography variant="h5" style={{ marginBottom: "4px" }}>
                   {inputState.nameInput}
                 </Typography>
 
@@ -275,7 +276,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
         }
       </Header>
 
-      <Paper square>
+      <Paper
+        square>
         <Tabs
           value={tabIndex}
           onChange={(event, newValue) => {
@@ -294,7 +296,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
         inputState.entries.map((entry) => 
           <EntryCard 
             entry={entry}
-            removeEntry={(entry) => removeEntry(entry)}
+            removeEntry={removeEntry(entry)}
             isOwnEntry={isViewingOwn} 
           />)}
 
@@ -431,12 +433,11 @@ export default Profile;
 
 const Container = styled.section`
   width: 100%;
-  max-width: 750px;
+  max-width: 850px;
   margin: 0 auto;
-  padding: 48px 12px;
+  padding: 48px 0px;
   display: flex;
   flex-direction: column;
-  background-color: white;
 `;
 
 const Header = styled.div`
@@ -445,6 +446,7 @@ const Header = styled.div`
   flex-direction: row;
   align-items: center;
   margin-bottom: 24px;
+  padding: 5px 5px;
 `;
 
 const UserInfo = styled.div`

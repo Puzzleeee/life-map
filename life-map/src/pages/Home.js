@@ -425,7 +425,7 @@ const Home = ({
       {!isLoading && isLoggedIn && (
         <Container>
           {/* start of navbar */}
-          <AppBar position="static">
+          <AppBar position="static" style={{ padding: 0}}>
             <Toolbar
               style={{ display: "flex", justifyContent: "space-between" }}
             >
@@ -604,6 +604,7 @@ const Container = styled.section`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #F2F9FF;
 `;
 
 const MapContainer = styled.div`
