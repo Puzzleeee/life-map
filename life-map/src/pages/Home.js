@@ -343,6 +343,7 @@ const Home = ({
           "http://localhost:5000/homepage",
           config
         );
+        console.log(entries.data.data);
         setEntries(entries.data.data);
 
         const { data: socialInfo } = await axios.get(

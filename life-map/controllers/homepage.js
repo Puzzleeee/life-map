@@ -3,6 +3,7 @@ const homepage = require("../service/homepage/homepage.js");
 const marker = require("../service/homepage/markers.js");
 const diary = require("../service/homepage/diary.js");
 const media = require("../service/homepage/media.js");
+const social = require("../service/social/social.js");
 
 const homepageController = () => {
   let modules = {};
@@ -10,12 +11,17 @@ const homepageController = () => {
   modules.home = async (req, res) => {
     const id = req.user.id;
     try {
-      const userData = await homepage.arrangeUserData(id);
+      const { following } = await social.arrangeSocialInfo(id);
+      // array of user ids that user follows, to be used to get diary entry details
+      const toRetrieve = [id].concat(following.map(relation => relation.followee));
+      const diaryEntries = await Promise.all(toRetrieve.map(id => homepage.arrangeUserData(id)));
+      const flattened = diaryEntries.reduce((a,b) => a.concat(b), []);
       res.status(200).json({
         success: true,
-        data: userData,
+        data: flattened,
       });
     } catch (err) {
+      console.log(err);
       res.status(400).json({
         success: false,
         err: err,
