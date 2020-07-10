@@ -88,82 +88,72 @@ const EntryCard = ({ entry, removeEntry, isOwnEntry }) => {
   //------- end of menu handlers -------//
 
   return (
-    <StyledCard elevation={3}>
-      <CardHeader
-        title={entry.title}
-        subheader={
-          <div style={{ marginTop: "4px" }}>
-            <Typography variant="body1" color="textSecondary">
-              {`Posted: ${new Date(entry.date_time).toDateString()}`}
-            </Typography>
-            <Location>
-              <RoomIcon fontSize="small" color="primary" />
-              <Typography>{entry.marker && entry.marker.name}</Typography>
-            </Location>
-          </div>
-        }
-        action={
-          isOwnEntry &&
-            <div>
-              <IconButton aria-label="settings" onClick={handleOpenMenu}>
-                <MoreVertIcon />
-              </IconButton>
-
-              <Menu
-                anchorEl={menuAnchor}
-                keepMounted
-                open={isMenuOpen}
-                onClose={handleCloseMenu}
-              >
-                <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
-                  Delete
-                </MenuItem>
-              </Menu>
-            </div>
-        }
-      />
-
-      <CardContent>
-        <Typography variant="body1" color="textPrimary" component="p">
-          {entry.content.slice(0, 130)}
-
-          {/* display ellipses if >130 chars long */}
-          {entry.content.length > 130 ? "..." : ""}
-        </Typography>
-      </CardContent>
-
-      {/* display expansion card if >130 chars OR there are photos */}
-      {(entry.content.length > 130 || entry.photos.length) && (
-        <div>
-          <CardActions>
-            <IconButton
-              className={clsx(classes.expand, {
-                [classes.expandOpen]: expanded,
-              })}
-              onClick={() => setExpanded((prev) => !prev)}
-            >
-              <ExpandMoreIcon />
-            </IconButton>
-          </CardActions>
-
-          <Collapse in={expanded} timeout="auto">
-            <CardContent>
-              <Typography variant="body1" color="textPrimary" component="p">
-                {entry.content.slice(130)}
+    <Collapse in={expanded} timeout="auto" collapsedHeight={350}>
+      <StyledCard elevation={3}>
+        <CardHeader
+          title={entry.title}
+          subheader={
+            <div style={{ marginTop: "4px" }}>
+              <Typography variant="body1" color="textSecondary">
+                {`Posted: ${new Date(entry.date_time).toDateString()}`}
               </Typography>
-            </CardContent>
+              <Location>
+                <RoomIcon fontSize="small" color="primary" />
+                <Typography>{entry.marker && entry.marker.name}</Typography>
+              </Location>
+            </div>
+          }
+          action={
+            isOwnEntry && (
+              <div>
+                <IconButton aria-label="settings" onClick={handleOpenMenu}>
+                  <MoreVertIcon />
+                </IconButton>
 
-            <ImageContainer>
-              {entry.photos.map((photo) => (
-                <CardMedia>
-                  <Image src={photo.data} alt="card photo" />
-                </CardMedia>
-              ))}
-            </ImageContainer>
-          </Collapse>
-        </div>
-      )}
-    </StyledCard>
+                <Menu
+                  anchorEl={menuAnchor}
+                  keepMounted
+                  open={isMenuOpen}
+                  onClose={handleCloseMenu}
+                >
+                  <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
+                    Delete
+                  </MenuItem>
+                </Menu>
+              </div>
+            )
+          }
+        />
+
+        <CardContent>
+          <Typography variant="body1" color="textPrimary" component="p">
+            {expanded
+              ? entry.content
+              : `${entry.content.split(" ").splice(0, 30).join(" ")}...`}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <IconButton
+            className={clsx(classes.expand, {
+              [classes.expandOpen]: expanded,
+            })}
+            onClick={() => setExpanded((prev) => !prev)}
+          >
+            <ExpandMoreIcon />
+          </IconButton>
+        </CardActions>
+
+        {expanded && (
+          <ImageContainer>
+            {entry.photos.map((photo) => (
+              <CardMedia>
+                <Image src={photo.data} alt="card photo" />
+              </CardMedia>
+            ))}
+          </ImageContainer>
+        )}
+      </StyledCard>
+    </Collapse>
   );
 };
 
