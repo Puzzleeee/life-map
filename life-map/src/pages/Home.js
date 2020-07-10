@@ -16,6 +16,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
@@ -537,13 +538,15 @@ const Home = ({
                 }
               >
                 {drawerState.isOpen &&
-                  <Card>
+                  <Card
+                    style={{
+                      overflowY: "auto",
+                    }}>
                     <CardContent
                       style={{
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
-                        alignItems: "center",
                       }}
                     >
                       <DrawerHeader>
@@ -564,16 +567,18 @@ const Home = ({
                           </IconButton>
                         </div>
                       </DrawerHeader>
-                      <Typography variant="h4" color="primary">
-                        {drawerState.entry.title}
-                      </Typography>
-                      <Typography variant="body1" color="textSecondary">
-                        {`Posted: ${new Date(drawerState.entry.date_time).toDateString()}`}
-                      </Typography>
-                      <Location>
-                        <RoomIcon fontSize="small" color="primary" />
-                        <Typography>{drawerState.entry.marker && drawerState.entry.marker.name}</Typography>
-                      </Location>
+                      <DrawerTitle>
+                        <Typography variant="h4" color="primary">
+                          {drawerState.entry.title}
+                        </Typography>
+                        <Typography variant="body1" color="textSecondary">
+                          {`Posted: ${new Date(drawerState.entry.date_time).toDateString()}`}
+                        </Typography>
+                        <Location>
+                          <RoomIcon fontSize="small" color="primary" />
+                          <Typography>{drawerState.entry.marker && drawerState.entry.marker.name}</Typography>
+                        </Location>
+                      </DrawerTitle>
                       <Typography variant="body1" color="textPrimary" component="p">
                         {drawerState.entry.content}
                       </Typography>
@@ -584,6 +589,13 @@ const Home = ({
                         {drawerState.content}
                       </Typography>
                     </CardContent>
+                    <ImageContainer>
+                      {drawerState.entry.photos.map((photo) => (
+                        <CardMedia>
+                          <Image src={photo.data} alt="card photo" />
+                        </CardMedia>
+                      ))}
+                    </ImageContainer>
                   </Card> 
                 }
               </Drawer>
@@ -637,4 +649,26 @@ const DrawerHeader = styled.div`
   display: flex;
   width: 100%;
 `
+
+const DrawerTitle = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 1.25rem 0px
+`
+
+const ImageContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+`;
+
+const Image = styled.img`
+  height: 250px;
+  width: auto;
+  margin: 12px;
+  border-radius: 5px;
+  box-shadow: 3px 3px 10px rgba(150, 150, 150, 0.5);
+`;
+
 
