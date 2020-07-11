@@ -23,7 +23,7 @@ const homepage = (diary, markers, media) => {
         console.log(err);
       });
   };
-  
+
   return Object.freeze(modules);
 };
 
