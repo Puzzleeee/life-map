@@ -358,6 +358,7 @@ const Home = ({
     ]
   );
 
+  //============= ROUTE HANDLERS ===============//
   const handleLogOut = async () => {
     await axios.post("http://localhost:5000/logout", config);
     setLoggedIn(false);
@@ -369,6 +370,12 @@ const Home = ({
     }
 
     setPage(page);
+  };
+
+  // when a search result is clicked
+  const handleSearchRedirect = (userID) => {
+    setProfileUserID(userID);
+    setPage("Profile");
   };
 
   /**
@@ -404,6 +411,7 @@ const Home = ({
             page={page}
             followRequests={followRequests}
             handlePageChange={handlePageChange}
+            handleSearchRedirect={handleSearchRedirect}
             handleFollowUIUpdate={handleFollowUIUpdate}
             handleLogOut={handleLogOut}
           />

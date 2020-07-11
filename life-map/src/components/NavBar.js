@@ -3,54 +3,39 @@ import axios from "axios";
 import FollowRequestCard from "./FollowRequestCard";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import InputBase from "@material-ui/core/InputBase";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import TextField from "@material-ui/core/TextField";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import SearchIcon from "@material-ui/icons/Search";
 import useDebouncer from "../hooks/useDebouncer";
 
+const config = {
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+};
+
 const useStyles = makeStyles((theme) => ({
   search: {
-    position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
     "&:hover": {
       backgroundColor: fade(theme.palette.common.white, 0.25),
     },
-    marginLeft: 0,
     width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(1),
-      width: "auto",
-    },
   },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  inputRoot: {
-    color: "inherit",
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
+  input: {
+    color: theme.palette.common.white,
   },
 }));
 
@@ -58,6 +43,7 @@ const NavBar = ({
   page,
   followRequests,
   handlePageChange,
+  handleSearchRedirect,
   handleFollowUIUpdate,
   handleLogOut,
 }) => {
@@ -75,20 +61,27 @@ const NavBar = ({
   // debouncedSearchInput is the only dependency, so this only runs
   // each time the debouncer returns a new value after the specified delay
   useEffect(() => {
-    if (debouncedSearchInput) {
-      // dummy api call
-      axios
-        .get(`/search/?query=${debouncedSearchInput}`)
-        .then((data) => {
-          setSearchResults(data.results);
-        })
-        .catch((error) => {
+    (async () => {
+      if (debouncedSearchInput) {
+        try {
+          const {
+            data: { results },
+          } = await axios.post(
+            `/social/user`,
+            { searchString: debouncedSearchInput },
+            config
+          );
+
+          if (results) {
+            setSearchResults(results);
+            return;
+          }
+        } catch (error) {
           console.error(error);
-          setSearchResults([]);
-        });
-    } else {
-      setSearchResults([]);
-    }
+        }
+        setSearchResults([]);
+      }
+    })();
   }, [debouncedSearchInput]);
 
   const handleOpenMenu = (event) => {
@@ -113,20 +106,40 @@ const NavBar = ({
           </IconButton>
 
           {/* search bar */}
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-            />
-          </div>
+          <Autocomplete
+            freeSolo
+            inputValue={searchInput}
+            // when an option is selected (or removed)
+            onChange={(event, value) => {
+              if (value) {
+                handleSearchRedirect(value.id);
+              }
+            }}
+            // when text input changes
+            onInputChange={(event, newInputValue) =>
+              setSearchInput(newInputValue)
+            }
+            options={searchResults}
+            getOptionLabel={(result) => result.name}
+            // render prop for input component
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                className={classes.search}
+                InputProps={{
+                  ...params.InputProps,
+                  className: classes.input,
+                  // render search icon
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
         </div>
         {/* end search bar */}
 
