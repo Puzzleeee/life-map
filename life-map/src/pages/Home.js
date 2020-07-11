@@ -8,6 +8,7 @@ import UserBar from "../components/UserBar";
 import Entries from "./Entries";
 import Profile from "./Profile";
 import NavBar from "../components/NavBar";
+import CustomMarker from "../components/CustomMarker"
 //--------start import Material-ui components---------//
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -158,12 +159,8 @@ const Home = ({
                 distanceToMouse={() => {}}
               >
                 {entries.map((entry) => (
-                  <RoomIcon
-                    fontSize="large"
-                    style={{
-                      color: colors?.[entry.marker?.variant] ?? colors.blue,
-                      cursor: "pointer",
-                    }}
+                  <CustomMarker
+                    variant={entry.marker.variant}
                     key={entry.marker.name}
                     lat={entry.marker.lat}
                     lng={entry.marker.lng}
