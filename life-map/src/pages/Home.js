@@ -8,7 +8,8 @@ import UserBar from "../components/UserBar";
 import Entries from "./Entries";
 import Profile from "./Profile";
 import NavBar from "../components/NavBar";
-import CustomMarker from "../components/CustomMarker"
+import CustomMarker from "../components/CustomMarker";
+import FilterBar from "../components/FilterBar";
 //--------start import Material-ui components---------//
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -19,7 +20,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import RoomIcon from "@material-ui/icons/Room";
 //--------end import Material-ui components---------//
-import { colors, mapDefaults } from "../constants";
+import { colors, mapDefaults, categories } from "../constants";
 
 const config = {
   withCredentials: true,
@@ -41,6 +42,7 @@ const Home = ({
   const [followRequests, setFollowRequests] = useState([]);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(true);
+  const [selectedCategories, setSelectedCategories] = useState(categories);
   //-------- start of view states -------- //
   const [page, setPage] = useState("Map");
   const [drawerState, setDrawerState] = useState({
@@ -151,6 +153,10 @@ const Home = ({
           {/* render map */}
           {page === "Map" && (
             <MapContainer>
+              <FilterBar 
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+              />
               <GoogleMapReact
                 defaultCenter={mapDefaults.center}
                 defaultZoom={mapDefaults.zoom}
@@ -159,20 +165,21 @@ const Home = ({
                 distanceToMouse={() => {}}
               >
                 {entries.map((entry) => (
-                  <CustomMarker
-                    variant={entry.marker.variant}
-                    key={entry.marker.name}
-                    lat={entry.marker.lat}
-                    lng={entry.marker.lng}
-                    name={entry.marker.name}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setDrawerState({
-                        entry,
-                        isOpen: true,
-                      });
-                    }}
-                  />
+                  selectedCategories.indexOf(entry.marker.variant) > -1  && 
+                    <CustomMarker
+                      variant={entry.marker.variant}
+                      key={entry.marker.name}
+                      lat={entry.marker.lat}
+                      lng={entry.marker.lng}
+                      name={entry.marker.name}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setDrawerState({
+                          entry,
+                          isOpen: true,
+                        });
+                      }}
+                    />
                 ))}
               </GoogleMapReact>
               <Drawer
@@ -304,6 +311,7 @@ const Container = styled.section`
 const MapContainer = styled.div`
   height: 94.5vh;
   width: 100%;
+  position: relative;
 `;
 
 const Location = styled.div`

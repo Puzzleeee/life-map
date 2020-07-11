@@ -7,6 +7,8 @@ export const colors = {
   purple: purple[500],
 };
 
+export const categories = [null, 'Family', 'Sports', 'Couples', 'Food'];
+
 export const mapDefaults = {
   center: {
     lat: 1.3521,
