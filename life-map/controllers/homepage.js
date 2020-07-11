@@ -35,10 +35,9 @@ const homepageController = () => {
 
   modules.createEntry = async (req, res) => {
     const user_id = req.user.id;
-    console.log("body", req.body);
+    // console.log("body", req.body);
     const { name, address, lat, lng, variant } = JSON.parse(req.body.location);
     const locationValues = { user_id, name, address, lat, lng, variant };
-    console.log("location", locationValues);
     const files = req.files;
 
     try {
