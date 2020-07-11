@@ -65,7 +65,7 @@ const AddEntry = () => {
   const [content, setContent] = useState("");
   const [shared, setShared] = useState(false);
   const [location, setLocation] = useState({});
-  const [markerVariant, setMarkerVariant] = useState("blue");
+  const [markerVariant, setMarkerVariant] = useState(null);
   const [images, setImages] = useState([]);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const classes = useStyles();
@@ -253,31 +253,31 @@ const AddEntry = () => {
           </FormInput>
 
           <div style={{ margin: "1em 0" }}>
-            <FormLabel component="label">Marker style</FormLabel>
+            <FormLabel component="label">Category</FormLabel>
             <RadioGroup
               row
               value={markerVariant}
               onChange={(e) => setMarkerVariant(e.target.value)}
             >
               <FormControlLabel
-                value="blue"
+                value="Food"
                 control={<Radio />}
-                label={<RoomIcon style={{ color: colors.blue }} />}
+                label="Food"
               />
               <FormControlLabel
-                value="red"
+                value="Couples"
                 control={<Radio />}
-                label={<RoomIcon style={{ color: colors.red }} />}
+                label="Couples"
               />
               <FormControlLabel
-                value="green"
+                value="Family"
                 control={<Radio />}
-                label={<RoomIcon style={{ color: colors.green }} />}
+                label="Family"
               />
               <FormControlLabel
-                value="purple"
+                value="Sports"
                 control={<Radio />}
-                label={<RoomIcon style={{ color: colors.purple }} />}
+                label="Sports"
               />
             </RadioGroup>
           </div>
