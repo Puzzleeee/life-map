@@ -10,9 +10,9 @@ import useOnclickOutside from "react-cool-onclickoutside";
 import ImageUpload from "./ImageUpload";
 import { makeStyles } from "@material-ui/core/styles";
 import createEntryBackground from "../static/create-entry-background.png";
+import { colors } from "../constants";
 
 //--------start import Material-ui components---------//
-import { green, purple } from "@material-ui/core/colors";
 import Card from "@material-ui/core/Card";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -262,22 +262,22 @@ const AddEntry = () => {
               <FormControlLabel
                 value="blue"
                 control={<Radio />}
-                label={<RoomIcon color="primary" />}
+                label={<RoomIcon style={{ color: colors.blue }} />}
               />
               <FormControlLabel
                 value="red"
                 control={<Radio />}
-                label={<RoomIcon color="secondary" />}
+                label={<RoomIcon style={{ color: colors.red }} />}
               />
               <FormControlLabel
                 value="green"
                 control={<Radio />}
-                label={<RoomIcon style={{ color: green[500] }} />}
+                label={<RoomIcon style={{ color: colors.green }} />}
               />
               <FormControlLabel
                 value="purple"
                 control={<Radio />}
-                label={<RoomIcon style={{ color: purple[500] }} />}
+                label={<RoomIcon style={{ color: colors.purple }} />}
               />
             </RadioGroup>
           </div>
