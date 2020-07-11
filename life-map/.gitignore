@@ -24,7 +24,6 @@ yarn-debug.log*
 yarn-error.log*
 
 #keys
-constants.js
 db.js
 
 #profile pics
