@@ -45,6 +45,13 @@ const useStyles = makeStyles((theme) => ({
   input: {
     color: theme.palette.common.white,
   },
+  title: {
+    // only show the page title on widths > 600px
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block",
+    },
+  },
   desktopButtonsContainer: {
     display: "none",
     [theme.breakpoints.up("md")]: {
@@ -53,6 +60,14 @@ const useStyles = makeStyles((theme) => ({
   },
   mobileButtonsContainer: {
     [theme.breakpoints.up("md")]: {
+      display: "none",
+    },
+  },
+  cleanAccordion: {
+    // hide the shadow below the accordion
+    boxShadow: "none",
+    // hide the :before pseudo-border of the accordion
+    "&.MuiAccordion-root:before": {
       display: "none",
     },
   },
@@ -142,7 +157,7 @@ const NavBar = ({
         <ListItemText primary="Profile" />
       </MenuItem>
 
-      <Accordion>
+      <Accordion className={classes.cleanAccordion}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <ListItemIcon style={{ display: "flex", alignItems: "center" }}>
             <NotificationsIcon />
@@ -262,7 +277,7 @@ const NavBar = ({
         </Menu>
         {/* end follow requests modal */}
 
-        <Typography variant="h6" className={classes.desktopButtonsContainer}>
+        <Typography variant="h6" className={classes.title}>
           {page}
         </Typography>
 
