@@ -7,7 +7,7 @@ import AddEntry from "../components/AddEntry";
 import UserBar from "../components/UserBar";
 import Entries from "./Entries";
 import Profile from "./Profile";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/NavBar/NavBar";
 import CustomMarker from "../components/CustomMarker";
 import FilterBar from "../components/FilterBar";
 //--------start import Material-ui components---------//

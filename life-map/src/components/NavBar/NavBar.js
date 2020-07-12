@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import FollowRequestCard from "./FollowRequestCard";
 import { fade, makeStyles } from "@material-ui/core/styles";
+
+//--------import custom components and hooks ---------//
+import FollowRequestCard from "./FollowRequestCard";
+import MobileMenuModal from "./MobileMenuModal";
+import useDebouncer from "../../hooks/useDebouncer";
+//--------end custom components and hooks ---------//
+//--------start import Material-ui components---------//
 import AppBar from "@material-ui/core/AppBar";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
@@ -19,12 +19,11 @@ import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import MenuIcon from "@material-ui/icons/Menu";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import SearchIcon from "@material-ui/icons/Search";
-import useDebouncer from "../hooks/useDebouncer";
+//--------end import Material-ui components---------//
 
 const config = {
   withCredentials: true,
@@ -60,14 +59,6 @@ const useStyles = makeStyles((theme) => ({
   },
   mobileButtonsContainer: {
     [theme.breakpoints.up("md")]: {
-      display: "none",
-    },
-  },
-  cleanAccordion: {
-    // hide the shadow below the accordion
-    boxShadow: "none",
-    // hide the :before pseudo-border of the accordion
-    "&.MuiAccordion-root:before": {
       display: "none",
     },
   },
@@ -137,60 +128,6 @@ const NavBar = ({
     setMenuAnchor(null);
     handlePageChange(page);
   };
-
-  const MobileMenu = ({
-    followRequests,
-    UIhandler,
-    handleLogOut,
-    handleProfile,
-  }) => (
-    <Menu
-      anchorEl={mobileAnchor}
-      keepMounted
-      open={isMobileMenuOpen}
-      onClose={() => setMobileAnchor(null)}
-    >
-      <MenuItem onClick={handleProfile}>
-        <ListItemIcon>
-          <AccountCircleIcon />
-        </ListItemIcon>
-        <ListItemText primary="Profile" />
-      </MenuItem>
-
-      <Accordion className={classes.cleanAccordion}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <ListItemIcon style={{ display: "flex", alignItems: "center" }}>
-            <NotificationsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Requests" />
-        </AccordionSummary>
-
-        {!!followRequests.length &&
-          followRequests.map((req) => (
-            <AccordionDetails>
-              <FollowRequestCard
-                key={req.id}
-                request={req}
-                UIhandler={UIhandler}
-              />
-            </AccordionDetails>
-          ))}
-
-        {!followRequests.length && (
-          <AccordionDetails>
-            <Typography>No requests</Typography>
-          </AccordionDetails>
-        )}
-      </Accordion>
-
-      <MenuItem onClick={handleLogOut}>
-        <ListItemIcon>
-          <ExitToAppIcon />
-        </ListItemIcon>
-        <ListItemText primary="Logout" />
-      </MenuItem>
-    </Menu>
-  );
 
   return (
     <AppBar position="static" style={{ padding: 0 }}>
@@ -305,7 +242,10 @@ const NavBar = ({
         </div>
 
         {/* mobile menu modal */}
-        <MobileMenu
+        <MobileMenuModal
+          anchor={mobileAnchor}
+          setAnchor={setMobileAnchor}
+          isOpen={isMobileMenuOpen}
           followRequests={followRequests}
           UIhandler={handleFollowUIUpdate}
           handleLogOut={handleLogOut}
