@@ -14,6 +14,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import MenuIcon from "@material-ui/icons/Menu";
+import MoreIcon from "@material-ui/icons/MoreVert";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import SearchIcon from "@material-ui/icons/Search";
 import useDebouncer from "../hooks/useDebouncer";
@@ -36,6 +37,17 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
     color: theme.palette.common.white,
+  },
+  desktopButtonsContainer: {
+    display: "none",
+    [theme.breakpoints.up("md")]: {
+      display: "flex",
+    },
+  },
+  mobileButtonsContainer: {
+    [theme.breakpoints.up("md")]: {
+      display: "none",
+    },
   },
 }));
 
@@ -182,9 +194,11 @@ const NavBar = ({
         </Menu>
         {/* end follow requests modal */}
 
-        <Typography variant="h6">{page}</Typography>
+        <Typography variant="h6" className={classes.desktopButtonsContainer}>
+          {page}
+        </Typography>
 
-        <div style={{ display: "flex" }}>
+        <div className={classes.desktopButtonsContainer}>
           <IconButton
             color="inherit"
             onClick={() => onMenuItemClick("Profile")}
@@ -199,6 +213,12 @@ const NavBar = ({
           <Button color="inherit" onClick={handleLogOut}>
             Logout
           </Button>
+        </div>
+
+        <div className={classes.mobileButtonsContainer}>
+          <IconButton onClick={() => {}} color="inherit">
+            <MoreIcon />
+          </IconButton>
         </div>
       </Toolbar>
     </AppBar>
