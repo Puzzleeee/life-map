@@ -4,6 +4,12 @@ import FollowRequestCard from "./FollowRequestCard";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
@@ -13,6 +19,7 @@ import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import MenuIcon from "@material-ui/icons/Menu";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -64,6 +71,9 @@ const NavBar = ({
   const isMenuOpen = Boolean(menuAnchor);
   const [followMenuAnchor, setFollowMenuAnchor] = useState(null);
   const isFollowMenuOpen = Boolean(followMenuAnchor);
+  const [mobileAnchor, setMobileAnchor] = useState(null);
+  const isMobileMenuOpen = Boolean(mobileAnchor);
+
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
@@ -104,10 +114,68 @@ const NavBar = ({
     setFollowMenuAnchor(event.target);
   };
 
+  const handleOpenMobileMenu = (event) => {
+    setMobileAnchor(event.target);
+  };
+
   const onMenuItemClick = (page) => {
     setMenuAnchor(null);
     handlePageChange(page);
   };
+
+  const MobileMenu = ({
+    followRequests,
+    UIhandler,
+    handleLogOut,
+    handleProfile,
+  }) => (
+    <Menu
+      anchorEl={mobileAnchor}
+      keepMounted
+      open={isMobileMenuOpen}
+      onClose={() => setMobileAnchor(null)}
+    >
+      <MenuItem onClick={handleProfile}>
+        <ListItemIcon>
+          <AccountCircleIcon />
+        </ListItemIcon>
+        <ListItemText primary="Profile" />
+      </MenuItem>
+
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <ListItemIcon style={{ display: "flex", alignItems: "center" }}>
+            <NotificationsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Requests" />
+        </AccordionSummary>
+
+        {!!followRequests.length &&
+          followRequests.map((req) => (
+            <AccordionDetails>
+              <FollowRequestCard
+                key={req.id}
+                request={req}
+                UIhandler={UIhandler}
+              />
+            </AccordionDetails>
+          ))}
+
+        {!followRequests.length && (
+          <AccordionDetails>
+            <Typography>No requests</Typography>
+          </AccordionDetails>
+        )}
+      </Accordion>
+
+      <MenuItem onClick={handleLogOut}>
+        <ListItemIcon>
+          <ExitToAppIcon />
+        </ListItemIcon>
+        <ListItemText primary="Logout" />
+      </MenuItem>
+    </Menu>
+  );
 
   return (
     <AppBar position="static" style={{ padding: 0 }}>
@@ -216,10 +284,18 @@ const NavBar = ({
         </div>
 
         <div className={classes.mobileButtonsContainer}>
-          <IconButton onClick={() => {}} color="inherit">
+          <IconButton onClick={handleOpenMobileMenu} color="inherit">
             <MoreIcon />
           </IconButton>
         </div>
+
+        {/* mobile menu modal */}
+        <MobileMenu
+          followRequests={followRequests}
+          UIhandler={handleFollowUIUpdate}
+          handleLogOut={handleLogOut}
+          handleProfile={() => onMenuItemClick("Profile")}
+        />
       </Toolbar>
     </AppBar>
   );

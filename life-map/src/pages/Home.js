@@ -153,7 +153,7 @@ const Home = ({
           {/* render map */}
           {page === "Map" && (
             <MapContainer>
-              <FilterBar 
+              <FilterBar
                 selectedCategories={selectedCategories}
                 setSelectedCategories={setSelectedCategories}
               />
@@ -165,7 +165,7 @@ const Home = ({
                 distanceToMouse={() => {}}
               >
                 {entries.map((entry) => (
-                  selectedCategories.indexOf(entry.marker.variant) > -1  && 
+                  selectedCategories.indexOf(entry.marker.variant) > -1  &&
                     <CustomMarker
                       variant={entry.marker.variant}
                       key={entry.marker.name}
