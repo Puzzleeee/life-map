@@ -324,6 +324,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
               user={{
                 id: followRelationship.follower,
                 name: followRelationship.name,
+                profile_pic: followRelationship.profile_pic
               }}
               isViewingOwn = {isViewingOwn}
               type='follower'
@@ -341,6 +342,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
               user={{
                 id: followRelationship.followee,
                 name: followRelationship.name,
+                profile_pic: followRelationship.profile_pic
               }}
               isViewingOwn = {isViewingOwn}
               type='following'

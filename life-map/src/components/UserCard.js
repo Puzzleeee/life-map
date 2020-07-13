@@ -28,29 +28,7 @@ const config = {
 const UserCard = ({ viewerInfo, setViewerInfo, user, changeProfile, isViewingOwn, type }) => {
   
   const [isFollowing, requestSent, handleButtonClick] = useSocialButton(viewerInfo, setViewerInfo, user);
-  const [profilePic, setProfilePic] = useState(null);
 
-  useEffect(() => {
-    console.log("UserCard use effect called");
-    (async () => {
-      try {
-        const { data } = await axios.post(
-          "http://localhost:5000/profile/user",
-          { id: user.id },
-          config
-        );
-        if (data.success) {
-          setProfilePic(data.profile_pic);
-        } else {
-          // display some error to front end here
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, [user]);
-
-  
   const removeFollower = (event) => {
     event.stopPropagation();
     const relationship = viewerInfo.followers.filter((relation) => relation.follower === user.id)[0];
@@ -71,7 +49,7 @@ const UserCard = ({ viewerInfo, setViewerInfo, user, changeProfile, isViewingOwn
     <CardContainer onClick={() => changeProfile(user.id)}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Avatar
-          src={profilePic || ""}
+          src={user?.profile_pic || ""}
           alt={user.name}
           style={{ marginRight: "16px" }}
         />

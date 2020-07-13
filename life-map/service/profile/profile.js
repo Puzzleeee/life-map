@@ -21,6 +21,16 @@ const profile = () => {
     return profile;
   }
 
+  modules.getProfilePic = async (id) => {
+    const file_name = (await db.get_profile_pic.execute(id))[0].profile_pic;
+    if (file_name) {
+      const url = (await AWS.retrieve(file_name)).data;
+      return url
+    } else {
+      return null;
+    }
+  }
+
   modules.getUserProfile = async (id) => {
     const [profile, entries, socialInfo] = await Promise.all([
       modules.getUserSummary(id),
@@ -28,10 +38,28 @@ const profile = () => {
       social.arrangeSocialInfo(id)
     ]);
 
+    const { followers, following } = socialInfo;
+    const [followersWithProfilePic, followingWithProfilePic] = await Promise.all([
+      Promise.all(followers.map(async (x) => {
+        const profile_pic = await modules.getProfilePic(x.follower);
+        return {...x, profile_pic}
+      })),
+      Promise.all(following.map(async (x) => {
+        const profile_pic = await modules.getProfilePic(x.followee);
+        return {...x, profile_pic}
+      }))
+    ]);
+
+    const updatedSocialInfo = {
+      ...socialInfo,
+      followers: followersWithProfilePic,
+      following: followingWithProfilePic
+    }
+
     return {
       ...profile,
       entries: entries,
-      ...socialInfo
+      ...updatedSocialInfo
     }
   }
 
@@ -40,15 +68,6 @@ const profile = () => {
       db.update_bio.execute(profile_id, bio),
       db.update_name.execute(id, name)
     ]);
-  }
-
-  modules.getProfilePic = async (id) => {
-    const file_name = (await db.get_profile_pic.execute(id))[0].profile_pic;
-    if (file_name) {
-      return AWS.retrieve(file_name).data;
-    } else {
-      return null;
-    }
   }
 
   modules.updateProfilePic = async (profile_id, file) => {
