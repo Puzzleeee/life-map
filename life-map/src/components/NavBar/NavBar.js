@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import FollowRequestCard from "./FollowRequestCard";
 import { fade, makeStyles } from "@material-ui/core/styles";
+
+//--------import custom components and hooks ---------//
+import FollowRequestCard from "./FollowRequestCard";
+import MobileMenuModal from "./MobileMenuModal";
+import useDebouncer from "../../hooks/useDebouncer";
+//--------end custom components and hooks ---------//
+//--------start import Material-ui components---------//
 import AppBar from "@material-ui/core/AppBar";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -14,9 +20,10 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import MenuIcon from "@material-ui/icons/Menu";
+import MoreIcon from "@material-ui/icons/MoreVert";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import SearchIcon from "@material-ui/icons/Search";
-import useDebouncer from "../hooks/useDebouncer";
+//--------end import Material-ui components---------//
 
 const config = {
   withCredentials: true,
@@ -37,6 +44,24 @@ const useStyles = makeStyles((theme) => ({
   input: {
     color: theme.palette.common.white,
   },
+  title: {
+    // only show the page title on widths > 600px
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block",
+    },
+  },
+  desktopButtonsContainer: {
+    display: "none",
+    [theme.breakpoints.up("md")]: {
+      display: "flex",
+    },
+  },
+  mobileButtonsContainer: {
+    [theme.breakpoints.up("md")]: {
+      display: "none",
+    },
+  },
 }));
 
 const NavBar = ({
@@ -52,6 +77,9 @@ const NavBar = ({
   const isMenuOpen = Boolean(menuAnchor);
   const [followMenuAnchor, setFollowMenuAnchor] = useState(null);
   const isFollowMenuOpen = Boolean(followMenuAnchor);
+  const [mobileAnchor, setMobileAnchor] = useState(null);
+  const isMobileMenuOpen = Boolean(mobileAnchor);
+
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
@@ -90,6 +118,10 @@ const NavBar = ({
 
   const handleOpenFollow = (event) => {
     setFollowMenuAnchor(event.target);
+  };
+
+  const handleOpenMobileMenu = (event) => {
+    setMobileAnchor(event.target);
   };
 
   const onMenuItemClick = (page) => {
@@ -182,9 +214,11 @@ const NavBar = ({
         </Menu>
         {/* end follow requests modal */}
 
-        <Typography variant="h6">{page}</Typography>
+        <Typography variant="h6" className={classes.title}>
+          {page}
+        </Typography>
 
-        <div style={{ display: "flex" }}>
+        <div className={classes.desktopButtonsContainer}>
           <IconButton
             color="inherit"
             onClick={() => onMenuItemClick("Profile")}
@@ -200,6 +234,23 @@ const NavBar = ({
             Logout
           </Button>
         </div>
+
+        <div className={classes.mobileButtonsContainer}>
+          <IconButton onClick={handleOpenMobileMenu} color="inherit">
+            <MoreIcon />
+          </IconButton>
+        </div>
+
+        {/* mobile menu modal */}
+        <MobileMenuModal
+          anchor={mobileAnchor}
+          setAnchor={setMobileAnchor}
+          isOpen={isMobileMenuOpen}
+          followRequests={followRequests}
+          UIhandler={handleFollowUIUpdate}
+          handleLogOut={handleLogOut}
+          handleProfile={() => onMenuItemClick("Profile")}
+        />
       </Toolbar>
     </AppBar>
   );

@@ -15,7 +15,8 @@ import Typography from "@material-ui/core/Typography";
 const FollowRequestCard = forwardRef(({ request, UIhandler }, ref) => {
   const { id, sender, recipient } = request;
 
-  const handleAccept = () => {
+  const handleAccept = (event) => {
+    event.stopPropagation();
     const payload = { id, sender, recipient };
     axios
       .post("http://localhost:5000/social/accept-follow-request", payload)
@@ -27,7 +28,8 @@ const FollowRequestCard = forwardRef(({ request, UIhandler }, ref) => {
       });
   };
 
-  const handleDecline = () => {
+  const handleDecline = (event) => {
+    event.stopPropagation();
     const payload = { id, sender, recipient };
     axios
       .post("http://localhost:5000/social/decline-follow-request", payload)
@@ -46,10 +48,10 @@ const FollowRequestCard = forwardRef(({ request, UIhandler }, ref) => {
           {request.name} wants to follow you
         </Typography>
         <ButtonContainer>
-          <IconButton color="primary" onClick={handleAccept}>
+          <IconButton color="primary" onClick={(e) => handleAccept(e)}>
             <CheckIcon />
           </IconButton>
-          <IconButton color="secondary" onClick={handleDecline}>
+          <IconButton color="secondary" onClick={(e) => handleDecline(e)}>
             <ClearIcon />
           </IconButton>
         </ButtonContainer>
@@ -61,7 +63,7 @@ const FollowRequestCard = forwardRef(({ request, UIhandler }, ref) => {
 export default FollowRequestCard;
 
 const Container = styled.div`
-  width: 350px;
+  width: 100%;
   padding-left: 12px;
   display: flex;
   justify-content: space-between;
@@ -70,6 +72,10 @@ const Container = styled.div`
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  @media (min-width: 960px) {
+    width: 350px;
   }
 `;
 

@@ -13,9 +13,13 @@ const homepageController = () => {
     try {
       const { following } = await social.arrangeSocialInfo(id);
       // array of user ids that user follows, to be used to get diary entry details
-      const toRetrieve = [id].concat(following.map(relation => relation.followee));
-      const diaryEntries = await Promise.all(toRetrieve.map(id => homepage.arrangeUserData(id)));
-      const flattened = diaryEntries.reduce((a,b) => a.concat(b), []);
+      const toRetrieve = [id].concat(
+        following.map((relation) => relation.followee)
+      );
+      const diaryEntries = await Promise.all(
+        toRetrieve.map((id) => homepage.arrangeUserData(id))
+      );
+      const flattened = diaryEntries.reduce((a, b) => a.concat(b), []);
       res.status(200).json({
         success: true,
         data: flattened,
@@ -32,8 +36,8 @@ const homepageController = () => {
   modules.createEntry = async (req, res) => {
     const user_id = req.user.id;
     // console.log("body", req.body);
-    const { name, address, lat, lng } = JSON.parse(req.body.location);
-    const locationValues = { user_id, name, address, lat, lng };
+    const { name, address, lat, lng, variant } = JSON.parse(req.body.location);
+    const locationValues = { user_id, name, address, lat, lng, variant };
     const files = req.files;
 
     try {
@@ -59,22 +63,22 @@ const homepageController = () => {
   modules.deleteEntry = async (req, res) => {
     const { id, marker_id } = req.body;
     try {
-      // should we do it syncronously or asyncronously? 
+      // should we do it syncronously or asyncronously?
       await media.deleteEntryPhotos(id);
       await marker.deleteMarker(marker_id);
       await diary.deleteDiaryEntry(id);
       res.status(200).json({
         success: true,
-        message: "entry and all relevant media deleted successfully!"
-      })
+        message: "entry and all relevant media deleted successfully!",
+      });
     } catch (err) {
       console.log(err);
       res.status(400).json({
         success: false,
         message: "something went wrong",
-      })
+      });
     }
-  }
+  };
 
   return Object.freeze(modules);
 };

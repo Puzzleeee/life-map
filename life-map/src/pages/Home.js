@@ -7,7 +7,9 @@ import AddEntry from "../components/AddEntry";
 import UserBar from "../components/UserBar";
 import Entries from "./Entries";
 import Profile from "./Profile";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/NavBar/NavBar";
+import CustomMarker from "../components/CustomMarker";
+import FilterBar from "../components/FilterBar";
 //--------start import Material-ui components---------//
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -18,6 +20,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import RoomIcon from "@material-ui/icons/Room";
 //--------end import Material-ui components---------//
+import { colors, mapDefaults, categories } from "../constants";
 
 const config = {
   withCredentials: true,
@@ -28,276 +31,6 @@ const config = {
 
 //============= THEMES ===============//
 // initialize constants for map
-const mapDefaults = {
-  center: {
-    lat: 1.3521,
-    lng: 103.8198,
-  },
-  zoom: 12,
-  styles: [
-    {
-      featureType: "administrative",
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#444444",
-        },
-      ],
-    },
-    {
-      featureType: "administrative.country",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "administrative.province",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "off",
-        },
-        {
-          saturation: "0",
-        },
-        {
-          lightness: "0",
-        },
-      ],
-    },
-    {
-      featureType: "administrative.locality",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "administrative.neighborhood",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "simplified",
-        },
-      ],
-    },
-    {
-      featureType: "landscape",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "off",
-        },
-        {
-          color: "#ffffff",
-        },
-      ],
-    },
-    {
-      featureType: "landscape",
-      elementType: "labels",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "landscape.man_made",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "landscape.natural",
-      elementType: "geometry.fill",
-      stylers: [
-        {
-          saturation: "17",
-        },
-        {
-          visibility: "on",
-        },
-      ],
-    },
-    {
-      featureType: "landscape.natural",
-      elementType: "labels",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "poi",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "poi.park",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "on",
-        },
-        {
-          hue: "#91ff00",
-        },
-        {
-          lightness: "56",
-        },
-        {
-          saturation: "26",
-        },
-      ],
-    },
-    {
-      featureType: "road",
-      elementType: "all",
-      stylers: [
-        {
-          saturation: -100,
-        },
-        {
-          lightness: 45,
-        },
-      ],
-    },
-    {
-      featureType: "road.highway",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "simplified",
-        },
-      ],
-    },
-    {
-      featureType: "road.highway",
-      elementType: "geometry",
-      stylers: [
-        {
-          color: "#f5d2c4",
-        },
-      ],
-    },
-    {
-      featureType: "road.highway",
-      elementType: "labels",
-      stylers: [
-        {
-          visibility: "on",
-        },
-      ],
-    },
-    {
-      featureType: "road.arterial",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "on",
-        },
-      ],
-    },
-    {
-      featureType: "road.arterial",
-      elementType: "geometry.fill",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "road.arterial",
-      elementType: "geometry.stroke",
-      stylers: [
-        {
-          visibility: "on",
-        },
-        {
-          color: "#f5d2c4",
-        },
-        {
-          lightness: "60",
-        },
-      ],
-    },
-    {
-      featureType: "road.arterial",
-      elementType: "labels",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "road.local",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "on",
-        },
-      ],
-    },
-    {
-      featureType: "road.local",
-      elementType: "geometry",
-      stylers: [
-        {
-          color: "#f3f3f3",
-        },
-        {
-          visibility: "simplified",
-        },
-      ],
-    },
-    {
-      featureType: "road.local",
-      elementType: "labels",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "transit",
-      elementType: "all",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "water",
-      elementType: "all",
-      stylers: [
-        {
-          color: "#e9f6f8",
-        },
-        {
-          visibility: "on",
-        },
-      ],
-    },
-  ],
-};
 
 const Home = ({
   location: {
@@ -309,6 +42,7 @@ const Home = ({
   const [followRequests, setFollowRequests] = useState([]);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isLoading, setLoading] = useState(true);
+  const [selectedCategories, setSelectedCategories] = useState(categories);
   //-------- start of view states -------- //
   const [page, setPage] = useState("Map");
   const [drawerState, setDrawerState] = useState({
@@ -419,6 +153,10 @@ const Home = ({
           {/* render map */}
           {page === "Map" && (
             <MapContainer>
+              <FilterBar
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+              />
               <GoogleMapReact
                 defaultCenter={mapDefaults.center}
                 defaultZoom={mapDefaults.zoom}
@@ -427,22 +165,21 @@ const Home = ({
                 distanceToMouse={() => {}}
               >
                 {entries.map((entry) => (
-                  <RoomIcon
-                    fontSize="large"
-                    color="primary"
-                    style={{ cursor: "pointer" }}
-                    key={entry.marker.name}
-                    lat={entry.marker.lat}
-                    lng={entry.marker.lng}
-                    name={entry.marker.name}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setDrawerState({
-                        entry,
-                        isOpen: true,
-                      });
-                    }}
-                  />
+                  selectedCategories.indexOf(entry.marker.variant) > -1  &&
+                    <CustomMarker
+                      variant={entry.marker.variant}
+                      key={entry.marker.name}
+                      lat={entry.marker.lat}
+                      lng={entry.marker.lng}
+                      name={entry.marker.name}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setDrawerState({
+                          entry,
+                          isOpen: true,
+                        });
+                      }}
+                    />
                 ))}
               </GoogleMapReact>
               <Drawer
@@ -574,6 +311,7 @@ const Container = styled.section`
 const MapContainer = styled.div`
   height: 94.5vh;
   width: 100%;
+  position: relative;
 `;
 
 const Location = styled.div`

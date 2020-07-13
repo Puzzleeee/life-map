@@ -1,38 +1,41 @@
 module.exports = function (crud) {
-
   let module = {};
 
   /**
    * Creates a marker and returns the assigned marker_id of the newly created marker
    */
-  module.execute = async function (user_id, lng, lat, name, address) {
+  module.execute = async function (user_id, lng, lat, name, address, variant) {
     const values = {
       user_id: {
-        value: user_id
-      }, 
+        value: user_id,
+      },
       lng: {
-        value: lng
+        value: lng,
       },
       lat: {
-        value: lat
+        value: lat,
       },
       name: {
-        value: name
+        value: name,
       },
       address: {
-        value: address
-      }
+        value: address,
+      },
+      variant: {
+        value: variant,
+      },
     };
 
-    return crud.create('markers', values, true)
+    return crud
+      .create("markers", values, true)
       .then((result) => {
         console.log("Marker created successfully");
         return result;
-      }).catch((err) => {
-        console.log(err);
       })
-  }
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return module;
-
-}
+};

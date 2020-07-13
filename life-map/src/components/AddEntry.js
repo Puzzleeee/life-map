@@ -8,23 +8,29 @@ import usePlacesAutocomplete, {
 } from "use-places-autocomplete";
 import useOnclickOutside from "react-cool-onclickoutside";
 import ImageUpload from "./ImageUpload";
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from "@material-ui/core/styles";
 import createEntryBackground from "../static/create-entry-background.png";
+import { colors } from "../constants";
 
 //--------start import Material-ui components---------//
-import Card from '@material-ui/core/Card';
-import TextField from '@material-ui/core/TextField';
-import Checkbox from '@material-ui/core/Checkbox';
-import Button from '@material-ui/core/Button';
+import Card from "@material-ui/core/Card";
+import TextField from "@material-ui/core/TextField";
+import Checkbox from "@material-ui/core/Checkbox";
+import Button from "@material-ui/core/Button";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
 //--------end import Material-ui components---------//
 
 //--------start import icons--------//
-import TitleTwoToneIcon from '@material-ui/icons/TitleTwoTone';
-import MenuBookTwoToneIcon from '@material-ui/icons/MenuBookTwoTone';
-import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
-import ShareTwoToneIcon from '@material-ui/icons/ShareTwoTone';
+import TitleTwoToneIcon from "@material-ui/icons/TitleTwoTone";
+import MenuBookTwoToneIcon from "@material-ui/icons/MenuBookTwoTone";
+import LocationOnTwoToneIcon from "@material-ui/icons/LocationOnTwoTone";
+import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
+import RoomIcon from "@material-ui/icons/Room";
 //--------end import icons--------//
-
 
 const config = {
   withCredentials: true,
@@ -35,30 +41,31 @@ const config = {
 
 const useStyles = makeStyles({
   entryCard: {
-    backgroundColor: 'rgba(247, 247, 247, 0.9)',
-    flexGrow: '1',
-    minWidth: '300px',
-    width: '60%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    marginTop: '5%',
-    marginBottom: '5%',
+    backgroundColor: "rgba(247, 247, 247, 0.9)",
+    flexGrow: "1",
+    minWidth: "300px",
+    width: "60%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginTop: "5%",
+    marginBottom: "5%",
   },
   textInput: {
-    flexGrow: '1'
+    flexGrow: "1",
   },
   icons: {
-    marginRight: '0.75em',
-  }
-})
+    marginRight: "0.75em",
+  },
+});
 
 const AddEntry = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [shared, setShared] = useState(false);
   const [location, setLocation] = useState({});
+  const [markerVariant, setMarkerVariant] = useState(null);
   const [images, setImages] = useState([]);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const classes = useStyles();
@@ -132,7 +139,7 @@ const AddEntry = () => {
       title,
       content,
       shared,
-      location,
+      location: { ...location, variant: markerVariant },
       images: Array.from(images),
     };
 
@@ -162,17 +169,17 @@ const AddEntry = () => {
     const {
       data: { success, message },
     } = await axios.post(
-        "http://localhost:5000/homepage/create-entry",
-        // payload,
-        // "http://localhost:5000/test-upload",
-        form_data,
-        upload_config
+      "http://localhost:5000/homepage/create-entry",
+      // payload,
+      // "http://localhost:5000/test-upload",
+      form_data,
+      upload_config
     );
 
     if (success) {
-      enqueueSnackbar("Entry created successfully!", { variant: "success"});
+      enqueueSnackbar("Entry created successfully!", { variant: "success" });
     } else {
-      enqueueSnackbar("Oops, something went wrong", { variant: "error"});
+      enqueueSnackbar("Oops, something went wrong", { variant: "error" });
     }
   };
 
@@ -205,7 +212,7 @@ const AddEntry = () => {
       <Card className={classes.entryCard}>
         <Form onSubmit={handleSubmit}>
           <FormInput>
-            <TitleTwoToneIcon className={classes.icons} color="primary"/>
+            <TitleTwoToneIcon className={classes.icons} color="primary" />
             <TextField
               className={classes.textInput}
               label="Title"
@@ -216,7 +223,7 @@ const AddEntry = () => {
           </FormInput>
 
           <FormInput>
-            <MenuBookTwoToneIcon className={classes.icons} color="secondary"/>
+            <MenuBookTwoToneIcon className={classes.icons} color="secondary" />
             <TextField
               className={classes.textInput}
               label="Content"
@@ -229,8 +236,8 @@ const AddEntry = () => {
           </FormInput>
 
           <FormInput>
-            <LocationOnTwoToneIcon className={classes.icons}/>
-            <LocationContainer> 
+            <LocationOnTwoToneIcon className={classes.icons} />
+            <LocationContainer>
               <TextField
                 className={classes.textInput}
                 label="Location"
@@ -239,18 +246,50 @@ const AddEntry = () => {
                 onChange={(e) => setLocationInput(e.target.value)}
               />
               {/* preconditions to check before rendering autocomplete results */}
-              {ready && status === "OK" && status !== "ZERO_RESULTS" && <Suggestions />}
+              {ready && status === "OK" && status !== "ZERO_RESULTS" && (
+                <Suggestions />
+              )}
             </LocationContainer>
           </FormInput>
 
+          <div style={{ margin: "1em 0" }}>
+            <FormLabel component="label">Category</FormLabel>
+            <RadioGroup
+              row
+              value={markerVariant}
+              onChange={(e) => setMarkerVariant(e.target.value)}
+            >
+              <FormControlLabel
+                value="Food"
+                control={<Radio />}
+                label="Food"
+              />
+              <FormControlLabel
+                value="Couples"
+                control={<Radio />}
+                label="Couples"
+              />
+              <FormControlLabel
+                value="Family"
+                control={<Radio />}
+                label="Family"
+              />
+              <FormControlLabel
+                value="Sports"
+                control={<Radio />}
+                label="Sports"
+              />
+            </RadioGroup>
+          </div>
+
           <FormInput>
-            <ShareTwoToneIcon className={classes.icons} color="primary"/>
+            <ShareTwoToneIcon className={classes.icons} color="primary" />
             <CheckBoxContainer>
               <Checkbox
                 checked={shared}
                 onChange={() => setShared((prev) => !prev)}
                 color="primary"
-                inputProps={{ 'aria-label': 'secondary checkbox' }}
+                inputProps={{ "aria-label": "secondary checkbox" }}
                 style={{ paddingLeft: "0" }}
               />
 
@@ -264,8 +303,13 @@ const AddEntry = () => {
           </FormInput>
 
           <ImageUpload images={images} handleSelectImage={handleSelectImage} />
-          
-          <Button variant="contained" color="primary" type="submit" style={{ marginTop: "24px", marginBottom: "24px" }}>
+
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            style={{ marginTop: "24px", marginBottom: "24px" }}
+          >
             Save
           </Button>
         </Form>
@@ -300,7 +344,7 @@ const FormInput = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`
+`;
 
 // const Label = styled.label`
 //   font-size: 1.1em;
@@ -348,7 +392,7 @@ const LocationContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-`
+`;
 const SuggestionTag = styled.div`
   padding: 8px;
   cursor: pointer;
