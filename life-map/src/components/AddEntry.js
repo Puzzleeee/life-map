@@ -157,10 +157,6 @@ const AddEntry = () => {
       }
     }
 
-    for (var value of form_data.values()) {
-      console.log(value);
-    }
-
     const upload_config = {
       withCredentials: true,
       headers: { "Content-Type": "text/html; charset=utf-8" },
@@ -174,12 +170,16 @@ const AddEntry = () => {
       // "http://localhost:5000/test-upload",
       form_data,
       upload_config
-    );
+    ).catch((err) => {
+      return {
+        data: err.response.data
+      }
+    })
 
     if (success) {
       enqueueSnackbar("Entry created successfully!", { variant: "success" });
     } else {
-      enqueueSnackbar("Oops, something went wrong", { variant: "error" });
+      enqueueSnackbar(`Oops, something went wrong: ${message}`, { variant: "error" });
     }
   };
 

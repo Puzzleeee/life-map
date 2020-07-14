@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { checkAuthenticated } = require("../middleware/authentication/auth.js");
 const busboyMiddleware = require("../middleware/file-upload/busboy.js");
+const { newEntryRules, newEntryValidator } = require("../middleware/validation/validator.js");
 const homepageController = require("../controllers/homepage.js");
 
 router.get("/", checkAuthenticated, homepageController.home);
@@ -23,7 +24,12 @@ router.get("/", checkAuthenticated, homepageController.home);
  */
 router.post(
   "/create-entry",
-  [checkAuthenticated, busboyMiddleware],
+  newEntryRules(),
+  [
+    checkAuthenticated,
+    busboyMiddleware,
+    newEntryValidator,
+  ],
   homepageController.createEntry
 );
 
