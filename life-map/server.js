@@ -1,7 +1,5 @@
 const express = require("express");
 const dotenv = require("dotenv");
-var cors = require("cors");
-const bcrypt = require("bcrypt");
 const db = require("./db/db.js");
 const passport = require("passport");
 const flash = require("express-flash");
@@ -9,10 +7,21 @@ const session = require("express-session");
 const initializePassport = require("./passport-config.js");
 const busboy = require("connect-busboy");
 const busboyBodyParser = require("busboy-body-parser");
+const helmet = require("helmet");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 dotenv.config({ path: "./config/config.env" });
+
+// Helmet
+app.use(helmet());
+
+// CSP with helmet
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"]
+  }
+}))
 
 // Node passport middleware
 app.use(

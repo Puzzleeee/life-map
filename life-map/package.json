@@ -22,6 +22,7 @@
     "express-session": "^1.17.1",
     "express-validator": "^6.6.0",
     "google-map-react": "^1.1.7",
+    "helmet": "^3.23.3",
     "method-override": "^3.0.0",
     "mysql2": "^2.1.0",
     "notistack": "^0.9.17",
