@@ -9,6 +9,7 @@ const busboy = require("connect-busboy");
 const busboyBodyParser = require("busboy-body-parser");
 const helmet = require("helmet");
 const path = require('path');
+const { IoT1ClickDevicesService } = require("aws-sdk");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -85,14 +86,32 @@ app.get("/", (req, res) => {
   });
 });
 
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/failure",
-    failureFlash: true,
-  })
-);
+app.post('/login', (req, res, next) => {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { 
+      return next(err); 
+    } 
+    
+    if (!user) { 
+      return res.status(200).json({
+        success: false,
+        user: {}
+      })
+    }
+
+    req.logIn(user, (err) => {
+      if (err) { 
+        return next(err); 
+      }
+      const { name, id } = req.user;
+      return res.status(200).json({
+        success: true,
+        message: "Log in successful!",
+        user: { name: name, id: id },
+      });
+    });
+  })(req, res, next);
+});
 
 // Testing create entry route with new photo upload
 // const busboyMiddleware = require("./middleware/file-upload/busboy.js");
