@@ -9,9 +9,9 @@ const socialController = require("../controllers/social.js");
  *   post:
  *      recipient: UUID of the follow request recipient
  */
-router.post('/follow', socialController.newFollowRequest);
+router.post('/follow', checkAuthenticated, socialController.newFollowRequest);
 
-router.post('/remove-follower-relationship', socialController.unfollow);
+router.post('/remove-follower-relationship', checkAuthenticated, socialController.unfollow);
 
 /** GET 
  * /social/social-info
@@ -22,7 +22,7 @@ router.post('/remove-follower-relationship', socialController.unfollow);
  *        following: array of user's following 
  *      }
  */
-router.get('/social-info', socialController.getSocialInfo);
+router.get('/social-info', checkAuthenticated, socialController.getSocialInfo);
 
 /** POST
  * /social/accept-follow-request && /social/decline-follow-request
@@ -31,14 +31,14 @@ router.get('/social-info', socialController.getSocialInfo);
  *      sender: id of the request sender
  *      recipient: id of the request recipient
  */
-router.post('/accept-follow-request', socialController.acceptFollowRequest);
-router.post('/decline-follow-request', socialController.declineFollowRequest);
+router.post('/accept-follow-request', checkAuthenticated, socialController.acceptFollowRequest);
+router.post('/decline-follow-request', checkAuthenticated, socialController.declineFollowRequest);
 
 /** POST
  * /social/user
  *   post:
  *      searchString: string to run search on
  */
-router.post('/user', socialController.searchUsers);
+router.post('/user', checkAuthenticated, socialController.searchUsers);
 
 module.exports = router;
