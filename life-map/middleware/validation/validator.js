@@ -3,7 +3,6 @@ const { check, validationResult } = require('express-validator');
 const newEntryRules = () => {
   return [
     check('location')
-      .not()
       .exists()
       .withMessage('Must specify a valid location')
       .bail()
