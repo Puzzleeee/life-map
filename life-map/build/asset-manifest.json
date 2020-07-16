@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a86d57f1.chunk.css",
+    "main.js": "/static/js/main.58a11c77.chunk.js",
+    "main.js.map": "/static/js/main.58a11c77.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.9afcab36.js",
+    "runtime-main.js.map": "/static/js/runtime-main.9afcab36.js.map",
+    "static/js/2.a69a9a45.chunk.js": "/static/js/2.a69a9a45.chunk.js",
+    "static/js/2.a69a9a45.chunk.js.map": "/static/js/2.a69a9a45.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.9895a2b33cf7356513abdba69f21ca4d.js": "/precache-manifest.9895a2b33cf7356513abdba69f21ca4d.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.a86d57f1.chunk.css.map": "/static/css/main.a86d57f1.chunk.css.map",
+    "static/js/2.a69a9a45.chunk.js.LICENSE.txt": "/static/js/2.a69a9a45.chunk.js.LICENSE.txt",
+    "static/media/coffee-image.jpg": "/static/media/coffee-image.206542de.jpg",
+    "static/media/cover-image.jpg": "/static/media/cover-image.1affad9b.jpg",
+    "static/media/create-entry-background.png": "/static/media/create-entry-background.c206849b.png",
+    "static/media/login-image.jpg": "/static/media/login-image.5491139d.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.9afcab36.js",
+    "static/js/2.a69a9a45.chunk.js",
+    "static/css/main.a86d57f1.chunk.css",
+    "static/js/main.58a11c77.chunk.js"
+  ]
+}
