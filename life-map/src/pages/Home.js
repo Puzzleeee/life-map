@@ -88,7 +88,7 @@ const Home = ({
     },
     [
       /* COMMENT THIS OUT TO PREVENT REMOUNTING ON PAGE CHANGE */
-      page
+      // page
     ]
   );
 
