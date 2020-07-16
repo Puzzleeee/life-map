@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 5000;
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'build')));
 
-  app.get('*', (req, res) => {
+  app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
   })
 } else {
@@ -76,15 +76,6 @@ app.use(function (req, res, next) {
 });
 
 app.set('etag', false)
-
-app.get("/", (req, res) => {
-  const { name, id } = req.user;
-  res.status(200).json({
-    success: true,
-    message: "Log in successful!",
-    user: { name: name, id: id },
-  });
-});
 
 app.post('/login', (req, res, next) => {
   passport.authenticate('local', function(err, user, info) {
