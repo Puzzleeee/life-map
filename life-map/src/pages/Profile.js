@@ -375,7 +375,7 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
     const {
       data: { success },
     } = await axios.post(
-        "http://localhost:5000/profile/profile-pic",
+        "/profile/profile-pic",
         form_data,
         upload_config
     );
@@ -408,7 +408,7 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
       const {
         data: { success },
       } = await axios.post(
-          "http://localhost:5000/profile/profile-pic",
+          "/profile/profile-pic",
           form_data,
           upload_config
       );

@@ -19,7 +19,7 @@ const FollowRequestCard = forwardRef(({ request, UIhandler }, ref) => {
     event.stopPropagation();
     const payload = { id, sender, recipient };
     axios
-      .post("http://localhost:5000/social/accept-follow-request", payload)
+      .post("/social/accept-follow-request", payload)
       .then(() => {
         UIhandler(id, "hide");
       })
@@ -32,7 +32,7 @@ const FollowRequestCard = forwardRef(({ request, UIhandler }, ref) => {
     event.stopPropagation();
     const payload = { id, sender, recipient };
     axios
-      .post("http://localhost:5000/social/decline-follow-request", payload)
+      .post("/social/decline-follow-request", payload)
       .then(() => {
         UIhandler(id, "hide");
       })

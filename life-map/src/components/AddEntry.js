@@ -165,9 +165,7 @@ const AddEntry = () => {
     const {
       data: { success, message },
     } = await axios.post(
-      "http://localhost:5000/homepage/create-entry",
-      // payload,
-      // "http://localhost:5000/test-upload",
+      "/homepage/create-entry",
       form_data,
       upload_config
     ).catch((err) => {

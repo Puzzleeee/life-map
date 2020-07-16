@@ -106,7 +106,7 @@ const Login = ({ loginRef, registerRef, redirect }) => {
   /* helper for credential authentication with backend */
   const authCheck = async () => {
     const response = await axios.post(
-      "http://localhost:5000/login",
+      "/login",
       {
         email: emailInput,
         password: passwordInput,
@@ -186,7 +186,7 @@ const Register = ({ loginRef, registerRef, redirect }) => {
       password: passwordInput,
     };
 
-    const response = await axios.post("http://localhost:5000/register", req);
+    const response = await axios.post("/register", req);
 
     if (response.data.message === "duplicate") {
       enqueueSnackbar("Email already in use", { variant: "error"});
