@@ -57,6 +57,9 @@ app.use(busboyBodyParser());
 app.use(flash());
 
 app.use(function (req, res, next) {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Origin", req.headers.origin);
   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
@@ -70,6 +73,8 @@ app.use(function (req, res, next) {
     next();
   }
 });
+
+app.set('etag', false)
 
 app.get("/", (req, res) => {
   const { name, id } = req.user;
