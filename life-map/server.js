@@ -19,7 +19,10 @@ app.use(helmet());
 // CSP with helmet
 app.use(helmet.contentSecurityPolicy({
   directives: {
-    defaultSrc: ["'self'"],
+    defaultSrc: ["'self'",
+      "https://maps.googleapis.com",
+      "https://fonts.gstatic.com"
+    ],
     scriptSrc: ["'self'", 
       "'unsafe-inline'", 
       "https://maps.googleapis.com"
@@ -27,6 +30,14 @@ app.use(helmet.contentSecurityPolicy({
     styleSrc: ["'self'",
       "'unsafe-inline'",
       "https://fonts.googleapis.com"
+    ],
+    imgSrc: ["'self'",
+      "'self data:'",
+      "https://maps.googleapis.com"
+    ],
+    fontSrc: ["'self'", 
+      "https://fonts.gstatic.com", 
+      "data:"
     ]
   }
 }))
