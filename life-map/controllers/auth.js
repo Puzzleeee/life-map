@@ -49,7 +49,7 @@ const authController = () => {
 
   modules.logout = (req, res) => {
     req.logOut()
-    res.redirect('/login')
+    res.redirect('/api/auth/login')
   }
 
   return Object.freeze(modules);

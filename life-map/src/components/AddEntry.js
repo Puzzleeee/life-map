@@ -165,7 +165,7 @@ const AddEntry = () => {
     const {
       data: { success, message },
     } = await axios.post(
-      "/homepage/create-entry",
+      "/api/homepage/create-entry",
       form_data,
       upload_config
     ).catch((err) => {

@@ -137,8 +137,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
     (async () => {
       try {
         const [profileData, viewerData] = await Promise.all([
-          axios.post("/profile/user", { id: userID }, config),
-          axios.get("/social/social-info", config)
+          axios.post("/api/profile/user", { id: userID }, config),
+          axios.get("/api/social/social-info", config)
         ]);
         const profileInfo =  (({entries, ...o}) => o)(profileData.data);
         const viewerInfo = {...viewerData.data, id: viewerID};
@@ -163,7 +163,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
       bio: inputState.bioInput,
       name: inputState.nameInput
     }
-    const response = await axios.post("/profile/update-user", payload, config);
+    const response = await axios.post("/api/profile/update-user", payload, config);
     if (response.data.success) {
       enqueueSnackbar("Successfully edited profile!", { variant: "success"});
     } else {
@@ -375,7 +375,7 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
     const {
       data: { success },
     } = await axios.post(
-        "/profile/profile-pic",
+        "/api/profile/profile-pic",
         form_data,
         upload_config
     );
@@ -408,7 +408,7 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
       const {
         data: { success },
       } = await axios.post(
-          "/profile/profile-pic",
+          "/api/profile/profile-pic",
           form_data,
           upload_config
       );

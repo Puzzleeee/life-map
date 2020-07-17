@@ -33,7 +33,7 @@ const UserCard = ({ viewerInfo, setViewerInfo, user, changeProfile, isViewingOwn
     event.stopPropagation();
     const relationship = viewerInfo.followers.filter((relation) => relation.follower === user.id)[0];
     return axios.post(
-      "/social/remove-follower-relationship",
+      "/api/social/remove-follower-relationship",
       relationship,
       config
     ).then(() => {

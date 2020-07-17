@@ -21,7 +21,7 @@ const UserBar = ({ userID, navigateToProfile }) => {
     (async () => {
       try {
         const { data: { success, profile_pic, name }} = await axios.post(
-          "/profile/user-summary",
+          "/api/profile/user-summary",
           { id: userID },
           config
         );

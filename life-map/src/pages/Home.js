@@ -60,7 +60,7 @@ const Home = ({
       let mounted = true;
       (async () => {
         const auth_response = await axios.get(
-          "/check-auth",
+          "/api/auth/check-auth",
           config
         );
 
@@ -70,13 +70,13 @@ const Home = ({
         }
 
         const entries = await axios.get(
-          "/homepage",
+          "/api/homepage",
           config
         );
         setEntries(entries.data.data);
 
         const { data: socialInfo } = await axios.get(
-          "/social/social-info",
+          "/api/social/social-info",
           config
         );
         setFollowRequests(socialInfo.followRequests);
@@ -94,7 +94,7 @@ const Home = ({
 
   //============= ROUTE HANDLERS ===============//
   const handleLogOut = async () => {
-    await axios.post("/logout", config);
+    await axios.post("/api/auth/logout", config);
     setLoggedIn(false);
   };
 

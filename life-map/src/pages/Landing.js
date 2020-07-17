@@ -186,7 +186,7 @@ const Register = ({ loginRef, registerRef, redirect }) => {
       password: passwordInput,
     };
 
-    const response = await axios.post("/register", req);
+    const response = await axios.post("/api/auth/register", req);
 
     if (response.data.message === "duplicate") {
       enqueueSnackbar("Email already in use", { variant: "error"});

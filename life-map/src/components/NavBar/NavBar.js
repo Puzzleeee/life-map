@@ -95,7 +95,7 @@ const NavBar = ({
           const {
             data: { results },
           } = await axios.post(
-            `/social/user`,
+            `/api/social/user`,
             { searchString: debouncedSearchInput },
             config
           );

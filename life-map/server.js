@@ -9,19 +9,9 @@ const busboy = require("connect-busboy");
 const busboyBodyParser = require("busboy-body-parser");
 const helmet = require("helmet");
 const path = require('path');
-const { IoT1ClickDevicesService } = require("aws-sdk");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'build')));
-
-  app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
-  })
-} else {
-  dotenv.config({ path: "./config/config.env" });
-}
 
 // Helmet
 app.use(helmet());
@@ -58,9 +48,6 @@ app.use(busboyBodyParser());
 app.use(flash());
 
 app.use(function (req, res, next) {
-  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-  res.header('Expires', '-1');
-  res.header('Pragma', 'no-cache');
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Origin", req.headers.origin);
   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
@@ -75,7 +62,6 @@ app.use(function (req, res, next) {
   }
 });
 
-app.set('etag', false)
 
 app.post('/login', (req, res, next) => {
   passport.authenticate('local', function(err, user, info) {
@@ -104,28 +90,22 @@ app.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-// Testing create entry route with new photo upload
-// const busboyMiddleware = require("./middleware/file-upload/busboy.js");
-// const aws = require("./service/aws-upload/aws.js");
-// const { createEntry } = require("./controllers/homepage.js");
-// app.post("/test-upload", busboyMiddleware, (req, res) => {
-//   console.log(req.body.images[0]);
-// });
-
-// // Testing file url retrival route
-// app.get('/test-retrieve', async (req, res) => {
-//   const awsResponse = await aws.retrieve('Capture3.JPG');
-//   if (awsResponse.success) {
-//     res.status(200).json(awsResponse);
-//   } else {
-//     res.status(400).json(awsResponse);
-//   }
-// })
-
 // Routes
-app.use("/", require("./routes/auth.js"));
-app.use("/homepage", require("./routes/homepage.js"));
-app.use("/social", require("./routes/social.js"));
-app.use("/profile", require("./routes/profile.js"));
+app.use("/api/auth", require("./routes/auth.js"));
+app.use("/api/homepage", require("./routes/homepage.js"));
+app.use("/api/social", require("./routes/social.js"));
+app.use("/api/profile", require("./routes/profile.js"));
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'build')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  })
+} else {
+  dotenv.config({ path: "./config/config.env" });
+}
+
+
 
 app.listen(PORT, console.log(`Server running on port ${PORT}`));

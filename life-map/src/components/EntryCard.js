@@ -76,7 +76,7 @@ const EntryCard = ({ entry, removeEntry, isOwnEntry }) => {
 
     const {
       data: { success },
-    } = await axios.post("/homepage/delete-entry", payload, config);
+    } = await axios.post("/api/homepage/delete-entry", payload, config);
 
     if (success) {
       removeEntry();
