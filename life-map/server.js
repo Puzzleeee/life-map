@@ -34,7 +34,8 @@ app.use(helmet.contentSecurityPolicy({
     imgSrc: ["'self'",
       "data:",
       "https://maps.googleapis.com",
-      "https://maps.gstatic.com"
+      "https://maps.gstatic.com",
+      "https://life-map.s3.amazonaws.com"
     ],
     fontSrc: ["'self'", 
       "https://fonts.gstatic.com", 
