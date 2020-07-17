@@ -19,7 +19,15 @@ app.use(helmet());
 // CSP with helmet
 app.use(helmet.contentSecurityPolicy({
   directives: {
-    defaultSrc: ["'self'"]
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", 
+      "'unsafe-inline'", 
+      "https://maps.googleapis.com"
+    ],
+    styleSrc: ["'self'",
+      "'unsafe-inline'",
+      "https://fonts.googleapis.com"
+    ]
   }
 }))
 
