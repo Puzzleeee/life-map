@@ -11,6 +11,7 @@ import logo from "../static/logo.png"
 import Card from '@material-ui/core/Card';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import CornerLoading from '../components/Loading/CornerLoading';
 
 // config required to make requests specific to the user that is logged in,
 // include this when using axios so that back-end knows which user is logged in
@@ -176,6 +177,7 @@ const Register = ({ loginRef, registerRef, redirect }) => {
   const [emailInput, setEmail] = useState("");
   const [nameInput, setName] = useState("");
   const [passwordInput, setPassword] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   /* backend call to create account */
@@ -186,6 +188,7 @@ const Register = ({ loginRef, registerRef, redirect }) => {
       password: passwordInput,
     };
 
+    setLoading(true);
     const response = await axios.post("/api/auth/register", req);
 
     if (response.data.message === "duplicate") {
@@ -195,6 +198,8 @@ const Register = ({ loginRef, registerRef, redirect }) => {
     } else {
       enqueueSnackbar("Successfully registered!", { variant: "success"});
     }
+
+    setLoading(false);
   };
 
   const scrollToLogin = () => {
@@ -211,6 +216,7 @@ const Register = ({ loginRef, registerRef, redirect }) => {
 
   return (
     <RegisterContainer ref={registerRef}>
+      {isLoading && <CornerLoading/>}
       <Card className={classes.root}>
       <h2 style={{ marginBottom: "36px", fontWeight: "100", fontSize: "1.5rem" }}>Register an account</h2>
         <Form onSubmit={handleSubmit}>

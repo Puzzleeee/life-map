@@ -4,7 +4,7 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 import EntryCard from "../components/EntryCard";
 import UserCard from "../components/UserCard";
-import LoadingIndicator from "../components/LoadingIndicator";
+import LoadingIndicator from "../components/Loading/LoadingIndicator";
 import PrivateAccount from "../components/PrivateAccount"
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";

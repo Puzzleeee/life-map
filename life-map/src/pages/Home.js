@@ -10,7 +10,7 @@ import Profile from "./Profile";
 import NavBar from "../components/NavBar/NavBar";
 import CustomMarker from "../components/CustomMarker";
 import FilterBar from "../components/FilterBar";
-import LoadingIndicator from "../components/LoadingIndicator";
+import LoadingIndicator from "../components/Loading/LoadingIndicator";
 //--------start import Material-ui components---------//
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
