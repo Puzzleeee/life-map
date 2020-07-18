@@ -10,6 +10,7 @@ import Profile from "./Profile";
 import NavBar from "../components/NavBar/NavBar";
 import CustomMarker from "../components/CustomMarker";
 import FilterBar from "../components/FilterBar";
+import LoadingIndicator from "../components/LoadingIndicator";
 //--------start import Material-ui components---------//
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -59,27 +60,26 @@ const Home = ({
     () => {
       let mounted = true;
       (async () => {
-        const auth_response = await axios.get(
+        const authPromise = axios.get(
           "/api/auth/check-auth",
           config
         );
 
-        if (mounted) {
-          setLoggedIn(auth_response.data.authenticated);
-          setLoading(false);
-        }
-
-        const entries = await axios.get(
+        const entriesPromise = axios.get(
           "/api/homepage",
           config
         );
-        setEntries(entries.data.data);
 
-        const { data: socialInfo } = await axios.get(
+        const socialPromise = axios.get(
           "/api/social/social-info",
           config
         );
+
+        const [{ data: auth_response }, { data: entries }, { data: socialInfo }] = await Promise.all([authPromise, entriesPromise, socialPromise]);
         setFollowRequests(socialInfo.followRequests);
+        setEntries(entries.data);
+        setLoggedIn(auth_response.authenticated);
+        setLoading(false);
       })();
 
       return () => {
@@ -127,7 +127,6 @@ const Home = ({
 
   return (
     <div>
-      {isLoading && <p>Loading</p>}
       {/* if logged out, redirect to landing page  */}
       {!isLoading && !isLoggedIn && (
         <Redirect
@@ -139,7 +138,7 @@ const Home = ({
       )}
 
       {/* else, load the logged in homepage */}
-      {!isLoading && isLoggedIn && (
+      {isLoggedIn && (
         <Container>
           <NavBar
             page={page}
@@ -153,126 +152,129 @@ const Home = ({
           {/* render map */}
           {page === "Map" && (
             <MapContainer>
-              <FilterBar
-                selectedCategories={selectedCategories}
-                setSelectedCategories={setSelectedCategories}
-              />
-              <GoogleMapReact
-                defaultCenter={mapDefaults.center}
-                defaultZoom={mapDefaults.zoom}
-                options={() => ({ styles: mapDefaults.styles })}
-                // somehow you need to do this cos of some bug in the package
-                distanceToMouse={() => {}}
-              >
-                {entries.map((entry) => (
-                  selectedCategories.indexOf(entry.marker.variant) > -1  &&
-                    <CustomMarker
-                      variant={entry.marker.variant}
-                      key={entry.marker.name}
-                      lat={entry.marker.lat}
-                      lng={entry.marker.lng}
-                      name={entry.marker.name}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setDrawerState({
-                          entry,
-                          isOpen: true,
-                        });
-                      }}
-                    />
-                ))}
-              </GoogleMapReact>
-              <Drawer
-                open={drawerState.isOpen}
-                anchor="bottom"
-                onClose={() =>
-                  setDrawerState({
-                    title: "",
-                    entries: "",
-                    isOpen: false,
-                  })
-                }
-              >
-                {drawerState.isOpen && (
-                  <Card
-                    style={{
-                      overflowY: "auto",
-                    }}
+              {isLoading ? <LoadingIndicator/> :
+                <>
+                  <FilterBar
+                    selectedCategories={selectedCategories}
+                    setSelectedCategories={setSelectedCategories}
+                  />
+                  <GoogleMapReact
+                    defaultCenter={mapDefaults.center}
+                    defaultZoom={mapDefaults.zoom}
+                    options={() => ({ styles: mapDefaults.styles })}
+                    // somehow you need to do this cos of some bug in the package
+                    distanceToMouse={() => {}}
                   >
-                    <CardContent
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <DrawerHeader>
-                        <UserBar
-                          userID={drawerState.entry.user_id}
-                          navigateToProfile={(id) => {
-                            setPage("Profile");
-                            setProfileUserID(id);
+                    {entries.map((entry) => (
+                      selectedCategories.indexOf(entry.marker.variant) > -1  &&
+                        <CustomMarker
+                          variant={entry.marker.variant}
+                          key={entry.marker.name}
+                          lat={entry.marker.lat}
+                          lng={entry.marker.lng}
+                          name={entry.marker.name}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setDrawerState({
+                              entry,
+                              isOpen: true,
+                            });
                           }}
                         />
-                        <div
+                    ))}
+                  </GoogleMapReact> 
+                  <Drawer
+                    open={drawerState.isOpen}
+                    anchor="bottom"
+                    onClose={() =>
+                      setDrawerState({
+                        title: "",
+                        entries: "",
+                        isOpen: false,
+                      })
+                    }
+                  >
+                    {drawerState.isOpen && (
+                      <Card
+                        style={{
+                          overflowY: "auto",
+                        }}
+                      >
+                        <CardContent
                           style={{
                             display: "flex",
-                            justifyContent: "flex-end",
-                            flexGrow: 1,
+                            flexDirection: "column",
+                            justifyContent: "space-between",
                           }}
                         >
-                          <IconButton
-                            onClick={() =>
-                              setDrawerState({
-                                entry: {},
-                                isOpen: false,
-                              })
-                            }
+                          <DrawerHeader>
+                            <UserBar
+                              userID={drawerState.entry.user_id}
+                              navigateToProfile={(id) => {
+                                setPage("Profile");
+                                setProfileUserID(id);
+                              }}
+                            />
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                flexGrow: 1,
+                              }}
+                            >
+                              <IconButton
+                                onClick={() =>
+                                  setDrawerState({
+                                    entry: {},
+                                    isOpen: false,
+                                  })
+                                }
+                              >
+                                <CloseIcon fontSize="large" />
+                              </IconButton>
+                            </div>
+                          </DrawerHeader>
+                          <DrawerTitle>
+                            <Typography variant="h4" color="primary">
+                              {drawerState.entry.title}
+                            </Typography>
+                            <Typography variant="body1" color="textSecondary">
+                              {`Posted: ${new Date(
+                                drawerState.entry.date_time
+                              ).toDateString()}`}
+                            </Typography>
+                            <Location>
+                              <RoomIcon fontSize="small" color="primary" />
+                              <Typography>
+                                {drawerState.entry.marker &&
+                                  drawerState.entry.marker.name}
+                              </Typography>
+                            </Location>
+                          </DrawerTitle>
+                          <Typography
+                            variant="body1"
+                            color="textPrimary"
+                            component="p"
                           >
-                            <CloseIcon fontSize="large" />
-                          </IconButton>
-                        </div>
-                      </DrawerHeader>
-                      <DrawerTitle>
-                        <Typography variant="h4" color="primary">
-                          {drawerState.entry.title}
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                          {`Posted: ${new Date(
-                            drawerState.entry.date_time
-                          ).toDateString()}`}
-                        </Typography>
-                        <Location>
-                          <RoomIcon fontSize="small" color="primary" />
-                          <Typography>
-                            {drawerState.entry.marker &&
-                              drawerState.entry.marker.name}
+                            {drawerState.entry.content}
                           </Typography>
-                        </Location>
-                      </DrawerTitle>
-                      <Typography
-                        variant="body1"
-                        color="textPrimary"
-                        component="p"
-                      >
-                        {drawerState.entry.content}
-                      </Typography>
-                    </CardContent>
-                    <CardContent>
-                      <Typography variant="body1">
-                        {drawerState.content}
-                      </Typography>
-                    </CardContent>
-                    <ImageContainer>
-                      {drawerState.entry.photos.map((photo) => (
-                        <CardMedia>
-                          <Image src={photo.data} alt="card photo" />
-                        </CardMedia>
-                      ))}
-                    </ImageContainer>
-                  </Card>
-                )}
-              </Drawer>
+                        </CardContent>
+                        <CardContent>
+                          <Typography variant="body1">
+                            {drawerState.content}
+                          </Typography>
+                        </CardContent>
+                        <ImageContainer>
+                          {drawerState.entry.photos.map((photo) => (
+                            <CardMedia>
+                              <Image src={photo.data} alt="card photo" />
+                            </CardMedia>
+                          ))}
+                        </ImageContainer>
+                      </Card>
+                    )}
+                  </Drawer>
+                </>}
             </MapContainer>
           )}
 

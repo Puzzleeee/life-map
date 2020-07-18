@@ -4,6 +4,7 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 import EntryCard from "../components/EntryCard";
 import UserCard from "../components/UserCard";
+import LoadingIndicator from "../components/LoadingIndicator";
 import PrivateAccount from "../components/PrivateAccount"
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
@@ -114,6 +115,7 @@ const inputStateReducer = (state, action) => {
 const Profile = ({ viewerID, userID, changeProfile }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [tabIndex, setTabIndex] = useState(0);
+  const [isLoading, setLoading] = useState(true);
   const [userState, dispatchUser] = useReducer(userStateReducer, initialUserState);
   const [inputState, dispatchInput] = useReducer(inputStateReducer, initialInputState);
 
@@ -149,7 +151,8 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
           entries: profileData.data.entries
         }
         dispatchUser({type: 'initialize', payload: { profileInfo, viewerInfo }});
-        dispatchInput({type: 'initialize', payload: { ...inputState }})
+        dispatchInput({type: 'initialize', payload: { ...inputState }});
+        setLoading(false);
       } catch (error) {
         console.error(error);
       }
@@ -183,172 +186,176 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
 
   return (
     <Container>
-      <Header>
-        <UserAvatar
-          profilePic={inputState.profilePic}
-          setProfilePic={(pic) => dispatchInput({type: 'setProfilePic', payload: {profilePic: pic}})}
-          profileId={userState.profileInfo.profile_id}
-          isViewingOwn={isViewingOwn}
-        />
-        <UserInfo>
-          {/* start name component */}
-          <div style={{ display: "flex", alignItems: "center" }}>
-            {!inputState.isEditingName && (
-              <>
-                <Typography variant="h5" style={{ marginBottom: "4px" }}>
-                  {inputState.nameInput}
-                </Typography>
+      {isLoading && <LoadingIndicator/>}
+      {!isLoading &&
+        <>
+          <Header>
+            <UserAvatar
+              profilePic={inputState.profilePic}
+              setProfilePic={(pic) => dispatchInput({type: 'setProfilePic', payload: {profilePic: pic}})}
+              profileId={userState.profileInfo.profile_id}
+              isViewingOwn={isViewingOwn}
+            />
+            <UserInfo>
+              {/* start name component */}
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {!inputState.isEditingName && (
+                  <>
+                    <Typography variant="h5" style={{ marginBottom: "4px" }}>
+                      {inputState.nameInput}
+                    </Typography>
 
-                {/* only display edit button if at your own profile */}
-                {!!isViewingOwn && (
-                  <IconButton
-                    color="primary"
-                    onClick={() => dispatchInput({type: 'toggleEditName', payload: {}})}
-                  >
-                    <EditIcon />
-                  </IconButton>
+                    {/* only display edit button if at your own profile */}
+                    {!!isViewingOwn && (
+                      <IconButton
+                        color="primary"
+                        onClick={() => dispatchInput({type: 'toggleEditName', payload: {}})}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    )}
+                  </>
                 )}
-              </>
-            )}
 
-            {!!inputState.isEditingName && (
-              <>
-                <TextField
-                  value={inputState.nameInput}
-                  onChange={(event) => dispatchInput({type: 'setNameInput', payload: { nameInput: event.target.value }})}
-                />
-                <IconButton
-                  color="primary"
-                  onClick={() => handleEdit(inputState.nameInput, "username")}
-                >
-                  <CheckIcon />
-                </IconButton>
-              </>
-            )}
-          </div>
-          {/* end name component */}
-
-          {/* start bio component */}
-          <div style={{ display: "flex", alignItems: "center" }}>
-            {!inputState.isEditingBio && (
-              <>
-                <Typography variant="subtitle1">
-                  {inputState.bioInput}
-                </Typography>
-
-                {/* only display edit button if at your own profile */}
-                {!!isViewingOwn && (
-                  <IconButton
-                    color="primary"
-                    onClick={() => dispatchInput({type: 'toggleEditBio', payload: {}})}
-                  >
-                    <EditIcon />
-                  </IconButton>
+                {!!inputState.isEditingName && (
+                  <>
+                    <TextField
+                      value={inputState.nameInput}
+                      onChange={(event) => dispatchInput({type: 'setNameInput', payload: { nameInput: event.target.value }})}
+                    />
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEdit(inputState.nameInput, "username")}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                  </>
                 )}
-              </>
-            )}
+              </div>
+              {/* end name component */}
 
-            {!!inputState.isEditingBio && (
-              <>
-                <TextField
-                  value={inputState.bioInput}
-                  onChange={(event) => dispatchInput({type: 'setBioInput', payload: { bioInput: event.target.value }})}
-                  multiline
-                />
-                
-                <IconButton
-                  color="primary"
-                  onClick={() => handleEdit(inputState.bioInput, "bio")}
-                >
-                  <CheckIcon />
-                </IconButton>
-              </>
-            )}
-          </div>
-          {/* end bio component */}
-        </UserInfo>
+              {/* start bio component */}
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {!inputState.isEditingBio && (
+                  <>
+                    <Typography variant="subtitle1">
+                      {inputState.bioInput}
+                    </Typography>
 
-        {!isViewingOwn && 
-          <Button
-            style = {{width: '20%'}}
-            size="small"
-            variant="contained"
-            color="primary"
-            onClick= {handleClick}
-          >
-            {requestSent ? "Requested"
-              : isFollowing ? "Following"
-                : "Follow"}
+                    {/* only display edit button if at your own profile */}
+                    {!!isViewingOwn && (
+                      <IconButton
+                        color="primary"
+                        onClick={() => dispatchInput({type: 'toggleEditBio', payload: {}})}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    )}
+                  </>
+                )}
 
-          </Button>
-        }
-      </Header>
+                {!!inputState.isEditingBio && (
+                  <>
+                    <TextField
+                      value={inputState.bioInput}
+                      onChange={(event) => dispatchInput({type: 'setBioInput', payload: { bioInput: event.target.value }})}
+                      multiline
+                    />
+                    
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEdit(inputState.bioInput, "bio")}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                  </>
+                )}
+              </div>
+              {/* end bio component */}
+            </UserInfo>
 
-      <Paper
-        square>
-        <Tabs
-          value={tabIndex}
-          onChange={(event, newValue) => {
-            setTabIndex(newValue);
-          }}
-          variant="fullWidth"
-        >
-          <Tab label={`${inputState.entries.length} entries`} />
-          <Tab label={`${userState.profileInfo.followers.length} followers`} />
-          <Tab label={`${userState.profileInfo.following.length} following`} />
-        </Tabs>
-      </Paper>
+            {!isViewingOwn && 
+              <Button
+                style = {{width: '20%'}}
+                size="small"
+                variant="contained"
+                color="primary"
+                onClick= {handleClick}
+              >
+                {requestSent ? "Requested"
+                  : isFollowing ? "Following"
+                    : "Follow"}
 
-      {!(isFollowing || isViewingOwn)
-        && <PrivateAccount/>}
+              </Button>
+            }
+          </Header>
+
+          <Paper
+            square>
+            <Tabs
+              value={tabIndex}
+              onChange={(event, newValue) => {
+                setTabIndex(newValue);
+              }}
+              variant="fullWidth"
+            >
+              <Tab label={`${inputState.entries.length} entries`} />
+              <Tab label={`${userState.profileInfo.followers.length} followers`} />
+              <Tab label={`${userState.profileInfo.following.length} following`} />
+            </Tabs>
+          </Paper>
+
+          {!(isFollowing || isViewingOwn)
+            && <PrivateAccount/>}
+            
+          {tabIndex === 0 &&
+            (isFollowing || isViewingOwn) &&
+            !!inputState.entries &&
+            inputState.entries.map((entry) => 
+              <EntryCard 
+                entry={entry}
+                removeEntry={removeEntry(entry)}
+                isOwnEntry={isViewingOwn} 
+              />)}
         
-      {tabIndex === 0 &&
-        (isFollowing || isViewingOwn) &&
-        !!inputState.entries &&
-        inputState.entries.map((entry) => 
-          <EntryCard 
-            entry={entry}
-            removeEntry={removeEntry(entry)}
-            isOwnEntry={isViewingOwn} 
-          />)}
-    
-      <Paper>
-        {tabIndex === 1 &&
-          (isFollowing || isViewingOwn) &&
-          !!userState.profileInfo.followers &&
-          userState.profileInfo.followers.map((followRelationship) => (
-            <UserCard
-              viewerInfo={userState.viewerInfo}
-              setViewerInfo={(viewerInfo) => setViewerInfo(viewerInfo)}
-              changeProfile={changeProfile}
-              user={{
-                id: followRelationship.follower,
-                name: followRelationship.name,
-                profile_pic: followRelationship.profile_pic
-              }}
-              isViewingOwn = {isViewingOwn}
-              type='follower'
-            />
-          ))}
+          <Paper>
+            {tabIndex === 1 &&
+              (isFollowing || isViewingOwn) &&
+              !!userState.profileInfo.followers &&
+              userState.profileInfo.followers.map((followRelationship) => (
+                <UserCard
+                  viewerInfo={userState.viewerInfo}
+                  setViewerInfo={(viewerInfo) => setViewerInfo(viewerInfo)}
+                  changeProfile={changeProfile}
+                  user={{
+                    id: followRelationship.follower,
+                    name: followRelationship.name,
+                    profile_pic: followRelationship.profile_pic
+                  }}
+                  isViewingOwn = {isViewingOwn}
+                  type='follower'
+                />
+              ))}
 
-        {tabIndex === 2 &&
-          (isFollowing || isViewingOwn) &&
-          !!userState.profileInfo.following &&
-          userState.profileInfo.following.map((followRelationship) => (
-            <UserCard
-              viewerInfo={userState.viewerInfo}
-              setViewerInfo={(viewerInfo) => setViewerInfo(viewerInfo)}
-              changeProfile={changeProfile}
-              user={{
-                id: followRelationship.followee,
-                name: followRelationship.name,
-                profile_pic: followRelationship.profile_pic
-              }}
-              isViewingOwn = {isViewingOwn}
-              type='following'
-            />
-          ))}
-      </Paper>
+            {tabIndex === 2 &&
+              (isFollowing || isViewingOwn) &&
+              !!userState.profileInfo.following &&
+              userState.profileInfo.following.map((followRelationship) => (
+                <UserCard
+                  viewerInfo={userState.viewerInfo}
+                  setViewerInfo={(viewerInfo) => setViewerInfo(viewerInfo)}
+                  changeProfile={changeProfile}
+                  user={{
+                    id: followRelationship.followee,
+                    name: followRelationship.name,
+                    profile_pic: followRelationship.profile_pic
+                  }}
+                  isViewingOwn = {isViewingOwn}
+                  type='following'
+                />
+              ))}
+          </Paper>
+      </>}
     </Container>
   );
 };
@@ -449,6 +456,7 @@ export default Profile;
 
 const Container = styled.section`
   width: 100%;
+  height: 94.5vh;
   max-width: 850px;
   margin: 0 auto;
   padding: 0.5vh 0px;
