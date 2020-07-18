@@ -12,6 +12,9 @@ import Card from '@material-ui/core/Card';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import CornerLoading from '../components/Loading/CornerLoading';
+import PersonSharpIcon from '@material-ui/icons/PersonSharp';
+import VpnKeySharpIcon from '@material-ui/icons/VpnKeySharp';
+import Typography from "@material-ui/core/Typography";
 
 // config required to make requests specific to the user that is logged in,
 // include this when using axios so that back-end knows which user is logged in
@@ -26,7 +29,7 @@ const useStyles = makeStyles({
   root: {
     backgroundColor: 'rgba(247, 247, 247, 0.9)',
     height: '70%',
-    minWidth: '300px',
+    minWidth: 'min(300px, 100vw)',
     width: '50%',
     display: 'flex',
     flexDirection: 'column',
@@ -73,9 +76,7 @@ const Landing = () => {
         <Container>
           <HeroImage>
             <HeroContainer>
-              <Title>
-                <Logo src={logo}/>
-              </Title>
+              <Logo src={logo}/>
               <Slogan>
                 
               </Slogan>
@@ -139,7 +140,12 @@ const Login = ({ loginRef, registerRef, redirect }) => {
   return (
     <LoginContainer ref={loginRef}>
       <Card className={classes.root}>
-        <h2 style={{ marginBottom: "36px", fontWeight: "100", fontSize: "1.5rem" }}>Login</h2>
+        <Title>
+          <Typography variant='h5' style={ { marginBottom: '36px', marginRight: '5px' }}>
+            Login
+          </Typography>
+          <VpnKeySharpIcon style={ { fontSize: '30' }}/>
+        </Title>
         <Form onSubmit={handleSubmit}>
           <TextField 
             className={classes.textInput}
@@ -218,7 +224,12 @@ const Register = ({ loginRef, registerRef, redirect }) => {
     <RegisterContainer ref={registerRef}>
       {isLoading && <CornerLoading/>}
       <Card className={classes.root}>
-      <h2 style={{ marginBottom: "36px", fontWeight: "100", fontSize: "1.5rem" }}>Register an account</h2>
+        <Title>
+          <Typography variant='h5' style={ { marginBottom: '36px', marginRight: '5px' }}>
+            Register an account
+          </Typography>
+          <PersonSharpIcon style={ { fontSize: '30' }}/>
+        </Title>
         <Form onSubmit={handleSubmit}>
           <TextField 
             className={classes.textInput}
@@ -265,6 +276,11 @@ const Container = styled.div`
   font-family: "Roboto";
 `;
 
+const Title = styled.div`
+  display: flex;
+  vertical-align: middle;
+`
+
 const HeroImage = styled.div`
   height: 100vh;
   background-image: linear-gradient(
@@ -286,13 +302,6 @@ const HeroContainer = styled.div`
   justify-content: center;
 `;
 
-const Title = styled.h1`
-  font-size: 2em;
-  margin-top: 50px;
-  letter-spacing: 2px;
-  font-weight: 500;
-`;
-
 const Slogan = styled.h4`
   font-size: 1.5em;
   margin-top: 1.5rem;
@@ -301,7 +310,7 @@ const Slogan = styled.h4`
 `
 
 const Logo = styled.img`
-  max-width: 100%;
+  max-width: 90%;
   height: auto;
 `;
 
@@ -347,6 +356,7 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   width: 50%;
+  min-width: min(220px, 80vw);
 `;
 
 // const Label = styled.label`

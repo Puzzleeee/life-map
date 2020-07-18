@@ -456,7 +456,7 @@ export default Profile;
 
 const Container = styled.section`
   width: 100%;
-  height: 94.5vh;
+  min-height: 94.5vh;
   max-width: 850px;
   margin: 0 auto;
   padding: 0.5vh 0px;
