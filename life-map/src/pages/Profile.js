@@ -441,6 +441,7 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
       />
       {isViewingOwn &&
         <IconButton
+          style={{ position: "relative", right: "6px", bottom: "7px"}}
           color="secondary"
           onClick={removeProfilePic}
         >

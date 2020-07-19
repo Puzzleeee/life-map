@@ -40,6 +40,19 @@ const config = {
   },
 };
 
+const toolbarConfig = {
+  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS'],
+  INLINE_STYLE_BUTTONS: [
+    {label: 'Bold', style: 'BOLD'},
+    {label: 'Italic', style: 'ITALIC'},
+    {label: 'Underline', style: 'UNDERLINE'}
+  ],
+  BLOCK_TYPE_BUTTONS: [
+    {label: 'UL', style: 'unordered-list-item'},
+    {label: 'OL', style: 'ordered-list-item'}
+  ]
+}
+
 const useStyles = makeStyles({
   entryCard: {
     backgroundColor: "rgba(247, 247, 247, 0.9)",
@@ -225,6 +238,8 @@ const AddEntry = () => {
             <MenuBookTwoToneIcon className={classes.icons} color="secondary" />
             <RichTextContainer>
               <RichTextEditor
+                rootStyle={{ minHeight: "30vh", backgroundColor: "rgba(247, 247, 247, 0.9)"}}
+                toolbarConfig={toolbarConfig}
                 value={content}
                 onChange={(value) => setContent(value)}
               />
