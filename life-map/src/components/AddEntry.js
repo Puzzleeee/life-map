@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import RichTextEditor from "react-rte";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -62,7 +63,7 @@ const useStyles = makeStyles({
 
 const AddEntry = () => {
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(RichTextEditor.createEmptyValue());
   const [shared, setShared] = useState(false);
   const [location, setLocation] = useState({});
   const [markerVariant, setMarkerVariant] = useState(null);
@@ -137,7 +138,7 @@ const AddEntry = () => {
     e.preventDefault();
     const payload = {
       title,
-      content,
+      content: content.toString("markdown"),
       shared,
       location: { ...location, variant: markerVariant },
       images: Array.from(images),
@@ -164,20 +165,20 @@ const AddEntry = () => {
 
     const {
       data: { success, message },
-    } = await axios.post(
-      "/api/homepage/create-entry",
-      form_data,
-      upload_config
-    ).catch((err) => {
-      return {
-        data: err.response.data
-      }
-    })
+    } = await axios
+      .post("/api/homepage/create-entry", form_data, upload_config)
+      .catch((err) => {
+        return {
+          data: err.response.data,
+        };
+      });
 
     if (success) {
       enqueueSnackbar("Entry created successfully!", { variant: "success" });
     } else {
-      enqueueSnackbar(`Oops, something went wrong: ${message}`, { variant: "error" });
+      enqueueSnackbar(`Oops, something went wrong: ${message}`, {
+        variant: "error",
+      });
     }
   };
 
@@ -220,18 +221,15 @@ const AddEntry = () => {
             />
           </FormInput>
 
-          <FormInput>
+          <div style={{ display: "flex" }}>
             <MenuBookTwoToneIcon className={classes.icons} color="secondary" />
-            <TextField
-              className={classes.textInput}
-              label="Content"
-              variant="outlined"
-              value={content}
-              multiline
-              rows={5}
-              onChange={(e) => setContent(e.target.value)}
-            />
-          </FormInput>
+            <RichTextContainer>
+              <RichTextEditor
+                value={content}
+                onChange={(value) => setContent(value)}
+              />
+            </RichTextContainer>
+          </div>
 
           <FormInput>
             <LocationOnTwoToneIcon className={classes.icons} />
@@ -257,11 +255,7 @@ const AddEntry = () => {
               value={markerVariant}
               onChange={(e) => setMarkerVariant(e.target.value)}
             >
-              <FormControlLabel
-                value="Food"
-                control={<Radio />}
-                label="Food"
-              />
+              <FormControlLabel value="Food" control={<Radio />} label="Food" />
               <FormControlLabel
                 value="Couples"
                 control={<Radio />}
@@ -344,42 +338,22 @@ const FormInput = styled.div`
   justify-content: space-between;
 `;
 
-// const Label = styled.label`
-//   font-size: 1.1em;
-//   letter-spacing: 1px;
-//   margin: 12px 0px;
-// `;
+const RichTextContainer = styled.div`
+  flex-grow: 1;
+  max-width: 85%;
 
-// const TextInput = styled.input`
-//   margin-bottom: 18px;
-//   font-size: 1.1em;
-//   padding: 8px;
-//   border-radius: 5px;
-//   border: 1px solid grey;
-// `;
+  @media (min-width: 600px) {
+    max-width: 90%;
+  }
 
-// const TextArea = styled.textarea`
-//   font-family: "Roboto";
-//   font-size: 1.1em;
-//   min-height: 40%;
-//   flex-shrink: 0;
-//   resize: none;
-//   margin-bottom: 18px;
-// `;
+  @media (min-width: 1100px) {
+    max-width: 95%;
+  }
 
-// const FormButton = styled.button`
-//   font-size: 1.1em;
-//   padding: 8px;
-//   border-radius: 5px;
-//   cursor: pointer;
-//   transition: all 0.1s ease;
-//   border: 1px solid grey;
-
-//   &:hover {
-//     background-color: #1152a8;
-//     color: white;
-//   }
-// `;
+  @media (min-width: 1600px) {
+    max-width: 100%;
+  }
+`;
 
 const CheckBoxContainer = styled.div`
   flex-grow: 1;

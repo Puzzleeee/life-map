@@ -3,7 +3,9 @@ import styled from "styled-components";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core";
 import { useSnackbar } from "notistack";
+import { useTheme } from "@material-ui/core/styles";
 import axios from "axios";
+import ReactMarkdown from "react-markdown";
 
 //--------start import Material-ui components---------//
 import Card from "@material-ui/core/Card";
@@ -11,7 +13,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import CardMedia from "@material-ui/core/CardMedia";
-import Collapse from "@material-ui/core/Collapse";
+// import Collapse from "@material-ui/core/Collapse";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
@@ -51,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
  */
 const EntryCard = ({ entry, removeEntry, isOwnEntry }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -88,72 +91,68 @@ const EntryCard = ({ entry, removeEntry, isOwnEntry }) => {
   //------- end of menu handlers -------//
 
   return (
-    <Collapse in={expanded} timeout="auto" collapsedHeight={350}>
-      <StyledCard elevation={3}>
-        <CardHeader
-          title={entry.title}
-          subheader={
-            <div style={{ marginTop: "4px" }}>
-              <Typography variant="body1" color="textSecondary">
-                {`Posted: ${new Date(entry.date_time).toDateString()}`}
-              </Typography>
-              <Location>
-                <RoomIcon fontSize="small" color="primary" />
-                <Typography>{entry.marker && entry.marker.name}</Typography>
-              </Location>
+    <StyledCard elevation={3}>
+      <CardHeader
+        title={entry.title}
+        subheader={
+          <div style={{ marginTop: "4px" }}>
+            <Typography variant="body1" color="textSecondary">
+              {`Posted: ${new Date(entry.date_time).toDateString()}`}
+            </Typography>
+            <Location>
+              <RoomIcon fontSize="small" color="primary" />
+              <Typography>{entry.marker && entry.marker.name}</Typography>
+            </Location>
+          </div>
+        }
+        action={
+          isOwnEntry && (
+            <div>
+              <IconButton aria-label="settings" onClick={handleOpenMenu}>
+                <MoreVertIcon />
+              </IconButton>
+
+              <Menu
+                anchorEl={menuAnchor}
+                keepMounted
+                open={isMenuOpen}
+                onClose={handleCloseMenu}
+              >
+                <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
+                  Delete
+                </MenuItem>
+              </Menu>
             </div>
-          }
-          action={
-            isOwnEntry && (
-              <div>
-                <IconButton aria-label="settings" onClick={handleOpenMenu}>
-                  <MoreVertIcon />
-                </IconButton>
+          )
+        }
+      />
 
-                <Menu
-                  anchorEl={menuAnchor}
-                  keepMounted
-                  open={isMenuOpen}
-                  onClose={handleCloseMenu}
-                >
-                  <MenuItem onClick={deleteEntry} style={{ color: "#f44336" }}>
-                    Delete
-                  </MenuItem>
-                </Menu>
-              </div>
-            )
-          }
+      <StyledCardContent isExpanded={expanded}>
+        <ReactMarkdown
+          source={entry.content}
+          renderers={{ root: Typography }}
         />
+        {!expanded && <Fade />}
+      </StyledCardContent>
+      <CardActions>
+        <IconButton
+          className={clsx(classes.expand, {
+            [classes.expandOpen]: expanded,
+          })}
+          onClick={() => setExpanded((prev) => !prev)}
+        >
+          <ExpandMoreIcon />
+        </IconButton>
+      </CardActions>
 
-        <CardContent>
-          <Typography variant="body1" color="textPrimary" component="p">
-            {expanded
-              ? entry.content
-              : `${entry.content.split(" ").splice(0, 30).join(" ")}...`}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <IconButton
-            className={clsx(classes.expand, {
-              [classes.expandOpen]: expanded,
-            })}
-            onClick={() => setExpanded((prev) => !prev)}
-          >
-            <ExpandMoreIcon />
-          </IconButton>
-        </CardActions>
-
-        {expanded && (
-          <ImageContainer>
-            {entry.photos.map((photo) => (
-              <CardMedia>
-                <Image src={photo.data} alt="card photo" />
-              </CardMedia>
-            ))}
-          </ImageContainer>
-        )}
-      </StyledCard>
-    </Collapse>
+      <ImageContainer>
+        {entry.photos.map((photo) => (
+          <CardMedia>
+            <Image src={photo.data} alt="card photo" />
+          </CardMedia>
+        ))}
+      </ImageContainer>
+    </StyledCard>
   );
 };
 
@@ -163,6 +162,25 @@ const StyledCard = styled(Card)`
   min-width: 300px;
   width: 100%;
   margin: 28px 0px;
+`;
+
+const StyledCardContent = styled(CardContent)`
+  max-height: ${({ isExpanded }) => (isExpanded ? "none" : "200px")};
+  overflow: hidden;
+  position: relative;
+`;
+
+const Fade = styled.div`
+  position: absolute;
+  bottom: 0;
+  display: block;
+  width: 100%;
+  height: 50px;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.9) 100%
+  );
 `;
 
 const Location = styled.div`
