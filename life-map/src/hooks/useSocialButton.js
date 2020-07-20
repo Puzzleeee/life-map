@@ -55,7 +55,7 @@ export default function useSocialButton(viewerInfo, setViewerInfo, user) {
   function unfollow() {
     const relationship = viewerInfo.following.filter((relation) => relation.followee === user.id)[0];
     return axios.post(
-      "/social/remove-follower-relationship",
+      "/api/social/remove-follower-relationship",
       relationship,
       config
     ).then(() => {
@@ -70,7 +70,7 @@ export default function useSocialButton(viewerInfo, setViewerInfo, user) {
   function follow() {
     return axios
         .post(
-          "/social/follow",
+          "/api/social/follow",
           { recipient: user.id },
           config
         )
@@ -91,7 +91,7 @@ export default function useSocialButton(viewerInfo, setViewerInfo, user) {
   function undoRequest() {
     const request = viewerInfo.sentRequests.filter(req => req.recipient === user.id)[0];
     return axios.post(
-      "/social/decline-follow-request",
+      "/api/social/decline-follow-request",
       request,
       config
     )

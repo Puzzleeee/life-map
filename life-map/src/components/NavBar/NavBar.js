@@ -23,6 +23,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import SearchIcon from "@material-ui/icons/Search";
+import Badge from '@material-ui/core/Badge';
 //--------end import Material-ui components---------//
 
 const config = {
@@ -133,7 +134,7 @@ const NavBar = ({
     <AppBar position="static" style={{ padding: 0 }}>
       <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <IconButton color="inherit" onClick={handleOpenMenu}>
+          <IconButton color="inherit" onClick={handleOpenMenu} style={{ paddingLeft: 0 }}>
             <MenuIcon />
           </IconButton>
 
@@ -222,11 +223,11 @@ const NavBar = ({
           >
             <AccountCircleIcon />
           </IconButton>
-
           <IconButton color="inherit" onClick={handleOpenFollow}>
-            <NotificationsIcon />
+            <Badge badgeContent={followRequests.length > 0 && followRequests.length}>
+              <NotificationsIcon/>
+            </Badge>
           </IconButton>
-
           <Button color="inherit" onClick={handleLogOut}>
             Logout
           </Button>
