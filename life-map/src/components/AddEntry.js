@@ -12,6 +12,7 @@ import ImageUpload from "./ImageUpload";
 import { makeStyles } from "@material-ui/core/styles";
 import createEntryBackground from "../static/create-entry-background.png";
 import { colors } from "../constants";
+import CornerLoading from "./Loading/CornerLoading";
 
 //--------start import Material-ui components---------//
 import Card from "@material-ui/core/Card";
@@ -81,6 +82,7 @@ const AddEntry = () => {
   const [location, setLocation] = useState({});
   const [markerVariant, setMarkerVariant] = useState(null);
   const [images, setImages] = useState([]);
+  const [isUploading, setUploading] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const classes = useStyles();
 
@@ -149,6 +151,7 @@ const AddEntry = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setUploading(true);
     const payload = {
       title,
       content: content.toString("markdown"),
@@ -186,6 +189,7 @@ const AddEntry = () => {
         };
       });
 
+    setUploading(false);
     if (success) {
       enqueueSnackbar("Entry created successfully!", { variant: "success" });
     } else {
@@ -221,6 +225,7 @@ const AddEntry = () => {
 
   return (
     <Entry>
+      {isUploading && <CornerLoading/>}
       <Card className={classes.entryCard}>
         <Form onSubmit={handleSubmit}>
           <FormInput>
