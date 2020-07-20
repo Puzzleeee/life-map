@@ -17,6 +17,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import TextField from "@material-ui/core/TextField";
 import ClearIcon from '@material-ui/icons/Clear';
 import Button from "@material-ui/core/Button";
+import CircularProgress from '@material-ui/core/CircularProgress'; 
 import useSocialButton from "../hooks/useSocialButton.js";
 
 const config = {
@@ -362,6 +363,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
 
 const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
 
+  const [isUploading, setUploading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const input = useRef(null);
 
@@ -375,6 +377,7 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
   }
 
   const removeProfilePic = async (e) => {
+    setUploading(true);
     const form_data = new FormData();
     form_data.append(`image`, null);
     form_data.append('profile_id', profileId);
@@ -386,7 +389,8 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
         form_data,
         upload_config
     );
-
+    
+    setUploading(false);
     if (success) {
       setProfilePic(null);
       enqueueSnackbar("Profile picture removed successfully!", { variant: "success"});
@@ -397,6 +401,7 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
 
   const handleInput = async (e) => {
     if (e.target.files.length > 0) {
+      setUploading(true);
       const image = e.target.files[0];
       const payload = {
         profile_id: profileId,
@@ -419,13 +424,15 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
           form_data,
           upload_config
       );
-
+      
+      setUploading(false);
       if (success) {
         setProfilePic(URL.createObjectURL(image));
         enqueueSnackbar("Profile picture updated successfully!", { variant: "success"});
       } else {
         enqueueSnackbar("Oops, something went wrong", { variant: "error"});
       }
+      
     } else {
       return;
     }
@@ -434,19 +441,24 @@ const UserAvatar = ({ profilePic, setProfilePic, profileId, isViewingOwn }) => {
   return (
     <div style={{display: 'flex', alignItems: 'start'}}>
       <input type='file' style={{display: 'none'}} ref={input} onChange={handleInput}/>
-      <Avatar
-        onClick={isViewingOwn ? handleClick : null}
-        src={profilePic || ""}
-        style={{ height: "92px", width: "92px", cursor: 'pointer' }}
-      />
-      {isViewingOwn &&
-        <IconButton
-          style={{ position: "relative", right: "6px", bottom: "7px"}}
-          color="secondary"
-          onClick={removeProfilePic}
-        >
-          <ClearIcon/>
-        </IconButton>
+      {isUploading && <CircularProgress/>}
+      {!isUploading &&
+        <>
+          <Avatar
+            onClick={isViewingOwn ? handleClick : null}
+            src={profilePic || ""}
+            style={{ height: "92px", width: "92px", cursor: 'pointer' }}
+          />
+          {isViewingOwn &&
+            <IconButton
+              style={{ position: "relative", right: "6px", bottom: "7px"}}
+              color="secondary"
+              onClick={removeProfilePic}
+            >
+              <ClearIcon/>
+            </IconButton>
+          }
+        </>
       }
 
     </div>
