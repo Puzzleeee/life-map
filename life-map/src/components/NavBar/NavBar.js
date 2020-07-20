@@ -186,9 +186,6 @@ const NavBar = ({
           <MenuItem onClick={() => onMenuItemClick("Add entry")}>
             Add entry
           </MenuItem>
-          <MenuItem onClick={() => onMenuItemClick("View all entries")}>
-            View all entries
-          </MenuItem>
         </Menu>
         {/* end nav bar menu modal */}
 
