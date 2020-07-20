@@ -203,6 +203,7 @@ const NavBar = ({
                 key={req.id}
                 request={req}
                 UIhandler={handleFollowUIUpdate}
+                navigateToProfile={() => handleSearchRedirect(req.sender)}
               />
             ))}
 

@@ -12,7 +12,7 @@ import Typography from "@material-ui/core/Typography";
  * @props {function} UIhandler - a UI update handler to mutate UI state in the parent
  * that renders this component
  */
-const FollowRequestCard = forwardRef(({ request, UIhandler }, ref) => {
+const FollowRequestCard = forwardRef(({ request, UIhandler, navigateToProfile }, ref) => {
   const { id, sender, recipient } = request;
 
   const handleAccept = (event) => {
@@ -43,7 +43,7 @@ const FollowRequestCard = forwardRef(({ request, UIhandler }, ref) => {
 
   return (
     <li ref={ref}>
-      <Container>
+      <Container onClick={navigateToProfile}>
         <Typography variant="body1">
           {request.name} wants to follow you
         </Typography>
@@ -69,6 +69,7 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  cursor: pointer;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
