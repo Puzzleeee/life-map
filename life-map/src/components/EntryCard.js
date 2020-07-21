@@ -95,7 +95,11 @@ const EntryCard = ({ entry, removeEntry, isOwnEntry }) => {
         title={entry.title}
         subheader={
           <div style={{ marginTop: "4px" }}>
-            <Typography variant="body1" color="textSecondary">
+            <Typography 
+              variant="body1" 
+              color="textSecondary" 
+              style={{ paddingLeft: "3px" }}
+            >
               {`Posted: ${new Date(entry.date_time).toDateString()}`}
             </Typography>
             <Location>
@@ -183,6 +187,7 @@ const Fade = styled.div`
 `;
 
 const Location = styled.div`
+  padding-right: 2px;
   display: flex;
   align-items: center;
   margin-top: 4px;
