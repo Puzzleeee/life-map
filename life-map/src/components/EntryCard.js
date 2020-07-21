@@ -5,7 +5,6 @@ import { makeStyles } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@material-ui/core/styles";
 import axios from "axios";
-import ReactMarkdown from "react-markdown";
 
 //--------start import Material-ui components---------//
 import Card from "@material-ui/core/Card";
@@ -128,11 +127,11 @@ const EntryCard = ({ entry, removeEntry, isOwnEntry }) => {
       />
 
       <StyledCardContent isExpanded={expanded}>
-        <ReactMarkdown
-          source={entry.content}
-          renderers={{ root: Typography }}
-        />
-        {!expanded && <Fade />}
+        <Typography variant="body1" color="textPrimary" component="p">
+          {expanded
+            ? entry.content
+            : `${entry.content.split(" ").splice(0, 30).join(" ")}...`}
+        </Typography>
       </StyledCardContent>
       <CardActions>
         <IconButton

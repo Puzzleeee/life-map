@@ -2,7 +2,6 @@ import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useSnackbar } from "notistack";
-import RichTextEditor from "react-rte";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -77,7 +76,7 @@ const useStyles = makeStyles({
 
 const AddEntry = () => {
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState(RichTextEditor.createEmptyValue());
+  const [content, setContent] = useState("");
   const [shared, setShared] = useState(false);
   const [location, setLocation] = useState({});
   const [markerVariant, setMarkerVariant] = useState(null);
@@ -154,7 +153,7 @@ const AddEntry = () => {
     setUploading(true);
     const payload = {
       title,
-      content: content.toString("markdown"),
+      content,
       shared,
       location: { ...location, variant: markerVariant },
       images: Array.from(images),
@@ -239,17 +238,18 @@ const AddEntry = () => {
             />
           </FormInput>
 
-          <div style={{ display: "flex" }}>
+          <FormInput>
             <MenuBookTwoToneIcon className={classes.icons} color="secondary" />
-            <RichTextContainer>
-              <RichTextEditor
-                rootStyle={{ minHeight: "30vh", backgroundColor: "rgba(247, 247, 247, 0.9)"}}
-                toolbarConfig={toolbarConfig}
-                value={content}
-                onChange={(value) => setContent(value)}
-              />
-            </RichTextContainer>
-          </div>
+            <TextField
+              className={classes.textInput}
+              label="Content"
+              variant="outlined"
+              value={content}
+              multiline
+              rows={10}
+              onChange={(e) => setContent(e.target.value)}
+            />
+          </FormInput>
 
           <FormInput>
             <LocationOnTwoToneIcon className={classes.icons} />
@@ -356,23 +356,6 @@ const FormInput = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-
-const RichTextContainer = styled.div`
-  flex-grow: 1;
-  max-width: 85%;
-
-  @media (min-width: 600px) {
-    max-width: 90%;
-  }
-
-  @media (min-width: 1100px) {
-    max-width: 95%;
-  }
-
-  @media (min-width: 1600px) {
-    max-width: 100%;
-  }
 `;
 
 const CheckBoxContainer = styled.div`

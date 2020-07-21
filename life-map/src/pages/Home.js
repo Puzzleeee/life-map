@@ -22,7 +22,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import RoomIcon from "@material-ui/icons/Room";
 //--------end import Material-ui components---------//
 import { colors, mapDefaults, categories } from "../constants";
-import ReactMarkdown from "react-markdown";
 
 const config = {
   withCredentials: true,
@@ -252,17 +251,13 @@ const Home = ({
                               </Typography>
                             </Location>
                           </DrawerTitle>
-                          <ReactMarkdown
-                            source={drawerState.entry.content}
-                            renderers={{ root: Typography }}
-                          />
-                          {/* <Typography
+                          <Typography
                             variant="body1"
                             color="textPrimary"
                             component="p"
                           >
                             {drawerState.entry.content}
-                          </Typography> */}
+                          </Typography>
                         </CardContent>
                         <CardContent>
                           <Typography variant="body1">
