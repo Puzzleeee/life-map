@@ -12,12 +12,14 @@ const aws = () => {
   /**
    * Function to upload a file to AWS S3
    * @param {File} file File to be uploaded
+   * @param {String} key Key to identify the file by
    * @return {Object} awsResponse Object containing information regarding AWS's response
    * @return {boolean} awsResponse.success Whether the upload was successful
    * @return {string} awsResponse.message Message describing the response
    * @return {Error} awsResponse.err Error generated, null if none
    */
-  modules.upload = async (file) => {
+  modules.upload = async (file, key = null) => {
+    file.name = key || file.name;
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Key: file.name,

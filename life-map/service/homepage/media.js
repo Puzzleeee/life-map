@@ -1,5 +1,6 @@
 const db = require("../../db/db.js");
 const AWS = require("../aws-upload/aws.js");
+const { v4: uuidv4 } = require('uuid');
 
 const media = () => {
   let modules = {};
@@ -16,8 +17,9 @@ const media = () => {
       let fileArr = Array.isArray(files) ? files : [files];
       let promises = [];
       for (let i = 0; i < fileArr.length; i++) {
-        promises.push(db.upload_photo.execute(entryId, fileArr[i].name));
-        promises.push(AWS.upload(fileArr[i]));
+        const newName = uuidv4();
+        promises.push(db.upload_photo.execute(entryId, newName));
+        promises.push(AWS.upload(fileArr[i], newName));
       }
       return Promise.all(promises);
     }
