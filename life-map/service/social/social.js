@@ -111,6 +111,14 @@ const social = () => {
     return db.search_users.execute(searchString);
   }
 
+  modules.checkRelationship = async (requester, toView) => {
+    if (requester == toView) {
+      return true;
+    } else {
+      return db.check_if_following.execute(requester, toView);
+    }
+  }
+
   return Object.freeze(modules);
 }
 

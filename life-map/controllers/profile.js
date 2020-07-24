@@ -6,7 +6,7 @@ const profileController = () => {
   modules.getUserProfile = async (req, res) => {
     const id = req.body.id;
     try {
-      const result = await profile.getUserProfile(id);
+      const result = await profile.getUserProfile(id, req.user.id);
       res.status(200).json({
         ...result,
         success: true,
