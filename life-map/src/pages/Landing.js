@@ -103,6 +103,7 @@ const Login = ({ loginRef, registerRef, redirect }) => {
   const classes = useStyles();
   const [emailInput, setEmail] = useState("");
   const [passwordInput, setPassword] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   /* helper for credential authentication with backend */
@@ -120,8 +121,11 @@ const Login = ({ loginRef, registerRef, redirect }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
     const response = await authCheck();
+
+    setLoading(false);
 
     if (response.success) {
       redirect(response.id);
@@ -139,6 +143,7 @@ const Login = ({ loginRef, registerRef, redirect }) => {
 
   return (
     <LoginContainer ref={loginRef}>
+      {isLoading && <CornerLoading/>}
       <Card className={classes.root}>
         <Title>
           <Typography variant='h5' style={ { marginBottom: '36px', marginRight: '5px' }}>
