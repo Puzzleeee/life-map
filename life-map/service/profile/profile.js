@@ -2,6 +2,7 @@ const db = require('../../db/db.js')
 const homepage = require('../homepage/homepage.js');
 const social = require('../social/social.js');
 const AWS = require("../aws-upload/aws.js");
+const { v4: uuidv4 } = require('uuid');
 
 const profile = () => {
   let modules = {};
@@ -71,11 +72,11 @@ const profile = () => {
   }
 
   modules.updateProfilePic = async (profile_id, file) => {
-    const file_name = file ? file.name : null;
+    const file_name = file ? uuidv4() : null;
     let promises = [];
     promises.push(db.update_profile_pic.execute(profile_id, file_name));
     if (file_name) {
-      promises.push(AWS.upload(file));
+      promises.push(AWS.upload(file, file_name));
     }
     return Promise.all(promises);
   }
