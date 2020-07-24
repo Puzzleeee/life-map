@@ -11,6 +11,7 @@ module.exports = function (crud) {
     get_following: require('../tables/social/get_following.js')(crud),
     get_sent_follow_requests: require('../tables/social/get_sent_follow_request')(crud),
     delete_follower_relationship: require('../tables/social/delete_follower_relationship.js')(crud),
+    check_if_following: require('../tables/social/check_if_following.js')(crud),
 
     search_users: require('../tables/social/search_users.js')(crud),
 

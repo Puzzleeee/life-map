@@ -32,29 +32,44 @@ const profile = () => {
     }
   }
 
-  modules.getUserProfile = async (id) => {
+  modules.getUserProfile = async (id, requester) => {
+    const allowedToView = await social.checkRelationship(requester, id);
     const [profile, entries, socialInfo] = await Promise.all([
       modules.getUserSummary(id),
-      homepage.arrangeUserData(id),
+      allowedToView ? homepage.arrangeUserData(id) : [],
       social.arrangeSocialInfo(id)
     ]);
 
     const { followers, following } = socialInfo;
-    const [followersWithProfilePic, followingWithProfilePic] = await Promise.all([
-      Promise.all(followers.map(async (x) => {
-        const profile_pic = await modules.getProfilePic(x.follower);
-        return {...x, profile_pic}
-      })),
-      Promise.all(following.map(async (x) => {
-        const profile_pic = await modules.getProfilePic(x.followee);
-        return {...x, profile_pic}
-      }))
-    ]);
+    let updatedSocialInfo;
+    // if allowed to view profile, get the profile pictures of followers/following
+    if (allowedToView) {
+      const [followersWithProfilePic, followingWithProfilePic] = await Promise.all([
+        Promise.all(followers.map(async (x) => {
+          const profile_pic = await modules.getProfilePic(x.follower);
+          return {...x, profile_pic}
+        })),
+        Promise.all(following.map(async (x) => {
+          const profile_pic = await modules.getProfilePic(x.followee);
+          return {...x, profile_pic}
+        }))
+      ]);
 
-    const updatedSocialInfo = {
-      ...socialInfo,
-      followers: followersWithProfilePic,
-      following: followingWithProfilePic
+      // do not return sentRequests to front-end as it is unecessary
+      updatedSocialInfo = {
+        ...socialInfo,
+        sentRequests: [],
+        followers: followersWithProfilePic,
+        following: followingWithProfilePic
+      }
+    } else {
+      // If not allowed to view profile, convert all the followers/following information into empty objects
+      updatedSocialInfo = {
+        ...socialInfo,
+        sentRequests: [],
+        followers: followers.map(x => ({})),
+        following: followers.map(x => ({}))
+      }
     }
 
     return {
