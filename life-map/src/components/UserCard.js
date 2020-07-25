@@ -25,11 +25,12 @@ const config = {
  * @props {string} type - Describing the role of the Card, either in the followers tab or following tab
  * the profile page
  */
-const UserCard = ({ viewerInfo, setViewerInfo, user, changeProfile, isViewingOwn, type }) => {
+const UserCard = ({ viewerInfo, setViewerInfo, user, changeProfile, isViewingOwn, removeFollower, type }) => {
   
   const [isFollowing, requestSent, handleButtonClick] = useSocialButton(viewerInfo, setViewerInfo, user);
 
-  const removeFollower = (event) => {
+  // function to handle removal of follower. This function is only accessible when a user is viewing their own profile
+  const handleRemoveFollower = (event) => {
     event.stopPropagation();
     const relationship = viewerInfo.followers.filter((relation) => relation.follower === user.id)[0];
     return axios.post(
@@ -38,10 +39,13 @@ const UserCard = ({ viewerInfo, setViewerInfo, user, changeProfile, isViewingOwn
       config
     ).then(() => {
       const new_followers = viewerInfo.followers.filter((relation) => relation.follower !== user.id);
+      // sets viewer state
       setViewerInfo({
         ...viewerInfo,
         followers: new_followers
       });
+      // sets profile state
+      removeFollower();
     })
   }
 
@@ -70,7 +74,7 @@ const UserCard = ({ viewerInfo, setViewerInfo, user, changeProfile, isViewingOwn
           {type === 'follower' && 
             <IconButton
               color="secondary"
-              onClick={removeFollower}
+              onClick={handleRemoveFollower}
             >
               <ClearIcon/>
             </IconButton>
