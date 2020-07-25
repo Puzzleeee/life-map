@@ -4,7 +4,7 @@ const homepage = (diary, markers, media) => {
   /**
    * Arranges a user's own diary entries data for front-end use
    *
-   * @param {number} id - the id of the user
+   * @param {String} id - the id of the user
    * @return An array of objects, each object representing a diary entry and its corresponding map marker
    */
   modules.arrangeUserData = async (id) => {
@@ -23,6 +23,17 @@ const homepage = (diary, markers, media) => {
         console.log(err);
       });
   };
+
+  /**
+   * Return a array of empty objects representing diary entries of a user,
+   * called when a user who is not authorised to view the entries requests for the entries
+   * 
+   * @param {String} id - id of the user whose entries are to be retrieved
+   */
+  modules.getDummyData = async (id) => {
+    const diaryEntries = await diary.getDiaryEntries(id);
+    return diaryEntries.map(x => ({}));
+  }
 
   return Object.freeze(modules);
 };

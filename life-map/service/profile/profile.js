@@ -36,7 +36,7 @@ const profile = () => {
     const allowedToView = await social.checkRelationship(requester, id);
     const [profile, entries, socialInfo] = await Promise.all([
       modules.getUserSummary(id),
-      allowedToView ? homepage.arrangeUserData(id) : [],
+      allowedToView ? homepage.arrangeUserData(id) : homepage.getDummyData(id),
       social.arrangeSocialInfo(id)
     ]);
 
@@ -54,19 +54,14 @@ const profile = () => {
           return {...x, profile_pic}
         }))
       ]);
-
-      // do not return sentRequests to front-end as it is unecessary
+      
       updatedSocialInfo = {
-        ...socialInfo,
-        sentRequests: [],
         followers: followersWithProfilePic,
         following: followingWithProfilePic
       }
     } else {
       // If not allowed to view profile, convert all the followers/following information into empty objects
       updatedSocialInfo = {
-        ...socialInfo,
-        sentRequests: [],
         followers: followers.map(x => ({})),
         following: followers.map(x => ({}))
       }
