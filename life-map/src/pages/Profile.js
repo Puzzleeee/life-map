@@ -49,6 +49,15 @@ const userStateReducer = (state, action) => {
         ...state,
         viewerInfo: action.payload.viewerInfo
       };
+    case 'removeFollower':
+      const newProfileInfo = {
+        ...state.profileInfo,
+        followers: state.profileInfo.followers.filter(x => x.id !== action.payload.relationship.id)
+      }
+      return {
+        ...state,
+        profileInfo: newProfileInfo
+      }
     default:
       return state;
   }
@@ -125,9 +134,15 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
     dispatchUser({ type: 'setViewer', payload: {viewerInfo} });
   }
 
+  const removeFollower = (relationship) => {
+    return () => {
+      dispatchUser({ type: 'removeFollower', payload: {relationship} });
+    }
+  }
+
   const removeEntry = (entry) => {
     return () => {
-      dispatchInput({ type: 'removeEntry', payload: {entry}})
+      dispatchInput({ type: 'removeEntry', payload: {entry} });
     }
   }
 
@@ -335,6 +350,7 @@ const Profile = ({ viewerID, userID, changeProfile }) => {
                     profile_pic: followRelationship.profile_pic
                   }}
                   isViewingOwn = {isViewingOwn}
+                  removeFollower = {removeFollower(followRelationship)}
                   type='follower'
                 />
               ))}
