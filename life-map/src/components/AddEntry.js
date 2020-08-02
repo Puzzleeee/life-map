@@ -155,7 +155,7 @@ const AddEntry = () => {
       title,
       content,
       shared,
-      location: { ...location, variant: markerVariant },
+      location: Object.keys(location).length === 0 ? null : { ...location, variant: markerVariant },
       images: Array.from(images),
     };
 
